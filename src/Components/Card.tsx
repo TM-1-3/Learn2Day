@@ -1,4 +1,6 @@
 /** @jsx React.createElement */
+import React from 'react';
+
 
 
 // nem sei se vamos usar oopsie
