@@ -1,5 +1,4 @@
 body {
-    background: linear-gradient(to right , #32533D 50%, #03254E 50%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -7,7 +6,16 @@ body {
     margin: 0;
 }
 
-.register {
+.student-page {
+    background: #32533D;
+}
+
+.teacher-page {
+    background: #03254E;
+}
+
+.student-register,
+.teacher-register {
     font-family: Arial, sans-serif;
     font-weight: 900;
     font-size: 42px;
@@ -30,6 +38,32 @@ body {
     align-items: center;
 }
 
+.user, 
+.email, 
+.phone-number, 
+.password, 
+.confirm-password {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    width: 350px;
+    padding: 5px 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-top: 25px;
+}
+
+.user input, 
+.email input, 
+.phone-number input, 
+.password input, 
+.confirm-password input {
+    border: none;
+    outline: none;
+    font-size: 15px;
+    width: 350px;
+}
+
 .S_signUp {
     background-color: #32533D;
     border: none;
@@ -38,26 +72,8 @@ body {
     font-weight: 550;
     font-size: 16px;
     padding: 13px 20px;
-    margin-top: 30px;
+    margin-top: 25px;
     cursor: pointer;
-}
-
-
-.vl {
-    border-left: 2px solid black;
-    height: 520px;
-    position: absolute;
-    left: 50%;
-    top: 40px;
-    bottom: 40px;
-    margin-left: -1px;
-}
-
-.teacher {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .T_signUp {
@@ -65,9 +81,9 @@ body {
     border: none;
     border-radius: 6px;
     color: white;
-    font-weight: 550; 
+    font-weight: 550;
     font-size: 16px;
     padding: 13px 20px;
-    margin-top: 30px;
+    margin-top: 25px;
     cursor: pointer;
 }
