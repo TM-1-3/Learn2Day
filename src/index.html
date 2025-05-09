@@ -2,14 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Learn2day</title>
+    <title>Learn2Day</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
+    <header class="header">
+        <div class="site-name">
+            <button class="main-page"> Learn2Day </button>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search..." />
+            <button class="search-button">
+                <span class="material-symbols-outlined"> search </span>
+            </button>
+            <button class="filter-button">
+                <span class="material-symbols-outlined"> filter_alt </span>
+            </button>
+        </div>
+        <div class="access-profile">
+            <button class="profile-button">
+                <span class="material-symbols-outlined"> account_circle </span>
+            </button>
+        </div>
+    </header>
     <h1>Welcome!</h1>
     <div className="list">
         <div id="root"></div>
