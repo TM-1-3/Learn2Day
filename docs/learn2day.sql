@@ -44,12 +44,13 @@ CREATE TABLE TUTOR(
 );
 
 INSERT INTO TUTOR (NAME, DATE_OF_BIRTH, PROFILE_IMAGE, EMAIL, DESCRIPTION) VALUES
-('Charles Xavier', '1965-08-23', 'https://static.wikia.nocookie.net/thexavierinstitute/images/b/b8/Charlesprofile.jpg/revision/latest?cb=20100215031626', 'profx@xmen.com', 'Bald men in weelchair'),
-('Prof. Severus Snape', '1970-01-09', 'https://images.unsplash.com/photo-1544005313-51774c5f3037', 'snape@hogwarts.com', 'Potions master and teacher'),
-('Walter White', '1980-12-25', 'https://upload.wikimedia.org/wikipedia/en/0/03/Walter_White_S5B.png', 'chemistry@lover.com', 'Heisenberg'),
-('Ms. Ada Lovelace', '1985-12-10', 'https://images.unsplash.com/photo-1520813792240-56fc4a3765a7', 'ada@techacademy.com', 'First computer programmer'),
-('Mr. Aristotle', '1975-03-07', 'https://images.unsplash.com/photo-1502767089025-6572583495b0', 'aristotle@life.com', 'Philosophy master');
-
+('Walter White', '1980-12-25', 'https://upload.wikimedia.org/wikipedia/en/0/03/Walter_White_S5B.png', 'chemistry@lover.com', 'Heisenberg, I am the one who knocks'),
+('Martim', '2005-12-09', 'https://avatars.githubusercontent.com/u/169788723?v=4', 'martim@email.com', 'Hi, I am '),
+('Bárbara Bandeira', '2000-12-09', 'https://znaki.fm/static/content/thumbs/1200x900/f/13/du3jdq---c4x3x50px50p--428a0e52cb7e5cc0bb3b3ce64cdc313f.jpg', 'babs@email.com', "Hi! I'm Barbara, a data scientist who enjoys working with data and turning it into actionable insights. Let's explore the world of data together!"),
+('Poot Lovato', '2000-12-09', 'https://pbs.twimg.com/profile_images/660935401620697088/2pcj9lh4_400x400.jpg', 'poot@email.com', "Hi! I am Poot, a data scientist who enjoys working with data and turning it into actionable insights. Let's explore the world of data together!"),
+('Kuzco', '2000-12-09', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrsM_hPnYdEBpv_XmL8SIGCjtSBpT1aX0bxA&s', 'kuzco@gmail.com', "Hi! I'm Kuzco, a data scientist who enjoys working with data and turning it into actionable insights. Let's explore the world of data together!"),
+('Andressa Urach', '1989-02-23', 'https://img.band.uol.com.br/image/2025/02/10/andressa-urach-vai-abrir-lanchonete-12311_400x300.jpg', 'andressa@email.com', 'Hi! My name is Andressa Urach, I am a philosophy teacher at FLUP.'),
+('Karla Sofía Gascon', '1900-01-24', 'https://hips.hearstapps.com/hmg-prod/images/karla-sofia-gascon-retirada-vida-publica-67a6273971a78.jpg', 'karla@email.com', 'Hi! Me llamo Karla Sofía Gacon, Bingo.');
 DROP TABLE IF EXISTS STUDENT_TUTOR;
 
 CREATE TABLE STUDENT_TUTOR(
