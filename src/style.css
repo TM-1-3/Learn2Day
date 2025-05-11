@@ -17,6 +17,11 @@ header {
     right: 0;
 }
 
+/*TODO*/
+header button{
+    cursor: pointer;
+}
+
 .main-page {
     color: white;
     background: none;
