@@ -106,10 +106,10 @@ h1 {
     width: 100%;
 }
 
-
 .card {
     min-width: 0;
-    width: 100%; 
+    width: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card .container {
@@ -118,6 +118,21 @@ h1 {
     border-radius: 20px;
     height: 100%;
     padding: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card:hover .container {
+    background-color: #e0e0e0;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card:hover .subtitles {
+    background-color: #03254e;
 }
 
 .card .content-wrapper {
@@ -133,6 +148,11 @@ h1 {
     border-radius: 12px;
     object-fit: cover;
     flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.card:hover .img {
+    transform: scale(1.02);
 }
 
 .card .subtitle-container {
@@ -149,6 +169,7 @@ h1 {
     font-weight: 600;
     color: #eeeeee;
     display: inline-block;
+    transition: all 0.3s ease;
 }
 
 .card .text-content {
@@ -156,7 +177,23 @@ h1 {
     flex-direction: column;
     gap: 12px;
     flex: 1;
-    min-width: 0; 
+    min-width: 0;
+}
+
+.card .title {
+    transition: color 0.3s ease;
+}
+
+.card:hover .title {
+    color: #1a3a6e;
+}
+
+.card .description {
+    transition: color 0.3s ease;
+}
+
+.card:hover .description {
+    color: #333;
 }
 
 /* If you open on smartphone it won't break the page */
