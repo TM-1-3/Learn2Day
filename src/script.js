@@ -3,7 +3,7 @@ const profile = document.getElementById("profile-inner")
 
 openButton.addEventListener("click", (e) => {
     e.stopPropagation();
-    profile.classList.add("open");
+    profile.classList.toggle("open");
 });
 
 document.addEventListener("click", (e) => {
