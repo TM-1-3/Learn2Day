@@ -137,7 +137,7 @@ ul {
     text-align: center;
   padding: 12px;
   border-radius: 25px;
-  background-color: #e0f0ff; /* light blue */
+  background-color: #e0f0ff; 
   width: 120px; 
 }
 
@@ -222,6 +222,6 @@ h1{
 }
 
 .student-card:hover {
-    background-color: #cbeeff;
+    background-color: #e0f0ff;
     transform: translateY(-2px);
 }
