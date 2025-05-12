@@ -31,9 +31,20 @@ $tutors = getTutors($db);
             </button>
         </div>
         <div class="access-profile">
-            <button class="profile-button">
+            <button id="profile-button">
                 <span class="material-symbols-outlined"> account_circle </span>
             </button>
+            <div id="profile-inner" class="profile">
+                <div class="login-popup">
+                    <input type="text" placeholder="E-mail" />
+                    <input type="password" placeholder="Password" />
+                    <button class="login-btn">Log In</button>
+                    <div class="divider">or</div>
+                    <a href='register_page.html'><button class="signup-btn">Sign Up</button></a>
+                    <hr size="18">
+                    <a href="#" class="reset-link">Reset your password</a>
+                </div>
+            </div>
         </div>
     </header>
     <h1>Welcome!</h1>
@@ -105,5 +116,6 @@ $tutors = getTutors($db);
             );
         </script>
     </div>
+    <script src="script.js"></script>
 </body>
 </html>
