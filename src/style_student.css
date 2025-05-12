@@ -29,11 +29,11 @@ h2{
     width: 250px;
     height: 250px;
     border-radius: 50%;
-    display: block;
-    margin: 0 auto; 
     object-fit: cover;
+    display: block;
+    margin: 0 auto;
+    flex-shrink: 0; 
 }
-
 .review {
     display: flex;
     align-items: flex-start;
@@ -74,7 +74,7 @@ h2{
     background-color: #32533D; 
     color: white;
     padding: 20px;
-    text-align: left;
+    text-align: center;
     width: 30%;
     box-sizing: border-box;
     height: 100vh;  /* Full height */  /* Fix the position to the viewport */
@@ -82,6 +82,9 @@ h2{
     left: 0; 
     position: sticky;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .main-section {
@@ -95,7 +98,7 @@ h2{
 
 
 .info-section section {
-    margin-top: 15px;
+    margin-top: 5px;
 }
 
 .card {
@@ -181,7 +184,7 @@ h1{
 }
 
 .info-element{
-    margin-bottom: 50px;
+    margin-bottom: 15px;
 }
 
 .language-list {
@@ -200,6 +203,7 @@ h1{
     justify-content: space-between;
     max-width: 300px;
     color: #32533D;
+    width: 300px;
 }
 
 .language-item img {
