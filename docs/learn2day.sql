@@ -51,6 +51,8 @@ INSERT INTO TUTOR (NAME, DATE_OF_BIRTH, PROFILE_IMAGE, EMAIL, DESCRIPTION) VALUE
 ('Kuzco', '2000-12-09', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrsM_hPnYdEBpv_XmL8SIGCjtSBpT1aX0bxA&s', 'kuzco@gmail.com', "Hi! I'm Kuzco, a data scientist who enjoys working with data and turning it into actionable insights. Let's explore the world of data together!"),
 ('Andressa Urach', '1989-02-23', 'https://img.band.uol.com.br/image/2025/02/10/andressa-urach-vai-abrir-lanchonete-12311_400x300.jpg', 'andressa@email.com', 'Hi! My name is Andressa Urach, I am a philosophy teacher at FLUP.'),
 ('Karla Sofía Gascon', '1900-01-24', 'https://hips.hearstapps.com/hmg-prod/images/karla-sofia-gascon-retirada-vida-publica-67a6273971a78.jpg', 'karla@email.com', 'Hi! Me llamo Karla Sofía Gacon, Bingo.');
+
+
 DROP TABLE IF EXISTS STUDENT_TUTOR;
 
 CREATE TABLE STUDENT_TUTOR(
