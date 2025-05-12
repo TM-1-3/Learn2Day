@@ -137,6 +137,7 @@ header button {
     color: white;
     font-weight: bold;
     cursor: pointer;
+    width: 224px;
 }
 
 .login-popup hr {
