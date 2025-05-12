@@ -1,3 +1,9 @@
+<?php
+require_once('fetchinfo.php');
+$db = connection();
+$students = getStudents($db);
+$tutors = getTutors($db);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -69,36 +75,47 @@
                     </div>
                 );
             };
+            const studentsData = [
+                <?php foreach($students as $student): ?>
+                {
+                    id: "student<?= $student['ID_STUDENT'] ?>",
+                    title: "<?= addslashes($student['NAME']) ?>",
+                    description: "<?= addslashes($student['DESCRIPTION']) ?>",
+                    imgSrc: "<?= addslashes($student['PROFILE_IMAGE']) ?>",
+                    subtitles: ["<?= addslashes($student['SCHOOL_INSTITUTION']) ?>"]
+                },
+                <?php endforeach; ?>
+            ];
+
+            const tutorsData = [
+                <?php foreach($tutors as $tutor): ?>
+                {
+                    id: "tutor<?= $tutor['ID_TUTOR'] ?>",
+                    title: "<?= addslashes($tutor['NAME']) ?>",
+                    description: "<?= addslashes($tutor['DESCRIPTION']) ?>",
+                    imgSrc: "<?= addslashes($tutor['PROFILE_IMAGE']) ?>",
+                    subtitles: ["Tutor"]
+                },
+                <?php endforeach; ?>
+            ];
 
             const root = ReactDOM.createRoot(document.getElementById('root'));
             root.render(
                 <div className="cards-grid">
-                    <Card
-                        id="card1"
-                        title="Martim"
-                        description="Hello! I'm Martim, a software engineer with a passion for technology and innovation. I love to create and learn new things every day."
-                        imgSrc="https://avatars.githubusercontent.com/u/169788723?v=4"
-                        subtitles={["Software Engineer"]}
-                    />
-                    <Card
-                        id="card2"
-                        title="Barbara"
-                        description="Hi! I'm Barbara, a data scientist who enjoys working with data and turning it into actionable insights. Let's explore the world of data together!"
-                        imgSrc="https://znaki.fm/static/content/thumbs/1200x900/f/13/du3jdq---c4x3x50px50p--428a0e52cb7e5cc0bb3b3ce64cdc313f.jpg"
-                        subtitles={["A maioral"]}
-                    />
-                    <Card
-                        id="card"
-                        title="poot lovato"
-                        description="Hello! I'm poot lovato, a software engineer with a passion for technology and innovation. I love to create and learn new things every day."
-                        imgSrc="https://pbs.twimg.com/profile_images/660935401620697088/2pcj9lh4_400x400.jpg"
-                        subtitles={["Software Engineer"]}
-                    />
+                    {tutorsData.map((tutor, index) => (
+                        <Card
+                            key={tutor.id}
+                            id={tutor.id}
+                            title={tutor.title}
+                            description={tutor.description}
+                            imgSrc={tutor.imgSrc}
+                            subtitles={tutor.subtitles}
+                        />
+                    ))}
                 </div>
             );
         </script>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
