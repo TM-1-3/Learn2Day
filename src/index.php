@@ -1,8 +1,7 @@
 <?php
-session_start();
-
-
 require_once('fetchinfo.php');
+require_once('includes/session.php');
+require_once('actions/login.php');
 $db = connection();
 $students = getStudents($db);
 $tutors = getTutors($db);
