@@ -10,7 +10,7 @@ $tutors = getTutors($db);
     <meta charset="UTF-8">
     <title>Learn2Day</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="index_style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
@@ -116,6 +116,6 @@ $tutors = getTutors($db);
             );
         </script>
     </div>
-    <script src="script.js"></script>
+    <script src="index_script.js"></script>
 </body>
 </html>
