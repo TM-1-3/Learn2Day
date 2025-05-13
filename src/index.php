@@ -5,6 +5,10 @@ require_once('actions/login.php');
 $db = connection();
 $students = getStudents($db);
 $tutors = getTutors($db);
+
+$session = Session::getInstance();
+$isLoggedIn = isset($_SESSION['user']);
+$loginError = isset($_GET['login_error']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,23 +37,38 @@ $tutors = getTutors($db);
             </button>
         </div>
         <div class="access-profile">
-            <button id="profile-button">
-                <span class="material-symbols-outlined"> account_circle </span>
-            </button>
-            <div id="profile-inner" class="profile">
-                <div class="login-popup">
-                    <input type="text" placeholder="E-mail" />
-                    <input type="password" placeholder="Password" />
-                    <button class="login-btn">Log In</button>
-                    <div class="divider">or</div>
-                    <a href='register_page.html'><button class="signup-btn">Sign Up</button></a>
-                    <hr size="18">
-                    <a href="#" class="reset-link">Reset your password</a>
+            <?php if ($isLoggedIn): ?>
+                <button id="profile-button">
+                    <span class="material-symbols-outlined"> account_circle </span>
+                    <?= htmlspecialchars($_SESSION['user']['username']) ?>
+                </button>
+                <div id="profile-inner" class="profile">
+                    <form action="actions/logout.php" method="post">
+                        <button type="submit" class="logout-btn">Log Out</button>
+                    </form>
                 </div>
-            </div>
+            <?php else: ?>
+                <button id="profile-button">
+                    <span class="material-symbols-outlined"> account_circle </span>
+                </button>
+                <div id="profile-inner" class="profile">
+                    <form action="actions/login.php" method="post" class="login-popup">
+                        <input type="text" name="username" placeholder="Username" required />
+                        <input type="password" name="password" placeholder="Password" required />
+                        <button type="submit" class="login-btn">Log In</button>
+                        <div class="divider">or</div>
+                        <a href='register_page.html'><button type="button" class="signup-btn">Sign Up</button></a>
+                        <hr size="18">
+                        <?php if ($loginError): ?>
+                            <div class="error-message">Invalid username or password</div>
+                        <?php endif; ?>
+                        <a href="#" class="reset-link">Reset your password</a>
+                    </form>
+                </div>
+            <?php endif; ?>
         </div>
     </header>
-    <h1>Welcome!</h1>
+    <h1>Welcome<?= $isLoggedIn ? ' back, ' . htmlspecialchars($_SESSION['user']['username']) : '' ?>!</h1>
     <div class="list">
         <div id="root"></div>
         <script type="text/babel">

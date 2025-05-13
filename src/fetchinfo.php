@@ -1,5 +1,3 @@
-#NOTE THIS MIGHT BE USELESS
-
 <?php 
     function connection(){
         return new PDO('sqlite:../docs/learn2day.db');

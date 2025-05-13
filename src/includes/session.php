@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-class Section {
-    private static ?Section $instance = null;
+class Session {
+    private static ?Session $instance = null;
 
     public static function getInstance(): Session{
         if(self::$instance == null){
-            self::$instance = new Section();
+            self::$instance = new Session();
         }
 
         return self::$instance;
