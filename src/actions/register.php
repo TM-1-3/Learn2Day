@@ -8,7 +8,7 @@ $password = $_POST['password'];
 $email = $_POST['email'];
 $type = $_POST['type'];
 
-Customer::create($username, $password, $email, $type);
+User::create($username, $password, $email, $type);
 
 header('Location: /');
 ?>

@@ -1,13 +1,12 @@
 <?php
 require_once('fetchinfo.php');
 require_once('includes/session.php');
-require_once('actions/login.php');
 $db = connection();
 $students = getStudents($db);
 $tutors = getTutors($db);
 
 $session = Session::getInstance();
-$isLoggedIn = isset($_SESSION['user']);
+$isLoggedIn = $session->isLoggedIn();
 $loginError = isset($_GET['login_error']);
 ?>
 <!DOCTYPE html>

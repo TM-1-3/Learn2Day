@@ -17,7 +17,7 @@ class Session {
     }
 
     public function getUser(){
-        return $_SESSION['user'];
+        return $_SESSION["user"];
     }
 
     public function login($user){
@@ -26,6 +26,10 @@ class Session {
 
     public function logout(){
         session_destroy();
+    }
+
+    public function isLoggedIn(): bool {
+        return isset($_SESSION["user"]);
     }
 }
 
