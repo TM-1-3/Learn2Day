@@ -34,7 +34,7 @@ INSERT INTO USERS (USERNAME, PASSWORD, EMAIL, TYPE) VALUES
 ('kuzco_t', 'emperorsnew', 'kuzco@gmail.com', 'TUTOR'),
 ('andressa_u', 'philosophy', 'andressa@email.com', 'TUTOR'),
 ('karla_g', 'bingobongo', 'karla@email.com', 'TUTOR'),
-('admin1', 'adminpass', 'admin@learn2day.com', 'ADMIN'),
+('admin1', '74913f5cd5f61ec0bcfdb775414c2fb3d161b620', 'admin@learn2day.com', 'ADMIN'),
 ('martimadmin', 'martim123', 'martim@admin', 'ADMIN');
 
 DROP TABLE IF EXISTS STUDENT;

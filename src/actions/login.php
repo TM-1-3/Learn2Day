@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     try {
-        $user = User::get_customer_by_username_password($username, $password);
+        $user = User::get_user_by_username_password($username, $password);
 
         if($user) {
             Session::getInstance()->login($user);

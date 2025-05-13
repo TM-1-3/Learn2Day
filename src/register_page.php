@@ -1,3 +1,8 @@
+<?php
+    include_once(__DIR__ . '/../includes/session.php');
+    include_once(__DIR__ . '/../includes/database.php');
+    
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

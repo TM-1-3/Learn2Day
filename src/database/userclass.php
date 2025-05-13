@@ -26,7 +26,7 @@ class User {
         ]);
     }
 
-    public static function get_customer_by_username_password(string $username, string $password): ?array {
+    public static function get_user_by_username_password(string $username, string $password): ?array {
         if (empty($username) || empty($password)) {
             throw new InvalidArgumentException("Username and password cannot be empty");
         }
