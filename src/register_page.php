@@ -22,8 +22,8 @@
         <?php endif; ?>
 
         <div class="teacher-container Tsign-up-container">
-            <form action="../actions/registers/register_teacher.php" method="POST">
-                <h1>Create Teacher Account</h1>
+            <form action="../actions/registers/register_tutor.php" method="POST">
+                <h1>Create Tutor Account</h1>
                 <input type="hidden" name="type" value="teacher">
                 <div class="user"><input type="text" name="username" placeholder="Name" required /></div>
                 <div class="email"><input type="email" name="email" placeholder="Email" required /></div>
