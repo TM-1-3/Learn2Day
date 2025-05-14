@@ -1,11 +1,11 @@
 <?php
-    include_once(__DIR__ . '/../includes/session.php');
-    include_once(__DIR__ . '/../includes/database.php');
-    include_once(__DIR__ . '/../database/userclass.php');
-    include_once(__DIR__ . '/../actions/register.php');
-
-
-    
+    include_once(__DIR__ . '/includes/session.php');
+    include_once(__DIR__ . '/includes/database.php');
+    include_once(__DIR__ . '/database/userclass.php');
+    $error = '';
+    if (isset($_GET['error'])) {
+        $error = htmlspecialchars($_GET['error']);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,26 +17,32 @@
 </head>
 <body>
     <div class="container" id="container">
+        <?php if ($error): ?>
+            <div class="error-message"><?= $error ?></div>
+        <?php endif; ?>
+
         <div class="teacher-container Tsign-up-container">
-            <form action="#">
+            <form action="../actions/registers/register_teacher.php" method="POST">
                 <h1>Create Teacher Account</h1>
-                <div class="user"><input type="text" placeholder="Name" required /></div>
-                <div class="email"><input type="email" placeholder="Email" required /></div>
-                <div class="phone-number"><input type="tel" placeholder="Phone Number" /></div>
-                <div class="password"><input type="password" placeholder="Password" required /></div>
-                <div class="confirm-password"><input type="password" placeholder="Confirm Password" required /></div>
+                <input type="hidden" name="type" value="teacher">
+                <div class="user"><input type="text" name="username" placeholder="Name" required /></div>
+                <div class="email"><input type="email" name="email" placeholder="Email" required /></div>
+                <div class="phone-number"><input type="tel" name="phone" placeholder="Phone Number" /></div>
+                <div class="password"><input type="password" name="password" placeholder="Password" required /></div>
+                <div class="confirm-password"><input type="password" name="confirm_password" placeholder="Confirm Password" required /></div>
                 <button type="submit" class="T_signUp">Sign Up</button>
             </form>
         </div>
 
         <div class="student-container Ssign-up-container">
-            <form action="#">
+            <form action="../actions/registers/register_student.php" method="POST">
                 <h1>Create Student Account</h1>
-                <div class="user"><input type="text" placeholder="Name" required /></div>
-                <div class="email"><input type="email" placeholder="Email" required /></div>
-                <div class="phone-number"><input type="tel" placeholder="Phone Number" /></div>
-                <div class="password"><input type="password" placeholder="Password" required /></div>
-                <div class="confirm-password"><input type="password" placeholder="Confirm Password" required /></div>
+                <input type="hidden" name="type" value="student">
+                <div class="user"><input type="text" name="username" placeholder="Name" required /></div>
+                <div class="email"><input type="email" name="email" placeholder="Email" required /></div>
+                <div class="phone-number"><input type="tel" name="phone" placeholder="Phone Number" /></div>
+                <div class="password"><input type="password" name="password" placeholder="Password" required /></div>
+                <div class="confirm-password"><input type="password" name="confirm_password" placeholder="Confirm Password" required /></div>
                 <button type="submit" class="S_signUp">Sign Up</button>
             </form>
         </div>

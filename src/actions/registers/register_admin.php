@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-require_once(__DIR__ . '/../includes/session.php');
-require_once(__DIR__ . '/../database/userclass.php');
+require_once(__DIR__ . '/../../includes/session.php');
+require_once(__DIR__ . '/../../database/userclass.php');
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -13,7 +13,7 @@ try {
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     $email = $_POST['email'] ?? '';
-    $type = $_POST['type'] ?? '';
+    $type = 'ADMIN' ?? '';
 
     if (empty($username) || empty($password) || empty($email) || empty($type)) {
         throw new Exception('All fields are required');
