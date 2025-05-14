@@ -56,7 +56,7 @@ $loginError = isset($_GET['login_error']);
                         <input type="password" name="password" placeholder="Password" required />
                         <button type="submit" class="login-btn">Log In</button>
                         <div class="divider">or</div>
-                        <a href='register_page.html'><button type="button" class="signup-btn">Sign Up</button></a>
+                        <a href='register_page.php'><button type="button" class="signup-btn">Sign Up</button></a>
                         <hr size="18">
                         <?php if ($loginError): ?>
                             <div class="error-message">Invalid username or password</div>

@@ -1,6 +1,10 @@
 <?php
     include_once(__DIR__ . '/../includes/session.php');
     include_once(__DIR__ . '/../includes/database.php');
+    include_once(__DIR__ . '/../database/userclass.php');
+    include_once(__DIR__ . '/../actions/register.php');
+
+
     
 ?>
 <!DOCTYPE html>
