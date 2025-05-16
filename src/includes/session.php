@@ -20,8 +20,13 @@ class Session {
         return $_SESSION["user"];
     }
 
-    public function login($user){
-        $_SESSION["user"] = $user;
+    public function login(array $user): void {
+        $_SESSION['user'] = [
+            'id' => $user['id'],
+            'username' => $user['username'],
+            'email' => $user['email'],
+            'type' => $user['type']
+        ];
     }
 
     public function logout(){

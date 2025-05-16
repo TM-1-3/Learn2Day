@@ -18,16 +18,6 @@ $description = '';
 $school_institution = '';
 $profile_image = '';
 
-try {
-    $existing_profile = Student::getById($user_id);
-    if ($existing_profile) {
-        header('Location: /register_page.php?error=Profile already exists');
-        exit();
-    }
-} catch (Exception $e) {
-    $errors[] = 'Error checking existing profile: ' . $e->getMessage();
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
@@ -103,6 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)){
         try {
+            $user_id = $session->getUserId();
             Student::create(
                 $user_id,
                 $name,
@@ -111,10 +102,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $description,
                 $school_institution
             );
-            header('Location: /profile.php');
+            header('Location: /profile.php?id=' . $user_id);
             exit();
         } catch (Exception $e) {
-
             if ($upload_success && file_exists($destination)) {
                 unlink($destination);
             }
@@ -122,7 +112,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-
+$user_id = $session->getUserId();
+if ($user_id <= 0) {
+    die('Invalid user ID');
+}
 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 ?>
 
@@ -185,5 +178,3 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         <script src="profile_image.js"></script>
     </body>
 </html>
-
-

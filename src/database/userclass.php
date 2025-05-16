@@ -11,34 +11,35 @@ class User {
         $this->username = $username;
     }
 
-    public static function create(string $username, string $password, string $email, string $type): void {
-        if (empty($password)) {
-            throw new InvalidArgumentException("Password cannot be empty");
-        }
-
+    public static function create(string $username, string $password, string $email, string $type): int {
         $db = Database::getInstance();
-        $stmt = $db->prepare('INSERT INTO users (username, password, email, type) VALUES (?, ?, ?, ?)');
-        $stmt->execute([
-            $username, 
-            sha1($password),
-            $email, 
-            $type
-        ]);
+        $hashed_password = sha1($password);
+        
+        $stmt = $db->prepare('
+            INSERT INTO users (username, password, email, type) 
+            VALUES (?, ?, ?, ?)
+        ');
+        $stmt->execute([$username, $hashed_password, $email, $type]);
+        
+        return (int)$db->lastInsertId();
     }
 
     public static function get_user_by_username_password(string $username, string $password): ?array {
-        if (empty($username) || empty($password)) {
-            throw new InvalidArgumentException("Username and password cannot be empty");
-        }
-
         $db = Database::getInstance();
-        $stmt = $db->prepare('SELECT * FROM users WHERE username = ? AND password = ?');
-        $stmt->execute([
-            $username, 
-            sha1($password)
-        ]);
-
-        return $stmt->fetch() ?: null;
+        $stmt = $db->prepare('SELECT * FROM users WHERE username = ?');
+        $stmt->execute([$username]);
+        
+        if ($user = $stmt->fetch()) {
+            if (password_verify($password, $user['password'])) {
+                return [
+                    'id' => (int)$user['ID_USER'],
+                    'username' => $user['USERNAME'],
+                    'email' => $user['EMAIL'],
+                    'type' => $user['TYPE']
+                ];
+            }
+        }
+        return null;
     }
 
     public static function get_user_by_username(string $username): ?array {

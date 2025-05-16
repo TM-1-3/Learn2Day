@@ -39,7 +39,7 @@ $loginError = isset($_GET['login_error']);
             <?php if ($isLoggedIn): ?>
                 <button id="profile-button">
                     <span class="material-symbols-outlined"> account_circle </span>
-                    <?= htmlspecialchars($_SESSION['user']['username']) ?>
+                    <?= htmlspecialchars($session->getUser()['username']) ?>
                 </button>
                 <div id="profile-inner" class="profile">
                     <form action="actions/logout.php" method="post">
@@ -67,7 +67,7 @@ $loginError = isset($_GET['login_error']);
             <?php endif; ?>
         </div>
     </header>
-    <h1>Welcome<?= $isLoggedIn ? ' back, ' . htmlspecialchars($_SESSION['user']['username']) : '' ?>!</h1>
+    <h1>Welcome<?= $isLoggedIn ? ' back, ' . htmlspecialchars($session->getUser()['username']) : '' ?>!</h1>
     <div class="list">
         <div id="root"></div>
         <script type="text/babel">

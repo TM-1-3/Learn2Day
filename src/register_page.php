@@ -25,7 +25,7 @@
             <form action="../actions/registers/register_tutor.php" method="POST">
                 <h1>Create Tutor Account</h1>
                 <input type="hidden" name="type" value="teacher">
-                <div class="user"><input type="text" name="username" placeholder="Name" required /></div>
+                <div class="user"><input type="text" name="username" placeholder="Username" required /></div>
                 <div class="email"><input type="email" name="email" placeholder="Email" required /></div>
                 <div class="phone-number"><input type="tel" name="phone" placeholder="Phone Number" /></div>
                 <div class="password"><input type="password" name="password" placeholder="Password" required /></div>
@@ -38,7 +38,7 @@
             <form action="../actions/registers/register_student.php" method="POST">
                 <h1>Create Student Account</h1>
                 <input type="hidden" name="type" value="student">
-                <div class="user"><input type="text" name="username" placeholder="Name" required /></div>
+                <div class="user"><input type="text" name="username" placeholder="Username" required /></div>
                 <div class="email"><input type="email" name="email" placeholder="Email" required /></div>
                 <div class="phone-number"><input type="tel" name="phone" placeholder="Phone Number" /></div>
                 <div class="password"><input type="password" name="password" placeholder="Password" required /></div>
