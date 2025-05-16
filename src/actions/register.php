@@ -28,24 +28,23 @@ try {
     }
 
     $db = Database::getInstance();
-    $stmt = $db->prepare('SELECT * FROM users WHERE username = ? OR email = ?');
+    $stmt = $db->prepare('SELECT * FROM USERS WHERE USERNAME = ? OR EMAIL = ?');
     $stmt->execute([$username, $email]);
     
     if ($stmt->fetch()) {
         throw new Exception('Username or email already exists');
     }
 
-    User::create($username, $password, $email, $type);
+    $user_id = User::create($username, $password, $email, $type);
 
-    $user = User::get_user_by_username_password($username, $password);
+    $user = User::get_user_by_id($user_id);
     if ($user) {
         Session::getInstance()->login($user);
     }
 
-    header('Location: /');
+    header('Location: /create_profile.php');
     exit();
 } catch (Exception $e) {
-
     header('Location: /register_page.php?error=' . urlencode($e->getMessage()));
     exit();
 }

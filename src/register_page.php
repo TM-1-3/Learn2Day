@@ -13,7 +13,7 @@
     <meta charset="UTF-8">
     <title>Registration</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="register_style.css">
+    <link rel="stylesheet" href="styles/register_style.css">
 </head>
 <body>
     <div class="container" id="container">
@@ -22,10 +22,10 @@
         <?php endif; ?>
 
         <div class="teacher-container Tsign-up-container">
-            <form action="../actions/registers/register_tutor.php" method="POST">
+            <form action="../actions/register.php" method="POST">
                 <h1>Create Tutor Account</h1>
-                <input type="hidden" name="type" value="teacher">
-                <div class="user"><input type="text" name="username" placeholder="Name" required /></div>
+                <input type="hidden" name="type" value="TUTOR">
+                <div class="user"><input type="text" name="username" placeholder="Username" required /></div>
                 <div class="email"><input type="email" name="email" placeholder="Email" required /></div>
                 <div class="phone-number"><input type="tel" name="phone" placeholder="Phone Number" /></div>
                 <div class="password"><input type="password" name="password" placeholder="Password" required /></div>
@@ -35,10 +35,10 @@
         </div>
 
         <div class="student-container Ssign-up-container">
-            <form action="../actions/registers/register_student.php" method="POST">
+            <form action="../actions/register.php" method="POST">
                 <h1>Create Student Account</h1>
-                <input type="hidden" name="type" value="student">
-                <div class="user"><input type="text" name="username" placeholder="Name" required /></div>
+                <input type="hidden" name="type" value="STUDENT">
+                <div class="user"><input type="text" name="username" placeholder="Username" required /></div>
                 <div class="email"><input type="email" name="email" placeholder="Email" required /></div>
                 <div class="phone-number"><input type="tel" name="phone" placeholder="Phone Number" /></div>
                 <div class="password"><input type="password" name="password" placeholder="Password" required /></div>
@@ -69,6 +69,6 @@
             <button class="overlay-button" id="overlayBtn">Register as Student</button>
         </div>
     </div>
-    <script src="register_script.js"></script>
+    <script src="scripts/register_script.js"></script>
 </body>
 </html>

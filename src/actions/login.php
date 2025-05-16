@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $user = User::get_user_by_username_password($username, $password);
 
-        if($user) {
+        if ($user) {
             Session::getInstance()->login($user);
             header('Location: /');
             exit();
