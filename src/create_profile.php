@@ -10,6 +10,12 @@ if (!$session->isLoggedIn()) {
 }
 
 $user_id = $session->getUserId();
+$user = $session->getUser();
+
+if (!$user) {
+    header('Location: /');
+    exit();
+}
 
 $errors = [];
 $name = '';
@@ -18,9 +24,22 @@ $description = '';
 $school_institution = '';
 $profile_image = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Helper function for upload error messages
+function uploadErrorToString(int $error_code): string {
+    $errors = [
+        UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+        UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+        UPLOAD_ERR_PARTIAL => 'The uploaded file was only partially uploaded',
+        UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+        UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
+        UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+        UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload',
+    ];
+    return $errors[$error_code] ?? 'Unknown upload error';
+}
 
-    if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
         $errors[] = 'Invalid CSRF token';
     }
 
@@ -29,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = trim($_POST['description'] ?? '');
     $school_institution = trim($_POST['school_institution'] ?? '');
 
+    // Validation
     if (empty($name)) {
         $errors[] = 'Name is required';
     } elseif (strlen($name) > 100) {
@@ -40,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $dob = DateTime::createFromFormat('Y-m-d', $date_of_birth);
         if (!$dob || $dob->format('Y-m-d') !== $date_of_birth) {
-            $errors[] = 'Invalid date format for date of birth';
+            $errors[] = 'Invalid date format for date of birth (use YYYY-MM-DD)';
         }
     }
 
@@ -53,8 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (strlen($description) > 500) {
         $errors[] = 'Description must be less than 500 characters';
     }
+
+    // File upload handling
     $upload_success = false;
-    if (isset($_FILES['profile_image'])) {
+    $destination = '';
+    
+    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] !== UPLOAD_ERR_NO_FILE) {
         $file_error = $_FILES['profile_image']['error'];
         
         if ($file_error === UPLOAD_ERR_OK) {
@@ -71,29 +95,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!is_dir($upload_dir)) {
                     mkdir($upload_dir, 0755, true);
                 }
-                $file_ext = pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION);
-                $file_ext = strtolower($file_ext);
+                
+                $file_ext = strtolower(pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION));
                 $profile_image = 'profile_' . $user_id . '_' . bin2hex(random_bytes(8)) . '.' . $file_ext;
                 $destination = $upload_dir . $profile_image;
                 
-                if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $destination)) {
-                    $upload_success = true;
-                } else {
+                if (!move_uploaded_file($_FILES['profile_image']['tmp_name'], $destination)) {
                     $errors[] = 'Failed to upload profile image';
+                } else {
+                    $upload_success = true;
                 }
             }
-        } elseif ($file_error !== UPLOAD_ERR_NO_FILE) {
-            $errors[] = 'File upload error: ' . $this->uploadErrorToString($file_error);
         } else {
-            $errors[] = 'Profile image is required';
+            $errors[] = 'File upload error: ' . uploadErrorToString($file_error);
         }
     } else {
         $errors[] = 'Profile image is required';
     }
 
-    if (empty($errors)){
+    if (empty($errors)) {
         try {
-            $user_id = $session->getUserId();
             Student::create(
                 $user_id,
                 $name,
@@ -112,12 +133,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-$user_id = $session->getUserId();
+
 if ($user_id <= 0) {
     die('Invalid user ID');
 }
+
 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
