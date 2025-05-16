@@ -40,5 +40,24 @@ class User {
 
         return $stmt->fetch() ?: null;
     }
+
+    public static function get_user_by_username(string $username): ?array {
+        if (empty($username)) {
+            throw new InvalidArgumentException("Username cannot be empty");
+        }
+
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT * FROM users WHERE username = ?');
+        $stmt->execute([$username]);
+
+        return $stmt->fetch() ?: null;
+    }
+
+    public static function get_user_by_id(int $id): ?array {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT * FROM users WHERE id = ?');
+        $stmt->execute([$id]);
+        return $stmt->fetch() ?: null;
+    }
 }
 ?>

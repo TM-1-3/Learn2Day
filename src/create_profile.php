@@ -1,5 +1,129 @@
 <?php
+require_once __DIR__ . '/database/studentclass.php';
+require_once __DIR__ . '/includes/session.php';
 
+$session = Session::getInstance();
+
+if (!$session->isLoggedIn()) {
+    header('Location: /');
+    exit();
+}
+
+$user_id = $session->getUserId();
+
+$errors = [];
+$name = '';
+$date_of_birth = '';
+$description = '';
+$school_institution = '';
+$profile_image = '';
+
+try {
+    $existing_profile = Student::getById($user_id);
+    if ($existing_profile) {
+        header('Location: /register_page.php?error=Profile already exists');
+        exit();
+    }
+} catch (Exception $e) {
+    $errors[] = 'Error checking existing profile: ' . $e->getMessage();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $errors[] = 'Invalid CSRF token';
+    }
+
+    $name = trim($_POST['name'] ?? '');
+    $date_of_birth = trim($_POST['date_of_birth'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    $school_institution = trim($_POST['school_institution'] ?? '');
+
+    if (empty($name)) {
+        $errors[] = 'Name is required';
+    } elseif (strlen($name) > 100) {
+        $errors[] = 'Name must be less than 100 characters';
+    }
+
+    if (empty($date_of_birth)) {
+        $errors[] = 'Date of birth is required';
+    } else {
+        $dob = DateTime::createFromFormat('Y-m-d', $date_of_birth);
+        if (!$dob || $dob->format('Y-m-d') !== $date_of_birth) {
+            $errors[] = 'Invalid date format for date of birth';
+        }
+    }
+
+    if (empty($school_institution)) {
+        $errors[] = 'School/Institution is required';
+    } elseif (strlen($school_institution) > 100) {
+        $errors[] = 'School/Institution must be less than 100 characters';
+    }
+
+    if (strlen($description) > 500) {
+        $errors[] = 'Description must be less than 500 characters';
+    }
+    $upload_success = false;
+    if (isset($_FILES['profile_image'])) {
+        $file_error = $_FILES['profile_image']['error'];
+        
+        if ($file_error === UPLOAD_ERR_OK) {
+            $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+            $file_type = $_FILES['profile_image']['type'];
+            $file_size = $_FILES['profile_image']['size'];
+            
+            if (!in_array($file_type, $allowed_types)) {
+                $errors[] = 'Only JPG, PNG, and GIF images are allowed';
+            } elseif ($file_size > 2 * 1024 * 1024) {
+                $errors[] = 'Image size must be less than 2MB';
+            } else {
+                $upload_dir = __DIR__ . '/uploads/profiles/';
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0755, true);
+                }
+                $file_ext = pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION);
+                $file_ext = strtolower($file_ext);
+                $profile_image = 'profile_' . $user_id . '_' . bin2hex(random_bytes(8)) . '.' . $file_ext;
+                $destination = $upload_dir . $profile_image;
+                
+                if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $destination)) {
+                    $upload_success = true;
+                } else {
+                    $errors[] = 'Failed to upload profile image';
+                }
+            }
+        } elseif ($file_error !== UPLOAD_ERR_NO_FILE) {
+            $errors[] = 'File upload error: ' . $this->uploadErrorToString($file_error);
+        } else {
+            $errors[] = 'Profile image is required';
+        }
+    } else {
+        $errors[] = 'Profile image is required';
+    }
+
+    if (empty($errors)){
+        try {
+            Student::create(
+                $user_id,
+                $name,
+                $date_of_birth,
+                $profile_image,
+                $description,
+                $school_institution
+            );
+            header('Location: /profile.php');
+            exit();
+        } catch (Exception $e) {
+
+            if ($upload_success && file_exists($destination)) {
+                unlink($destination);
+            }
+            $errors[] = 'Error creating profile: ' . $e->getMessage();
+        }
+    }
+}
+
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 ?>
 
 <!DOCTYPE html>
@@ -8,45 +132,58 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Create Profile</title>
-        <link rel="stylesheet" href="register_style.css">
+        <link rel="stylesheet" href="createprofile_style.css">
     </head>
     <body>
         <div class="container" id="container">
             <div class="profile-form-container">
-                <form action="../actions/profilecreate.php" method="POST" enctype="multipart/form-data">
+                <form action="create_profile.php" method="POST" enctype="multipart/form-data">
                     <h1>Create Profile</h1>
-                    <input type="hidden" name="type" value="profile">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                     
+                    <?php if (!empty($errors)): ?>
+                        <div class="alert alert-danger">
+                            <ul>
+                                <?php foreach ($errors as $error): ?>
+                                    <li><?= htmlspecialchars($error) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
+
                     <div class="name">
-                        <input type="text" name="name" placeholder="Name" required />
+                        <input type="text" name="name" placeholder="Full Name" value="<?= htmlspecialchars($name) ?>" required maxlength="100" />
                     </div>
-                    <div class="enrollment">
-                        <input type="text" name="enrollment" placeholder="Institution" required />
+                    
+                    <div class="dob">
+                        <input type="date" name="date_of_birth" placeholder="Date of Birth" value="<?= htmlspecialchars($date_of_birth) ?>" required />
                     </div>
-                    <div class="course">
-                        <input type="text" name="course" placeholder="Course" required />
+                    
+                    <div class="institution">
+                        <input type="text" name="school_institution" placeholder="School/Institution" value="<?= htmlspecialchars($school_institution) ?>" required maxlength="100" />
                     </div>
-                    <div class="language">
-                        <input type="text" name="language" placeholder="Language" required />
+                    
+                    <div class="description">
+                        <textarea name="description" placeholder="About you..." maxlength="500"><?= htmlspecialchars($description) ?></textarea>
                     </div>
+                    
                     <div class="image-upload-container">
-                    <div class="upload-area" id="uploadArea">
-                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                        <span class="upload-text">Click to upload image</span>
-                        <img id="image-preview" alt="Preview">
+                        <div class="upload-area" id="uploadArea">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <span class="upload-text">Click to upload profile image</span>
+                            <img id="image-preview" alt="Preview">
+                        </div>
+                        <input type="file" id="fileInput" class="upload-input" name="profile_image" accept="image/jpeg,image/png,image/gif" required>
+                        <button type="button" class="upload-btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                        <div class="file-info" id="fileInfo">No file chosen</div>
                     </div>
-                    <input type="file" id="fileInput" class="upload-input" name="image" accept="image/*" required>
-                    <button type="button" class="upload-btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
-                    <div class="file-info" id="fileInfo">No file chosen</div>
-                </div>
 
                     <button type="submit" class="S_signUp">Create Profile</button>
                 </form>
             </div>
         </div>
-    <script src="profile_image.js"></script>
+        <script src="profile_image.js"></script>
     </body>
 </html>
-
 
 

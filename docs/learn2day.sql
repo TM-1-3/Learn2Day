@@ -44,7 +44,6 @@ CREATE TABLE STUDENT(
     NAME VARCHAR(255) NOT NULL,
     DATE_OF_BIRTH DATE NOT NULL,
     PROFILE_IMAGE VARCHAR(255) NOT NULL,
-    EMAIL VARCHAR(255) NOT NULL,
     DESCRIPTION TEXT,
     SCHOOL_INSTITUTION VARCHAR(255) NOT NULL,
     PRIMARY KEY (ID_STUDENT),
@@ -52,12 +51,12 @@ CREATE TABLE STUDENT(
     FOREIGN KEY (SCHOOL_INSTITUTION) REFERENCES SCHOOL_INSTITUTION(NAME) ON DELETE CASCADE
 );
 
-INSERT INTO STUDENT (ID_STUDENT, NAME, DATE_OF_BIRTH, PROFILE_IMAGE, EMAIL, DESCRIPTION, SCHOOL_INSTITUTION) VALUES
-(1, 'John Doe', '2007-04-16','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrsM_hPnYdEBpv_XmL8SIGCjtSBpT1aX0bxA&s', 'normal@guy.com', 'Someone', 'School of Life'),
-(2, 'Alice Wonderland', '2005-03-15', 'https://images.unsplash.com/photo-1502685104226-ee32379fefbe', 'alice@kuzco.com', 'Curious student', 'Xavier School for Gifted Youngsters'),
-(3, 'Harry Potter', '2004-07-31', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2', 'harry@hogwarts.com', 'Aspiring wizard', 'Hogwarts'),
-(4, 'Socrates Wise', '2003-06-01', 'https://images.unsplash.com/photo-1527980965255-d3b416303d12', 'socrates@life.com', 'Seeker of truth', 'School of Life'),
-(5, 'Tony Stark', '2002-05-29', 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d', 'tony@tech.com', 'Technology enthusiast', 'Tech Academy');
+INSERT INTO STUDENT (ID_STUDENT, NAME, DATE_OF_BIRTH, PROFILE_IMAGE, DESCRIPTION, SCHOOL_INSTITUTION) VALUES
+(1, 'John Doe', '2007-04-16','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrsM_hPnYdEBpv_XmL8SIGCjtSBpT1aX0bxA&s', 'Someone', 'School of Life'),
+(2, 'Alice Wonderland', '2005-03-15', 'https://images.unsplash.com/photo-1502685104226-ee32379fefbe', 'Curious student', 'Xavier School for Gifted Youngsters'),
+(3, 'Harry Potter', '2004-07-31', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2', 'Aspiring wizard', 'Hogwarts'),
+(4, 'Socrates Wise', '2003-06-01', 'https://images.unsplash.com/photo-1527980965255-d3b416303d12', 'Seeker of truth', 'School of Life'),
+(5, 'Tony Stark', '2002-05-29', 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d', 'Technology enthusiast', 'Tech Academy');
 
 DROP TABLE IF EXISTS TUTOR;
 
@@ -66,35 +65,33 @@ CREATE TABLE TUTOR(
     NAME VARCHAR(255) NOT NULL,
     DATE_OF_BIRTH DATE NOT NULL,
     PROFILE_IMAGE VARCHAR(255) NOT NULL,
-    EMAIL VARCHAR(255) NOT NULL,
     DESCRIPTION TEXT,
     PRIMARY KEY (ID_TUTOR),
     FOREIGN KEY (ID_TUTOR) REFERENCES USERS(ID_USER) ON DELETE CASCADE
 );
 
-INSERT INTO TUTOR (ID_TUTOR, NAME, DATE_OF_BIRTH, PROFILE_IMAGE, EMAIL, DESCRIPTION) VALUES
-(6, 'Walter White', '1980-12-25', 'https://upload.wikimedia.org/wikipedia/en/0/03/Walter_White_S5B.png', 'chemistry@lover.com', 'Heisenberg, I am the one who knocks'),
-(7, 'Martim', '2005-12-09', 'https://avatars.githubusercontent.com/u/169788723?v=4', 'martim@email.com', 'Hi, I am '),
-(8, 'Bárbara Bandeira', '2000-12-09', 'https://znaki.fm/static/content/thumbs/1200x900/f/13/du3jdq---c4x3x50px50p--428a0e52cb7e5cc0bb3b3ce64cdc313f.jpg', 'babs@email.com', "Hi! I'm Barbara, a data scientist who enjoys working with data and turning it into actionable insights. Let's explore the world of data together!"),
-(9, 'Poot Lovato', '2000-12-09', 'https://pbs.twimg.com/profile_images/660935401620697088/2pcj9lh4_400x400.jpg', 'poot@email.com', "Hi! I am Poot, a data scientist who enjoys working with data and turning it into actionable insights. Let's explore the world of data together!"),
-(10, 'Kuzco', '2000-12-09', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrsM_hPnYdEBpv_XmL8SIGCjtSBpT1aX0bxA&s', 'kuzco@gmail.com', "Hi! I'm Kuzco, a data scientist who enjoys working with data and turning it into actionable insights. Let's explore the world of data together!"),
-(11, 'Andressa Urach', '1989-02-23', 'https://img.band.uol.com.br/image/2025/02/10/andressa-urach-vai-abrir-lanchonete-12311_400x300.jpg', 'andressa@email.com', 'Hi! My name is Andressa Urach, I am a philosophy teacher at FLUP.'),
-(12, 'Karla Sofía Gascon', '1900-01-24', 'https://hips.hearstapps.com/hmg-prod/images/karla-sofia-gascon-retirada-vida-publica-67a6273971a78.jpg', 'karla@email.com', 'Hi! Me llamo Karla Sofía Gacon, Bingo.');
+INSERT INTO TUTOR (ID_TUTOR, NAME, DATE_OF_BIRTH, PROFILE_IMAGE, DESCRIPTION) VALUES
+(6, 'Walter White', '1980-12-25', 'https://upload.wikimedia.org/wikipedia/en/0/03/Walter_White_S5B.png', 'Heisenberg, I am the one who knocks'),
+(7, 'Martim', '2005-12-09', 'https://avatars.githubusercontent.com/u/169788723?v=4','Hi, I am '),
+(8, 'Bárbara Bandeira', '2000-12-09', 'https://znaki.fm/static/content/thumbs/1200x900/f/13/du3jdq---c4x3x50px50p--428a0e52cb7e5cc0bb3b3ce64cdc313f.jpg', "Hi! I'm Barbara, a data scientist who enjoys working with data and turning it into actionable insights. Let's explore the world of data together!"),
+(9, 'Poot Lovato', '2000-12-09', 'https://pbs.twimg.com/profile_images/660935401620697088/2pcj9lh4_400x400.jpg', "Hi! I am Poot, a data scientist who enjoys working with data and turning it into actionable insights. Let's explore the world of data together!"),
+(10, 'Kuzco', '2000-12-09', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrsM_hPnYdEBpv_XmL8SIGCjtSBpT1aX0bxA&s', "Hi! I'm Kuzco, a data scientist who enjoys working with data and turning it into actionable insights. Let's explore the world of data together!"),
+(11, 'Andressa Urach', '1989-02-23', 'https://img.band.uol.com.br/image/2025/02/10/andressa-urach-vai-abrir-lanchonete-12311_400x300.jpg', 'Hi! My name is Andressa Urach, I am a philosophy teacher at FLUP.'),
+(12, 'Karla Sofía Gascon', '1900-01-24', 'https://hips.hearstapps.com/hmg-prod/images/karla-sofia-gascon-retirada-vida-publica-67a6273971a78.jpg', 'Hi! Me llamo Karla Sofía Gacon, Bingo.');
 
 CREATE TABLE ADMIN(
     ID_ADMIN INTEGER NOT NULL,
     NAME VARCHAR(255) NOT NULL,
     DATE_OF_BIRTH DATE NOT NULL,
     PROFILE_IMAGE VARCHAR(255) NOT NULL,
-    EMAIL VARCHAR(255) NOT NULL,
     DESCRIPTION TEXT,
     PRIMARY KEY (ID_ADMIN),
     FOREIGN KEY (ID_ADMIN) REFERENCES USERS(ID_USER) ON DELETE CASCADE
 );
 
-INSERT INTO ADMIN (ID_ADMIN, NAME, DATE_OF_BIRTH, PROFILE_IMAGE, EMAIL, DESCRIPTION) VALUES
-(13, 'System Admin', '1990-01-01', 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png', 'admin@learn2day.com', 'System Administrator'),
-(14, 'Martim Admin', '1990-01-01', 'https://avatars.githubusercontent.com/u/169788723?v=4', 'martim@admin', 'System Administrator');
+INSERT INTO ADMIN (ID_ADMIN, NAME, DATE_OF_BIRTH, PROFILE_IMAGE, DESCRIPTION) VALUES
+(13, 'System Admin', '1990-01-01', 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png', 'System Administrator'),
+(14, 'Martim Admin', '1990-01-01', 'https://avatars.githubusercontent.com/u/169788723?v=4', 'System Administrator');
 
 DROP TABLE IF EXISTS STUDENT_TUTOR;
 

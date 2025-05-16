@@ -42,7 +42,7 @@ try {
         Session::getInstance()->login($user);
     }
 
-    header('Location: /');
+    header('Location: /create_profile.php');
     exit();
 } catch (Exception $e) {
 

@@ -31,6 +31,10 @@ class Session {
     public function isLoggedIn(): bool {
         return isset($_SESSION["user"]);
     }
+
+    public function getUserId(): ?int {
+        return $this->isLoggedIn() ? (int)$_SESSION["user"]["id"] : null;
+    }
 }
 
 
