@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/includes/session.php';
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/database/studentclass.php';
+require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/userclass.php';
 
 $session = Session::getInstance();
@@ -88,7 +89,13 @@ $tutors = $stmt->fetchAll();
             <h2>Available Tutors</h2>
             <div class="cards-grid">
                 <?php foreach ($tutors as $tutor): ?>
-                    <div class="card" id="tutor<?= htmlspecialchars($tutor['ID_TUTOR']) ?>">
+                    <?php 
+                        $userId = Tutor::getUserIdbyUserName($tutor['ID_TUTOR']);
+                        if ($userId === null) continue;
+                    ?>
+                     <div class="card" id="tutor<?= htmlspecialchars($tutor['ID_TUTOR']) ?>" 
+                        onclick="window.location.href='/profile.php?id=<?= $userId ?>'"
+                        style="cursor: pointer;">
                         <div class="container">
                             <div class="details">
                                 <div class="content-wrapper">

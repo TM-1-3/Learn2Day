@@ -9,7 +9,7 @@ require_once __DIR__ . '/database/userclass.php';
 $session = Session::getInstance();
 
 if (!$session->isLoggedIn()) {
-    header('Location: /login.php');
+    header('Location: /register_page.php');
     exit();
 }
 
