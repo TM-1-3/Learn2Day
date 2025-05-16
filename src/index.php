@@ -111,36 +111,6 @@ $tutors = $stmt->fetchAll();
                 <?php endforeach; ?>
             </div>
         </section>
-
-        <?php if ($isLoggedIn && $user->type === 'TUTOR'): ?>
-            <section class="students-section">
-                <h2>Students</h2>
-                <div class="cards-grid">
-                    <?php foreach ($students as $student): ?>
-                        <div class="card" id="student<?= htmlspecialchars($student['ID_STUDENT']) ?>">
-                            <div class="container">
-                                <div class="details">
-                                    <div class="content-wrapper">
-                                        <img class="img" src="/uploads/profiles/<?= htmlspecialchars($student['PROFILE_IMAGE']) ?>" 
-                                             alt="<?= htmlspecialchars($student['NAME']) ?>"
-                                             onerror="this.src='/images/default-profile.jpg'">
-                                        <div class="text-content">
-                                            <h2 class="title"><?= htmlspecialchars($student['NAME']) ?></h2>
-                                            <div class="subtitle-container">
-                                                <div class="subtitles"><?= htmlspecialchars($student['SCHOOL_INSTITUTION']) ?></div>
-                                            </div>
-                                            <?php if (!empty($student['DESCRIPTION'])): ?>
-                                                <p class="description"><?= htmlspecialchars($student['DESCRIPTION']) ?></p>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </section>
-        <?php endif; ?>
     </main>
 
     <script src="scripts/index_script.js"></script>
