@@ -86,6 +86,18 @@ class Tutor {
         return null;
     }
 
+    public static function getUserIdbyUserName(string $username): ?int {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT ID_USER FROM USERS WHERE USERNAME = ?');
+        $stmt->execute([$username]);
+        
+        if ($row = $stmt->fetch()) {
+            return (int)$row['ID_USER'];
+        }
+        
+        return null;
+    }
+
     public static function updateProfileImage(int $id, string $new_image_path): bool {
         $user = User::get_user_by_id($id);
         if (!$user || $user->type !== 'TUTOR') {
