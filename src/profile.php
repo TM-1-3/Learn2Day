@@ -57,7 +57,7 @@ if ($user->type === 'TUTOR') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($profile->name) ?>'s Profile</title>
-    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="styles/profile.css">
 </head>
 <body>
     <div class="container">

@@ -161,7 +161,7 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Create Profile</title>
-        <link rel="stylesheet" href="createprofile_style.css">
+        <link rel="stylesheet" href="styles/createprofile_style.css">
     </head>
     <body>
         <div class="container" id="container">
@@ -211,6 +211,6 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                 </form>
             </div>
         </div>
-        <script src="profile_image.js"></script>
+        <script src="scripts/profile_image.js"></script>
     </body>
 </html>
