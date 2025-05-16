@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/database/studentclass.php';
+require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/includes/session.php';
 
 $session = Session::getInstance();
@@ -24,7 +25,7 @@ $description = '';
 $school_institution = '';
 $profile_image = '';
 
-// Helper function for upload error messages
+
 function uploadErrorToString(int $error_code): string {
     $errors = [
         UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
@@ -48,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = trim($_POST['description'] ?? '');
     $school_institution = trim($_POST['school_institution'] ?? '');
 
-    // Validation
+
     if (empty($name)) {
         $errors[] = 'Name is required';
     } elseif (strlen($name) > 100) {
@@ -74,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Description must be less than 500 characters';
     }
 
-    // File upload handling
+
     $upload_success = false;
     $destination = '';
     
@@ -115,14 +116,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         try {
-            Student::create(
-                $user_id,
-                $name,
-                $date_of_birth,
-                $profile_image,
-                $description,
-                $school_institution
-            );
+            if($user->type == 'STUDENT'){
+                Student::create(
+                    $user_id,
+                    $name,
+                    $date_of_birth,
+                    $profile_image,
+                    $description,
+                    $school_institution
+                );
+            }
+            if($user->type == 'TUTOR'){
+                Tutor::create(
+                    $user_id,
+                    $name,
+                    $date_of_birth,
+                    $profile_image,
+                    $description,
+                    $school_institution
+                );
+            }
             header('Location: /profile.php?id=' . $user_id);
             exit();
         } catch (Exception $e) {
