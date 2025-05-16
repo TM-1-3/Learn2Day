@@ -33,7 +33,7 @@ $tutors = $stmt->fetchAll();
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
 <body>
-    <header class="header">
+<header class="header">
         <div class="site-name">
             <a href="/" class="main-page">Learn2Day</a>
         </div>
@@ -54,8 +54,9 @@ $tutors = $stmt->fetchAll();
                     <?= htmlspecialchars($user->username) ?>
                 </button>
                 <div id="profile-inner" class="profile">
-                    <a href="/profile.php" class="profile-link">My Profile</a>
-                    <form action="/actions/logout.php" method="post">
+                    <form action="actions/logout.php" method="post" class="logout-popup">
+                        <a href='/profile.php?id=<?= $user->id ?>' class="viewprofile-btn">View Profile</a>
+                        <hr size="18">
                         <button type="submit" class="logout-btn">Log Out</button>
                     </form>
                 </div>

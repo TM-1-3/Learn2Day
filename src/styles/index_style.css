@@ -63,6 +63,17 @@ header button {
     padding: 4px;
 }
 
+.logout-popup {
+    background: #E5E5E5;
+    padding: 13px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    width: 250px;
+    height: 125px;
+}
+
 .filter-button {
     background: #535353;
     border: none;
@@ -129,7 +140,9 @@ header button {
 }
 
 .login-btn,
-.signup-btn {
+.signup-btn,
+.logout-btn,
+.viewprofile-btn {
     padding: 10px;
     border: none;
     border-radius: 10px;
@@ -140,7 +153,10 @@ header button {
     width: 224px;
 }
 
-.login-popup hr {
+
+.login-popup a {
+    border: none;
+    border-top: 1px solid #535353;
     margin-top: 10px;
 }
 
@@ -148,6 +164,14 @@ header button {
     text-align: center;
     color: #535353;
     font-size: 15px;
+}
+
+
+.logout-popup hr {
+    border: none;
+    border-top: 1px solid #535353;
+    margin-top: 0px;
+    margin-bottom: 0px;
 }
 
 .reset-link {
@@ -268,6 +292,44 @@ h1 {
 
 .card:hover .description {
     color: #333;
+}
+
+.viewprofile-btn {
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: #535353;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 15px;
+}
+
+.viewprofile-btn:hover {
+    background-color: #3d3d3d;
+}
+
+.logout-btn {
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: #535353;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 15px;
+}
+
+.logout-btn:hover {
+    background-color: #3d3d3d;
 }
 
 /* If you open on smartphone it won't break the page */
