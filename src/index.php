@@ -102,7 +102,7 @@ $tutors = $stmt->fetchAll();
                                 <div class="content-wrapper">
                                     <img class="img" src="/uploads/profiles/<?= htmlspecialchars($tutor['PROFILE_IMAGE']) ?>" 
                                          alt="<?= htmlspecialchars($tutor['NAME']) ?>"
-                                         onerror="this.src='/images/default-profile.jpg'">
+                                         onerror="this.src='/uploads/profiles/default.png'">
                                     <div class="text-content">
                                         <h2 class="title"><?= htmlspecialchars($tutor['NAME']) ?></h2>
                                         <div class="subtitle-container">

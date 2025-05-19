@@ -1,0 +1,249 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    background: #D8D4D5;
+    display: grid;
+    place-content: center;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    position: relative;
+    width: 900px;
+    height: 900px;
+    background-color: #FFF;
+    box-shadow: 25px 30px 55px #000;
+    border-radius: 13px;
+    overflow: hidden;
+}
+
+.profile-form-container{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+}
+
+.form-container {
+    position: absolute;
+    width: 60%;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+}
+
+form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+}
+
+h1 {
+    color: #000;
+}
+
+
+.name,
+.dob,
+.institution,
+.description {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    width: 350px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-top: 25px;
+}
+
+
+.dob {
+    padding: 0;
+    overflow: hidden;
+}
+
+.dob input {
+    border: none;
+    outline: none;
+    font-size: 15px;
+    width: 100%;
+    padding: 10px;
+}
+
+
+.name input,
+.institution input {
+    border: none;
+    outline: none;
+    font-size: 15px;
+    width: 100%;
+}
+
+
+.description {
+    align-items: flex-start;
+    padding: 10px;
+    min-height: 100px;
+}
+
+.description textarea {
+    border: none;
+    outline: none;
+    font-size: 15px;
+    width: 100%;
+    height: 100%;
+    resize: none;
+    font-family: Arial, sans-serif;
+}
+
+p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 20px;
+    letter-spacing: 0.5px;
+    margin: 25px 0 35px;
+}
+
+.S_signUp {
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 550;
+    font-size: 16px;
+    padding: 13px 20px;
+    margin-top: 25px;
+    cursor: pointer;
+    background-color: #32533D;
+}
+
+.T_signUp {
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 550;
+    font-size: 16px;
+    padding: 13px 20px;
+    margin-top: 25px;
+    cursor: pointer;
+    background-color: #1a3a6e;
+}
+
+.image-upload-container {
+    position: relative;
+    width: 350px;
+    margin: 25px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.upload-area {
+    width: 150px;
+    height: 150px;
+    border: 2px dashed #ccc;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.upload-area:hover {
+    border-color: #32533D;
+    background-color: #f9f9f9;
+}
+
+.upload-area.has-image {
+    border: none;
+}
+
+.upload-icon {
+    font-size: 40px;
+    color: #ccc;
+    margin-bottom: 10px;
+}
+
+.upload-text {
+    font-size: 14px;
+    color: #777;
+    text-align: center;
+}
+
+#image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.upload-input {
+    display: none;
+}
+
+.upload-btnS {
+    padding: 8px 15px;
+    background-color: #32533D;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.upload-btnT {
+    padding: 8px 15px;
+    background-color: #1a3a6e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+
+
+.upload-btn:hover {
+    background-color: #2a4735;
+}
+
+.file-info {
+    font-size: 12px;
+    color: #777;
+    margin-top: 5px;
+}
+
+.alert {
+    width: 350px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-danger ul {
+    list-style-type: none;
+    padding-left: 10px;
+}
+
+.alert-danger li {
+    margin-bottom: 5px;
+}

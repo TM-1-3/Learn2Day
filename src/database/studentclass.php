@@ -105,5 +105,33 @@ class Student {
         $stmt = $db->prepare('UPDATE STUDENT SET DESCRIPTION = ? WHERE ID_STUDENT = ?');
         return $stmt->execute([$description, $user->username]);
     }
+
+    public function update(): bool {
+        $db = Database::getInstance();
+        $user = User::get_user_by_id($this->id_student);
+        
+        if (!$user) {
+            return false;
+        }
+    
+        $stmt = $db->prepare('
+            UPDATE STUDENT 
+            SET NAME = ?, 
+                DATE_OF_BIRTH = ?, 
+                PROFILE_IMAGE = ?, 
+                DESCRIPTION = ?, 
+                SCHOOL_INSTITUTION = ? 
+            WHERE ID_STUDENT = ?
+        ');
+    
+        return $stmt->execute([
+            $this->name,
+            $this->date_of_birth,
+            $this->profile_image,
+            $this->description,
+            $this->school_institution,
+            $user->username 
+        ]);
+    }
 }
 ?>
