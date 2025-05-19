@@ -93,3 +93,10 @@ body {
 .degree-item {
     background-color: #d5f5e3;
 }
+
+.profile-info .username {
+    color: #666;
+    font-size: 1.1rem;
+    margin: 0.2rem 0;
+    font-weight: normal;
+}
