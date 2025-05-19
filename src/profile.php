@@ -75,15 +75,15 @@ if ($user->type === 'TUTOR') {
             </button>
         </div>
         <div class="access-profile">
-            <?php if ($isLoggedIn): ?>
-                <?php $user = $session->getUser(); ?>
+            <?php if ($session->isLoggedIn()): ?>
+                <?php $current_user = $session->getUser(); ?>
                 <button id="profile-button">
                     <span class="material-symbols-outlined">account_circle</span>
-                    <?= htmlspecialchars($user->username) ?>
+                    <?= htmlspecialchars($current_user->username) ?>
                 </button>
                 <div id="profile-inner" class="profile">
                     <form action="actions/logout.php" method="post" class="logout-popup">
-                        <a href='/profile.php?id=<?= $user->id ?>' class="viewprofile-btn">View Profile</a>
+                        <a href='/profile.php?id=<?= $current_user->id ?>' class="viewprofile-btn">View Profile</a>
                         <hr size="18">
                         <button type="submit" class="logout-btn">Log Out</button>
                     </form>
@@ -99,9 +99,6 @@ if ($user->type === 'TUTOR') {
                         <button type="submit" class="login-btn">Log In</button>
                         <div class="divider">or</div>
                         <a href='/register_page.php'><button type="button" class="signup-btn">Sign Up</button></a>
-                        <?php if ($loginError): ?>
-                            <div class="error-message">Invalid username or password</div>
-                        <?php endif; ?>
                         <a href="#" class="reset-link">Reset your password</a>
                     </form>
                 </div>
@@ -117,6 +114,7 @@ if ($user->type === 'TUTOR') {
                  onerror="this.src='/uploads/profiles/default.png'">
             <div class="profile-info">
                 <h1><?= htmlspecialchars($profile->name) ?></h1>
+                <p class="username">@<?= htmlspecialchars($user->username) ?></p>
                 <?php if ($profile_type === 'Student'): ?>
                     <p><?= htmlspecialchars($profile->school_institution) ?></p>
                 <?php endif; ?>
