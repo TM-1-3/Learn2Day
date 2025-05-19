@@ -124,6 +124,18 @@ p {
     background-color: #32533D;
 }
 
+.T_signUp {
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 550;
+    font-size: 16px;
+    padding: 13px 20px;
+    margin-top: 25px;
+    cursor: pointer;
+    background-color: #1a3a6e;
+}
+
 .image-upload-container {
     position: relative;
     width: 350px;
@@ -181,7 +193,7 @@ p {
     display: none;
 }
 
-.upload-btn {
+.upload-btnS {
     padding: 8px 15px;
     background-color: #32533D;
     color: white;
@@ -190,6 +202,18 @@ p {
     cursor: pointer;
     transition: background-color 0.3s;
 }
+
+.upload-btnT {
+    padding: 8px 15px;
+    background-color: #1a3a6e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+
 
 .upload-btn:hover {
     background-color: #2a4735;
