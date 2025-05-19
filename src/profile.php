@@ -114,7 +114,7 @@ if ($user->type === 'TUTOR') {
             <img src="/uploads/profiles/<?= htmlspecialchars($profile->profile_image) ?>" 
                  alt="Profile Picture" 
                  class="profile-picture"
-                 onerror="this.src='/images/default-profile.jpg'">
+                 onerror="this.src='/uploads/profiles/default.png'">
             <div class="profile-info">
                 <h1><?= htmlspecialchars($profile->name) ?></h1>
                 <?php if ($profile_type === 'Student'): ?>

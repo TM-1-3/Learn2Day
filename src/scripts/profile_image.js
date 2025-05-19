@@ -31,3 +31,24 @@ fileInput.addEventListener('change', function(e) {
 uploadArea.addEventListener('click', function() {
     fileInput.click();
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('fileInput');
+    const imagePreview = document.getElementById('image-preview');
+    const fileInfo = document.getElementById('fileInfo');
+    
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                imagePreview.src = event.target.result;
+                imagePreview.style.display = 'block';
+                fileInfo.textContent = file.name;
+            }
+            
+            reader.readAsDataURL(file);
+        }
+    });
+});

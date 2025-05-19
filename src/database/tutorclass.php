@@ -173,5 +173,33 @@ class Tutor {
         $stmt->execute([$user->username]);
         return $stmt->fetchAll();
     }
+
+    public function update(): bool {
+        $db = Database::getInstance();
+        $user = User::get_user_by_id($this->id);
+        
+        if (!$user || $user->type !== 'TUTOR') {
+            return false;
+        }
+    
+        $stmt = $db->prepare('
+            UPDATE TUTOR 
+            SET NAME = ?, 
+                DATE_OF_BIRTH = ?, 
+                PROFILE_IMAGE = ?, 
+                DESCRIPTION = ?, 
+                SCHOOL_INSTITUTION = ? 
+            WHERE ID_TUTOR = ?
+        ');
+    
+        return $stmt->execute([
+            $this->name,
+            $this->date_of_birth,
+            $this->profile_image,
+            $this->description,
+            $this->school_institution,
+            $user->username 
+        ]);
+    }
 }
 ?>
