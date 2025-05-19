@@ -161,8 +161,8 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Create Profile</title>
-        <link rel="stylesheet" href="styles/createprofile_style.css">
-        <link rel="stylesheet" href="styles/index_style.css">
+        <link rel="stylesheet" href="styles/createprofile.css">
+        <link rel="stylesheet" href="styles/index.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     </head>
     <header class="header">
