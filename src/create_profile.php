@@ -162,7 +162,56 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Create Profile</title>
         <link rel="stylesheet" href="styles/createprofile_style.css">
+        <link rel="stylesheet" href="styles/index_style.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     </head>
+    <header class="header">
+        <div class="site-name">
+            <a href="/" class="main-page">Learn2Day</a>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search..." />
+            <button class="search-button">
+                <span class="material-symbols-outlined">search</span>
+            </button>
+            <button class="filter-button">
+                <span class="material-symbols-outlined">filter_alt</span>
+            </button>
+        </div>
+        <div class="access-profile">
+            <?php if ($isLoggedIn): ?>
+                <?php $user = $session->getUser(); ?>
+                <button id="profile-button">
+                    <span class="material-symbols-outlined">account_circle</span>
+                    <?= htmlspecialchars($user->username) ?>
+                </button>
+                <div id="profile-inner" class="profile">
+                    <form action="actions/logout.php" method="post" class="logout-popup">
+                        <a href='/profile.php?id=<?= $user->id ?>' class="viewprofile-btn">View Profile</a>
+                        <hr size="18">
+                        <button type="submit" class="logout-btn">Log Out</button>
+                    </form>
+                </div>
+            <?php else: ?>
+                <button id="profile-button">
+                    <span class="material-symbols-outlined">account_circle</span>
+                </button>
+                <div id="profile-inner" class="profile">
+                    <form action="/actions/login.php" method="post" class="login-popup">
+                        <input type="text" name="username" placeholder="Username" required />
+                        <input type="password" name="password" placeholder="Password" required />
+                        <button type="submit" class="login-btn">Log In</button>
+                        <div class="divider">or</div>
+                        <a href='/register_page.php'><button type="button" class="signup-btn">Sign Up</button></a>
+                        <?php if ($loginError): ?>
+                            <div class="error-message">Invalid username or password</div>
+                        <?php endif; ?>
+                        <a href="#" class="reset-link">Reset your password</a>
+                    </form>
+                </div>
+            <?php endif; ?>
+        </div>
+    </header>
     <body>
         <div class="container" id="container">
             <div class="profile-form-container">
@@ -219,5 +268,6 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             </div>
         </div>
         <script src="scripts/profile_image.js"></script>
+        <script src="scripts/index_script.js"></script>
     </body>
 </html>
