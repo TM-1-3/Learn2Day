@@ -75,6 +75,7 @@ $tutors = $stmt->fetchAll();
                         <?php if ($loginError): ?>
                             <div class="error-message">Invalid username or password</div>
                         <?php endif; ?>
+                        <hr size="18">
                         <a href="#" class="reset-link">Reset your password</a>
                     </form>
                 </div>

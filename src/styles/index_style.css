@@ -71,7 +71,7 @@ header button {
     flex-direction: column;
     gap: 13px;
     width: 250px;
-    height: 125px;
+    height: 140px;
 }
 
 .filter-button {
@@ -153,13 +153,6 @@ header button {
     width: 224px;
 }
 
-
-.login-popup a {
-    border: none;
-    border-top: 1px solid #535353;
-    margin-top: 10px;
-}
-
 .divider {
     text-align: center;
     color: #535353;
@@ -167,9 +160,10 @@ header button {
 }
 
 
-.logout-popup hr {
+.logout-popup hr,
+.login-popup hr {
     border: none;
-    border-top: 1px solid #535353;
+    border-bottom: 1px solid #535353;
     margin-top: 0px;
     margin-bottom: 0px;
 }
@@ -181,6 +175,7 @@ header button {
     text-decoration: underline;
     cursor: pointer;
 }
+
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
