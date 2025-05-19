@@ -203,11 +203,18 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                             <img id="image-preview" alt="Preview">
                         </div>
                         <input type="file" id="fileInput" class="upload-input" name="profile_image" accept="image/jpeg,image/png,image/gif" required>
-                        <button type="button" class="upload-btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                        <?php if($user->type == 'STUDENT'): ?>
+                        <button type="button" class="upload-btnS" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                        <?php elseif($user->type == 'TUTOR'): ?>
+                        <button type="button" class="upload-btnT" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                        <?php endif; ?>
                         <div class="file-info" id="fileInfo">No file chosen</div>
                     </div>
-
+                    <?php if ($user->type == 'STUDENT'): ?>
                     <button type="submit" class="S_signUp">Create Profile</button>
+                    <?php elseif ($user->type == 'TUTOR'): ?>
+                    <button type="submit" class="T_signUp">Create Profile</button>
+                    <?php endif; ?>
                 </form>
             </div>
         </div>
