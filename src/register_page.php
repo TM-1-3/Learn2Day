@@ -27,7 +27,6 @@
                 <input type="hidden" name="type" value="TUTOR">
                 <div class="user"><input type="text" name="username" placeholder="Username" required /></div>
                 <div class="email"><input type="email" name="email" placeholder="Email" required /></div>
-                <div class="phone-number"><input type="tel" name="phone" placeholder="Phone Number" /></div>
                 <div class="password"><input type="password" name="password" placeholder="Password" required /></div>
                 <div class="confirm-password"><input type="password" name="confirm_password" placeholder="Confirm Password" required /></div>
                 <button type="submit" class="T_signUp">Sign Up</button>
@@ -40,7 +39,6 @@
                 <input type="hidden" name="type" value="STUDENT">
                 <div class="user"><input type="text" name="username" placeholder="Username" required /></div>
                 <div class="email"><input type="email" name="email" placeholder="Email" required /></div>
-                <div class="phone-number"><input type="tel" name="phone" placeholder="Phone Number" /></div>
                 <div class="password"><input type="password" name="password" placeholder="Password" required /></div>
                 <div class="confirm-password"><input type="password" name="confirm_password" placeholder="Confirm Password" required /></div>
                 <button type="submit" class="S_signUp">Sign Up</button>
