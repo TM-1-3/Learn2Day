@@ -5,6 +5,8 @@ require_once (__DIR__ . '/../includes/database.php');
 require_once(__DIR__ . '/../database/userclass.php');
 require_once(__DIR__ . '/../includes/session.php');
 
+$session = Session::getInstance();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
@@ -14,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($user) {
             Session::getInstance()->login($user);
+            unset($_SESSION['login_error']);
             header('Location: /homepage.php');
             exit();
         }
@@ -21,7 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     }
 
-    header('Location: /?login_error=1');
+    $_SESSION['login_error'] = true;
+    header('Location: /');
     exit();
 }
 
