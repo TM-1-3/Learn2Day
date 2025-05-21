@@ -170,9 +170,13 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         <div class="container" id="container">
             <div class="profile-form-container">
                 <form action="create_profile.php" method="POST" enctype="multipart/form-data">
-                    <h1>Create Profile</h1>
+                    <?php if($user->type == 'STUDENT'): ?>
+                        <h1 style="color: #32533D">Create Profile</h1>
+                    <?php elseif($user->type == 'TUTOR'): ?>
+                        <h1 style="color: #03254E">Create Profile</h1>
+                    <?php endif; ?>
+
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
-                    
                     <?php if (!empty($errors)): ?>
                         <div class="alert alert-danger">
                             <ul>
@@ -182,37 +186,52 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                             </ul>
                         </div>
                     <?php endif; ?>
-
-                    <div class="name">
-                        <input type="text" name="name" placeholder="Full Name" value="<?= htmlspecialchars($name) ?>" required maxlength="100" />
+                    <div class="ndp">
+                        <div class="name-dob">
+                            <div class="name">
+                                <input type="text" name="name" placeholder="Full Name" value="<?= htmlspecialchars($name) ?>" required maxlength="100" />
+                            </div>
+                            
+                            <div class="dob">
+                                <input type="date" name="date_of_birth" placeholder="Date of Birth" value="<?= htmlspecialchars($date_of_birth) ?>" required />
+                            </div>
+                        </div>
+                        <div class="image-upload-container">
+                            <div class="upload-area" id="uploadArea">
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <span class="upload-text">Click to upload profile image</span>
+                                <img id="image-preview" alt="Preview">
+                            </div>
+                            <input type="file" id="fileInput" class="upload-input" name="profile_image" accept="image/jpeg,image/png,image/gif" required>
+                            <?php if($user->type == 'STUDENT'): ?>
+                            <button type="button" class="upload-btnS" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                            <?php elseif($user->type == 'TUTOR'): ?>
+                            <button type="button" class="upload-btnT" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                            <?php endif; ?>
+                            <div class="file-info" id="fileInfo">No file chosen</div>
+                        </div>
                     </div>
-                    
-                    <div class="dob">
-                        <input type="date" name="date_of_birth" placeholder="Date of Birth" value="<?= htmlspecialchars($date_of_birth) ?>" required />
+
+                    <div class="description">
+                        <textarea name="description" placeholder="About you..." maxlength="500"><?= htmlspecialchars($description) ?></textarea>
                     </div>
                     
                     <div class="institution">
                         <input type="text" name="school_institution" placeholder="School/Institution" value="<?= htmlspecialchars($school_institution) ?>" required maxlength="100" />
                     </div>
                     
-                    <div class="description">
-                        <textarea name="description" placeholder="About you..." maxlength="500"><?= htmlspecialchars($description) ?></textarea>
+                    <div class="degree">
+                        <input type="text" name="degree" placeholder="Degree" value="<?= htmlspecialchars($degree) ?>" required maxlength="100" />
                     </div>
                     
-                    <div class="image-upload-container">
-                        <div class="upload-area" id="uploadArea">
-                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                            <span class="upload-text">Click to upload profile image</span>
-                            <img id="image-preview" alt="Preview">
-                        </div>
-                        <input type="file" id="fileInput" class="upload-input" name="profile_image" accept="image/jpeg,image/png,image/gif" required>
-                        <?php if($user->type == 'STUDENT'): ?>
-                        <button type="button" class="upload-btnS" onclick="document.getElementById('fileInput').click()">Choose File</button>
-                        <?php elseif($user->type == 'TUTOR'): ?>
-                        <button type="button" class="upload-btnT" onclick="document.getElementById('fileInput').click()">Choose File</button>
-                        <?php endif; ?>
-                        <div class="file-info" id="fileInfo">No file chosen</div>
+                    <div class="subject">
+                        <input type="text" name="subject" placeholder="Subject" value="<?= htmlspecialchars($subject) ?>" required maxlength="100" />
                     </div>
+
+                    <div class="language">
+                        <input type="text" name="language" placeholder="Language" value="<?= htmlspecialchars($language) ?>" required maxlength="100" />
+                    </div>
+
                     <?php if ($user->type == 'STUDENT'): ?>
                     <button type="submit" class="S_signUp">Create Profile</button>
                     <?php elseif ($user->type == 'TUTOR'): ?>
