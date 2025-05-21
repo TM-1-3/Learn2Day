@@ -13,6 +13,12 @@ $loginError = isset($_GET['login_error']);
 
 $db = Database::getInstance();
 
+
+if(!$isLoggedIn){
+    header('Location: /');
+    exit();
+}
+
 $students = [];
 $stmt = $db->prepare('SELECT * FROM STUDENT LIMIT 10');
 $stmt->execute();
@@ -36,7 +42,7 @@ $tutors = $stmt->fetchAll();
 <body>
 <header class="header">
         <div class="site-name">
-            <a href="/" class="main-page">Learn2Day</a>
+            <a href="/homepage.php" class="main-page">Learn2Day</a>
         </div>
         <div class="search-bar">
             <input type="text" placeholder="Search..." />
@@ -59,6 +65,24 @@ $tutors = $stmt->fetchAll();
                         <a href='/profile.php?id=<?= $user->id ?>' class="viewprofile-btn">View Profile</a>
                         <hr size="18">
                         <button type="submit" class="logout-btn">Log Out</button>
+                    </form>
+                </div>
+            <?php else: ?>
+                <button id="profile-button">
+                    <span class="material-symbols-outlined">account_circle</span>
+                </button>
+                <div id="profile-inner" class="profile">
+                    <form action="/actions/login.php" method="post" class="login-popup">
+                        <input type="text" name="username" placeholder="Username" required />
+                        <input type="password" name="password" placeholder="Password" required />
+                        <button type="submit" class="login-btn">Log In</button>
+                        <div class="divider">or</div>
+                        <a href='/register_page.php'><button type="button" class="signup-btn">Sign Up</button></a>
+                        <?php if ($loginError): ?>
+                            <div class="error-message">Invalid username or password</div>
+                        <?php endif; ?>
+                        <hr size="18">
+                        <a href="#" class="reset-link">Reset your password</a>
                     </form>
                 </div>
             <?php endif; ?>
@@ -103,7 +127,7 @@ $tutors = $stmt->fetchAll();
         </section>
     </main>
 
-    <script src="scripts/index_script.js"></script>
+    <script src="scripts/homepage_script.js"></script>
 
 </body>
 </html>
