@@ -273,20 +273,18 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                                 <label>Subjects You Need Help With</label>
                                 <div id="student-subjects-container">
                                     <div class="subject-entry">
-                                        <div class="sub-grad">
-                                            <select name="subjects[]" class="subject-select">
-                                                <option value="">Select a subject</option>
-                                                <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
-                                                    <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                            <select name="student_levels[]" class="grade-select">
-                                                <option value="">Grade level</option>
-                                                <?php foreach (Qualifications::getAllStudentLevels() as $student_level): ?>
-                                                    <option value="<?= htmlspecialchars($student_level) ?>"><?= htmlspecialchars($student_level) ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </div>
+                                        <select name="subjects[]" class="subject-select">
+                                            <option value="">Select a subject</option>
+                                            <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
+                                                <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <select name="student_levels[]" class="grade-select">
+                                            <option value="">Grade level</option>
+                                            <?php foreach (Qualifications::getAllStudentLevels() as $student_level): ?>
+                                                <option value="<?= htmlspecialchars($student_level) ?>"><?= htmlspecialchars($student_level) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
                                         <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
                                     </div>
                                 </div>
@@ -344,20 +342,18 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                             </select>
                             <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
                         <?php else: ?>
-                            <div class="sub-grad">
-                                <select name="subjects[]" class="subject-select">
-                                    <option value="">Select a subject</option>
-                                    <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
-                                        <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <select name="student_levels[]" class="grade-select">
-                                    <option value="">Grade level</option>
-                                    <?php foreach (Qualifications::getAllStudentLevels() as $student_level): ?>
-                                        <option value="<?= htmlspecialchars($student_level) ?>"><?= htmlspecialchars($student_level) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
+                            <select name="subjects[]" class="subject-select">
+                                <option value="">Select a subject</option>
+                                <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
+                                    <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <select name="student_levels[]" class="grade-select">
+                                <option value="">Grade level</option>
+                                <?php foreach (Qualifications::getAllStudentLevels() as $student_level): ?>
+                                    <option value="<?= htmlspecialchars($student_level) ?>"><?= htmlspecialchars($student_level) ?></option>
+                                <?php endforeach; ?>
+                            </select>
                             <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
                         <?php endif; ?>
                     `;
