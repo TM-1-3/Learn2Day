@@ -58,12 +58,12 @@ if ($user->type === 'TUTOR') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($profile->name) ?>'s Profile</title>
     <link rel="stylesheet" href="styles/profile.css">
-    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="styles/homepage.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
 <header class="header">
         <div class="site-name">
-            <a href="/" class="main-page">Learn2Day</a>
+            <a href="/homepage.php" class="main-page">Learn2Day</a>
         </div>
         <div class="search-bar">
             <input type="text" placeholder="Search..." />
@@ -174,6 +174,6 @@ if ($user->type === 'TUTOR') {
             <?php endif; ?>
         </div>
     </div>
-    <script src="scripts/index_script.js"></script>
+    <script src="scripts/homepage_script.js"></script>
 </body>
 </html>

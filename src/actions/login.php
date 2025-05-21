@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($user) {
             Session::getInstance()->login($user);
-            header('Location: /');
+            header('Location: /homepage.php');
             exit();
         }
     } catch (InvalidArgumentException $e) {
