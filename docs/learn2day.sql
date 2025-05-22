@@ -130,26 +130,25 @@ CREATE TABLE SUBJECT(
 );
 
 INSERT INTO SUBJECT (DESIGNATION) VALUES
-('Português'),
-('Matemática'),
-('Estudo do Meio'),
-('Inglês'),
-('História e Geografia de Portugal'),
-('Ciências Naturais'),
-('Francês'),
-('Espanhol'),
-('História'),
-('Geografia'),
-('Físico-Química'),
-('Alemão'),
-('Filosofia'),
-('Biologia e Geologia'),
-('Física e Química '),
-('Geometria Descritiva'),
-('Economia'),
-('Matemática Aplicada às Ciências Sociais'),
-('Desenho'),
-('História e Cultura das Artes');
+('Portuguese'),
+('Math'),
+('English'),
+('Social and Environmental Studies'),
+('History and Geography of Portugal'),
+('Natural Sciences'),
+('French'),
+('Spanish'),
+('History'),
+('Geography'),
+('Physics and Chemistry'),
+('German'),
+('Philosophy'),
+('Biology and Geology'),
+('Descriptive Geometry'),
+('Economics'),
+('Mathematics Applied to Social Sciences'),
+('Drawing'),
+('History and Culture of the Arts');
 
 
 DROP TABLE IF EXISTS STUDENT_SUBJECT;
