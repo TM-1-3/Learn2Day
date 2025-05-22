@@ -120,43 +120,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             if($user->type == 'STUDENT'){
                 Student::create(
-                    $user_id,
+                    $user->username,
                     $name,
                     $date_of_birth,
                     $profile_image,
-                    $description,
-                    implode(', ', $subjects),
-                    implode(', ', $languages)
+                    $description
                 );
-                
                 foreach ($subjects as $subject) {
-                    Qualifications::addStudentSubject($user_id, $subject, 0);
+                    Qualifications::addStudentSubject($user->username, $subject);
                 }
-                
                 foreach ($languages as $language) {
-                    Qualifications::addStudentLanguage($user_id, $language);
+                    Qualifications::addStudentLanguage($user->username, $language);
                 }
             }
             if($user->type == 'TUTOR'){
                 Tutor::create(
-                    $user_id,
+                    $user->username,
                     $name,
                     $date_of_birth,
                     $profile_image,
-                    $description,
-                    implode(', ', $subjects),
-                    implode(', ', $languages)
+                    $description
                 );
-                
                 foreach ($subjects as $subject) {
-                    Tutor::addSubject($user_id, $subject, 0);
+                    Qualifications::addTutorSubject($user->username, $subject);
                 }
-                
                 foreach ($languages as $language) {
-                    Tutor::addLanguage($user_id, $language);
+                    Qualifications::addTutorLanguage($user->username, $language);
                 }
             }
-            header('Location: /profile.php?id=' . $user_id);
+            header('Location: /profile.php?id=' . urlencode($user->username));
             exit();
         } catch (Exception $e) {
             if ($upload_success && file_exists($destination)) {
