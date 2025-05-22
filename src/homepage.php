@@ -6,6 +6,7 @@ require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/database/studentclass.php';
 require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/userclass.php';
+require_once __DIR__ . '/database/qualificationclass.php';
 
 $session = Session::getInstance();
 $isLoggedIn = $session->isLoggedIn();
@@ -21,28 +22,42 @@ if(!$isLoggedIn){
 $searchQuery = '';
 $searchResults = [];
 $showAll = true;
+$selectedSubjects = [];
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
-    $searchQuery = trim($_GET['search']);
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_GET['subjects']))) {
+    $searchQuery = trim($_GET['search'] ?? '');
+    $selectedSubjects = $_GET['subjects'] ?? [];
+    
+    $showAll = false;
+
+    $query = "
+        SELECT ID_TUTOR as id, NAME, 'tutor' as type, PROFILE_IMAGE, DESCRIPTION 
+        FROM TUTOR 
+        WHERE 1=1
+    ";
+    
+    $params = [];
     
     if (!empty($searchQuery)) {
-        $showAll = false;
-
-        $stmt = $db->prepare("
-            SELECT ID_STUDENT as id, NAME, 'student' as type, PROFILE_IMAGE, DESCRIPTION 
-            FROM STUDENT 
-            WHERE NAME LIKE ? OR ID_STUDENT LIKE ?
-            UNION
-            SELECT ID_TUTOR as id, NAME, 'tutor' as type, PROFILE_IMAGE, DESCRIPTION 
-            FROM TUTOR 
-            WHERE NAME LIKE ? OR ID_TUTOR LIKE ?
-            LIMIT 10
-        ");
-        
+        $query .= " AND (NAME LIKE ? OR ID_TUTOR LIKE ?)";
         $searchParam = "%$searchQuery%";
-        $stmt->execute([$searchParam, $searchParam, $searchParam, $searchParam]);
-        $searchResults = $stmt->fetchAll();
+        $params[] = $searchParam;
+        $params[] = $searchParam;
     }
+    
+    if (!empty($selectedSubjects)) {
+        $placeholders = implode(',', array_fill(0, count($selectedSubjects), '?'));
+        $query .= " AND ID_TUTOR IN (
+            SELECT TUTOR FROM TUTOR_SUBJECT WHERE SUBJECT IN ($placeholders)
+        )";
+        $params = array_merge($params, $selectedSubjects);
+    }
+    
+    $query .= " LIMIT 10";
+    
+    $stmt = $db->prepare($query);
+    $stmt->execute($params);
+    $searchResults = $stmt->fetchAll();
 }
 
 if ($showAll) {
@@ -78,10 +93,24 @@ if ($showAll) {
                 <button type="submit" class="search-button">
                     <span class="material-symbols-outlined">search</span>
                 </button>
+                <div class="filter-dropdown">
+                    <button type="button" class="filter-button">
+                        <span class="material-symbols-outlined">filter_alt</span>
+                    </button>
+                    <div class="filter-options">
+                        <h4>Filter by Subject</h4>
+                        <?php 
+                        $subjects = Qualifications::getAllSubjects();
+                        foreach ($subjects as $subject): ?>
+                            <label>
+                                <input type="checkbox" name="subjects[]" value="<?= htmlspecialchars($subject) ?>" 
+                                    <?= (isset($_GET['subjects']) && in_array($subject, $_GET['subjects'])) ? 'checked' : '' ?>>
+                                <?= htmlspecialchars($subject) ?>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
             </form>
-            <button class="filter-button">
-                <span class="material-symbols-outlined">filter_alt</span>
-            </button>
         </div>
         <div class="access-profile">
             <?php if ($isLoggedIn): ?>
@@ -122,9 +151,24 @@ if ($showAll) {
     <main>
         <h1>Welcome<?= $isLoggedIn ? ' back, ' . htmlspecialchars($user->username) : '' ?>!</h1>
         
-        <?php if (!empty($searchQuery)): ?>
+        <?php if (!empty($selectedSubjects)): ?>
+            <div class="active-filters">
+                <strong>Active filters:</strong>
+                <?php foreach ($selectedSubjects as $subject): ?>
+                    <span class="filter-tag">
+                        <?= htmlspecialchars($subject) ?>
+                        <a href="?<?= http_build_query(array_merge($_GET, ['subjects' => array_diff($_GET['subjects'], [$subject])])) ?>" 
+                           class="remove-filter">
+                            ×
+                        </a>
+                    </span>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (!empty($searchQuery) || !empty($selectedSubjects)): ?>
             <section class="tutors-section">
-                <h2>Search Results for "<?= htmlspecialchars($searchQuery) ?>"</h2>
+                <h2>Search Results <?= !empty($searchQuery) ? 'for "' . htmlspecialchars($searchQuery) . '"' : '' ?></h2>
                 <div class="cards-grid">
                     <?php if (!empty($searchResults)): ?>
                         <?php foreach ($searchResults as $user): ?>
@@ -152,7 +196,7 @@ if ($showAll) {
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <p>No users found matching your search.</p>
+                        <p>No tutors found matching your criteria.</p>
                     <?php endif; ?>
                 </div>
             </section>
@@ -186,12 +230,9 @@ if ($showAll) {
                     <?php endforeach; ?>
                 </div>
             </section>
-            
-            
-            <?php endif; ?>
+        <?php endif; ?>
     </main>
 
     <script src="scripts/homepage_script.js"></script>
-
 </body>
 </html>
