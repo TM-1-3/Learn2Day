@@ -219,7 +219,7 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                                 <span class="upload-text">Click to upload profile image</span>
                                 <img id="image-preview" alt="Preview">
                             </div>
-                            <input type="file" id="fileInput" class="upload-input" name="profile_image" accept="image/jpeg,image/png,image/gif" required>
+                            <input type="file" id="fileInput" class="upload-input" name="profile_image" accept="image/jpeg,image/png,image/gif">
                             <?php if($user->type == 'STUDENT'): ?>
                             <button type="button" class="upload-btnS" onclick="document.getElementById('fileInput').click()">Choose File</button>
                             <?php elseif($user->type == 'TUTOR'): ?>

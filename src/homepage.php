@@ -13,21 +13,49 @@ $loginError = isset($_GET['login_error']);
 
 $db = Database::getInstance();
 
-
 if(!$isLoggedIn){
     header('Location: /');
     exit();
 }
 
-$students = [];
-$stmt = $db->prepare('SELECT * FROM STUDENT LIMIT 10');
-$stmt->execute();
-$students = $stmt->fetchAll();
+$searchQuery = '';
+$searchResults = [];
+$showAll = true;
 
-$tutors = [];
-$stmt = $db->prepare('SELECT * FROM TUTOR LIMIT 10');
-$stmt->execute();
-$tutors = $stmt->fetchAll();
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
+    $searchQuery = trim($_GET['search']);
+    
+    if (!empty($searchQuery)) {
+        $showAll = false;
+
+        $stmt = $db->prepare("
+            SELECT ID_STUDENT as id, NAME, 'student' as type, PROFILE_IMAGE, DESCRIPTION 
+            FROM STUDENT 
+            WHERE NAME LIKE ? OR ID_STUDENT LIKE ?
+            UNION
+            SELECT ID_TUTOR as id, NAME, 'tutor' as type, PROFILE_IMAGE, DESCRIPTION 
+            FROM TUTOR 
+            WHERE NAME LIKE ? OR ID_TUTOR LIKE ?
+            LIMIT 10
+        ");
+        
+        $searchParam = "%$searchQuery%";
+        $stmt->execute([$searchParam, $searchParam, $searchParam, $searchParam]);
+        $searchResults = $stmt->fetchAll();
+    }
+}
+
+if ($showAll) {
+    $students = [];
+    $stmt = $db->prepare('SELECT * FROM STUDENT LIMIT 10');
+    $stmt->execute();
+    $students = $stmt->fetchAll();
+
+    $tutors = [];
+    $stmt = $db->prepare('SELECT * FROM TUTOR LIMIT 10');
+    $stmt->execute();
+    $tutors = $stmt->fetchAll();
+}
 ?>
 
 <!DOCTYPE html>
@@ -45,10 +73,12 @@ $tutors = $stmt->fetchAll();
             <a href="/homepage.php" class="main-page">Learn2Day</a>
         </div>
         <div class="search-bar">
-            <input type="text" placeholder="Search..." />
-            <button class="search-button">
-                <span class="material-symbols-outlined">search</span>
-            </button>
+            <form method="GET" action="/homepage.php">
+                <input type="text" name="search" placeholder="Search..." value="<?= htmlspecialchars($searchQuery) ?>" />
+                <button type="submit" class="search-button">
+                    <span class="material-symbols-outlined">search</span>
+                </button>
+            </form>
             <button class="filter-button">
                 <span class="material-symbols-outlined">filter_alt</span>
             </button>
@@ -92,35 +122,73 @@ $tutors = $stmt->fetchAll();
     <main>
         <h1>Welcome<?= $isLoggedIn ? ' back, ' . htmlspecialchars($user->username) : '' ?>!</h1>
         
-        <section class="tutors-section">
-            <h2>Available Tutors</h2>
-            <div class="cards-grid">
-                <?php foreach ($tutors as $tutor): ?>
-                    <div class="card" id="tutor<?= htmlspecialchars($tutor['ID_TUTOR']) ?>" 
-                        onclick="window.location.href='/profile.php?id=<?= urlencode($tutor['ID_TUTOR']) ?>'"
-                        style="cursor: pointer;">
-                        <div class="container">
-                            <div class="details">
-                                <div class="content-wrapper">
-                                    <img class="img" src="/uploads/profiles/<?= htmlspecialchars($tutor['PROFILE_IMAGE']) ?>" 
-                                         alt="<?= htmlspecialchars($tutor['NAME']) ?>"
-                                         onerror="this.src='/uploads/profiles/default.png'">
-                                    <div class="text-content">
-                                        <h2 class="title"><?= htmlspecialchars($tutor['NAME']) ?></h2>
-                                        <div class="subtitle-container">
-                                            <div class="subtitles">Tutor</div>
+        <?php if (!empty($searchQuery)): ?>
+            <section class="tutors-section">
+                <h2>Search Results for "<?= htmlspecialchars($searchQuery) ?>"</h2>
+                <div class="cards-grid">
+                    <?php if (!empty($searchResults)): ?>
+                        <?php foreach ($searchResults as $user): ?>
+                            <div class="card" id="<?= $user['type'] ?><?= htmlspecialchars($user['id']) ?>" 
+                                onclick="window.location.href='/profile.php?id=<?= urlencode($user['id']) ?>'"
+                                style="cursor: pointer;">
+                                <div class="container">
+                                    <div class="details">
+                                        <div class="content-wrapper">
+                                            <img class="img" src="/uploads/profiles/<?= htmlspecialchars($user['PROFILE_IMAGE']) ?>" 
+                                                 alt="<?= htmlspecialchars($user['NAME']) ?>"
+                                                 onerror="this.src='/uploads/profiles/default.png'">
+                                            <div class="text-content">
+                                                <h2 class="title"><?= htmlspecialchars($user['NAME']) ?></h2>
+                                                <div class="subtitle-container">
+                                                    <div class="subtitles"><?= ucfirst($user['type']) ?></div>
+                                                </div>
+                                                <?php if (!empty($user['DESCRIPTION'])): ?>
+                                                    <p class="description"><?= htmlspecialchars($user['DESCRIPTION']) ?></p>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
-                                        <?php if (!empty($tutor['DESCRIPTION'])): ?>
-                                            <p class="description"><?= htmlspecialchars($tutor['DESCRIPTION']) ?></p>
-                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p>No users found matching your search.</p>
+                    <?php endif; ?>
+                </div>
+            </section>
+        <?php else: ?>
+            <section class="tutors-section">
+                <h2>Available Tutors</h2>
+                <div class="cards-grid">
+                    <?php foreach ($tutors as $tutor): ?>
+                        <div class="card" id="tutor<?= htmlspecialchars($tutor['ID_TUTOR']) ?>" 
+                            onclick="window.location.href='/profile.php?id=<?= urlencode($tutor['ID_TUTOR']) ?>'"
+                            style="cursor: pointer;">
+                            <div class="container">
+                                <div class="details">
+                                    <div class="content-wrapper">
+                                        <img class="img" src="/uploads/profiles/<?= htmlspecialchars($tutor['PROFILE_IMAGE']) ?>" 
+                                             alt="<?= htmlspecialchars($tutor['NAME']) ?>"
+                                             onerror="this.src='/uploads/profiles/default.png'">
+                                        <div class="text-content">
+                                            <h2 class="title"><?= htmlspecialchars($tutor['NAME']) ?></h2>
+                                            <div class="subtitle-container">
+                                                <div class="subtitles">Tutor</div>
+                                            </div>
+                                            <?php if (!empty($tutor['DESCRIPTION'])): ?>
+                                                <p class="description"><?= htmlspecialchars($tutor['DESCRIPTION']) ?></p>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </section>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+            
+            
+            <?php endif; ?>
     </main>
 
     <script src="scripts/homepage_script.js"></script>
