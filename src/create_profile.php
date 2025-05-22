@@ -2,6 +2,7 @@
 require_once __DIR__ . '/database/studentclass.php';
 require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/includes/session.php';
+require_once __DIR__ . '/database/qualificationclass.php';
 
 $session = Session::getInstance();
 
@@ -22,9 +23,9 @@ $errors = [];
 $name = '';
 $date_of_birth = '';
 $description = '';
-$school_institution = '';
+$subjects = [];
+$languages = [];
 $profile_image = '';
-
 
 function uploadErrorToString(int $error_code): string {
     $errors = [
@@ -47,8 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $date_of_birth = trim($_POST['date_of_birth'] ?? '');
     $description = trim($_POST['description'] ?? '');
-    $school_institution = trim($_POST['school_institution'] ?? '');
-
+    $languages = isset($_POST['languages']) ? array_filter($_POST['languages']) : [];
+    $subjects = isset($_POST['subjects']) ? array_filter($_POST['subjects']) : [];
 
     if (empty($name)) {
         $errors[] = 'Name is required';
@@ -65,16 +66,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (empty($school_institution)) {
-        $errors[] = 'School/Institution is required';
-    } elseif (strlen($school_institution) > 100) {
-        $errors[] = 'School/Institution must be less than 100 characters';
-    }
-
     if (strlen($description) > 500) {
         $errors[] = 'Description must be less than 500 characters';
     }
 
+    if (empty($subjects)) {
+        $errors[] = 'At least one subject is required';
+    }
+
+    if (empty($languages)) {
+        $errors[] = 'At least one language is required';
+    }
 
     $upload_success = false;
     $destination = '';
@@ -123,8 +125,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $date_of_birth,
                     $profile_image,
                     $description,
-                    $school_institution
+                    implode(', ', $subjects),
+                    implode(', ', $languages)
                 );
+                
+                foreach ($subjects as $subject) {
+                    Qualifications::addStudentSubject($user_id, $subject, 0);
+                }
+                
+                foreach ($languages as $language) {
+                    Qualifications::addStudentLanguage($user_id, $language);
+                }
             }
             if($user->type == 'TUTOR'){
                 Tutor::create(
@@ -133,8 +144,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $date_of_birth,
                     $profile_image,
                     $description,
-                    $school_institution
+                    implode(', ', $subjects),
+                    implode(', ', $languages)
                 );
+                
+                foreach ($subjects as $subject) {
+                    Tutor::addSubject($user_id, $subject, 0);
+                }
+                
+                foreach ($languages as $language) {
+                    Tutor::addLanguage($user_id, $language);
+                }
             }
             header('Location: /profile.php?id=' . $user_id);
             exit();
@@ -154,7 +174,6 @@ if ($user_id <= 0) {
 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -166,13 +185,21 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     </head>
     
-    <body>
+    <?php if($user->type == 'STUDENT'): ?>
+        <body style="background-color: #32533D">
+    <?php elseif($user->type == 'TUTOR'): ?>
+        <body style="background-color: #03254E">
+    <?php endif; ?>
         <div class="container" id="container">
             <div class="profile-form-container">
                 <form action="create_profile.php" method="POST" enctype="multipart/form-data">
-                    <h1>Create Profile</h1>
+                    <?php if($user->type == 'STUDENT'): ?>
+                        <h1 style="color: #32533D">Create Profile</h1>
+                    <?php elseif($user->type == 'TUTOR'): ?>
+                        <h1 style="color: #03254E">Create Profile</h1>
+                    <?php endif; ?>
+
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
-                    
                     <?php if (!empty($errors)): ?>
                         <div class="alert alert-danger">
                             <ul>
@@ -183,36 +210,105 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                         </div>
                     <?php endif; ?>
 
-                    <div class="name">
-                        <input type="text" name="name" placeholder="Full Name" value="<?= htmlspecialchars($name) ?>" required maxlength="100" />
+                    <div class="ndp">
+                        <div class="name-dob">
+                            <div class="name">
+                                <input type="text" name="name" placeholder="Name" value="<?= htmlspecialchars($name) ?>" required maxlength="100" />
+                            </div>
+                            
+                            <div class="dob">
+                                <input type="date" name="date_of_birth" placeholder="Date of Birth" value="<?= htmlspecialchars($date_of_birth) ?>" required />
+                            </div>
+                        </div>
+
+                        <div class="image-upload-container">
+                            <div class="upload-area" id="uploadArea">
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <span class="upload-text">Click to upload profile image</span>
+                                <img id="image-preview" alt="Preview">
+                            </div>
+                            <input type="file" id="fileInput" class="upload-input" name="profile_image" accept="image/jpeg,image/png,image/gif" required>
+                            <?php if($user->type == 'STUDENT'): ?>
+                            <button type="button" class="upload-btnS" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                            <?php elseif($user->type == 'TUTOR'): ?>
+                            <button type="button" class="upload-btnT" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                            <?php endif; ?>
+                            <div class="file-info" id="fileInfo">No file chosen</div>
+                        </div>
                     </div>
-                    
-                    <div class="dob">
-                        <input type="date" name="date_of_birth" placeholder="Date of Birth" value="<?= htmlspecialchars($date_of_birth) ?>" required />
-                    </div>
-                    
-                    <div class="institution">
-                        <input type="text" name="school_institution" placeholder="School/Institution" value="<?= htmlspecialchars($school_institution) ?>" required maxlength="100" />
-                    </div>
-                    
+
                     <div class="description">
                         <textarea name="description" placeholder="About you..." maxlength="500"><?= htmlspecialchars($description) ?></textarea>
                     </div>
                     
-                    <div class="image-upload-container">
-                        <div class="upload-area" id="uploadArea">
-                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                            <span class="upload-text">Click to upload profile image</span>
-                            <img id="image-preview" alt="Preview">
-                        </div>
-                        <input type="file" id="fileInput" class="upload-input" name="profile_image" accept="image/jpeg,image/png,image/gif" required>
-                        <?php if($user->type == 'STUDENT'): ?>
-                        <button type="button" class="upload-btnS" onclick="document.getElementById('fileInput').click()">Choose File</button>
-                        <?php elseif($user->type == 'TUTOR'): ?>
-                        <button type="button" class="upload-btnT" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                    <div class="qualifications-section">
+                        <h2 style="margin-top: 50px;"><?= $user->type === 'TUTOR' ? 'Your Qualifications' : 'Your Needs' ?></h2>
+                        
+                        <?php if ($user->type === 'TUTOR'): ?>
+                            <!-- Tutor Qualifications -->
+                            <div class="form-group">
+                                <label>Subjects You Can Teach</label>
+                                <div id="tutor-subjects-container">
+                                    <div class="subject-entry">
+                                        <select name="subjects[]" class="subject-select">
+                                            <option value="">Select a subject</option>
+                                            <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
+                                                <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <select name="tutor_level[]" class="grade-select">
+                                            <option value="">School level</option>
+                                            <?php foreach (Qualifications::getAllTutorLevels() as $tutor_level): ?>
+                                                    <option value="<?= htmlspecialchars($tutor_level) ?>"><?= htmlspecialchars($tutor_level) ?></option>
+                                                <?php endforeach; ?>
+                                        </select>
+                                        <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
+                                    </div>
+                                </div>
+                                <button type="button" class="add-btn" onclick="addSubject()">Add Another Subject</button>
+                            </div>
+                        <?php else: ?>
+                            <!-- Student Needs -->
+                            <div class="form-group">
+                                <label>Subjects You Need Help With</label>
+                                <div id="student-subjects-container">
+                                    <div class="subject-entry">
+                                        <select name="subjects[]" class="subject-select">
+                                            <option value="">Select a subject</option>
+                                            <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
+                                                <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <select name="student_levels[]" class="grade-select">
+                                            <option value="">Grade level</option>
+                                            <?php foreach (Qualifications::getAllStudentLevels() as $student_level): ?>
+                                                <option value="<?= htmlspecialchars($student_level) ?>"><?= htmlspecialchars($student_level) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
+                                    </div>
+                                </div>
+                                <button type="button" class="add-btn" onclick="addSubject()">Add Another Subject</button>
+                            </div>
                         <?php endif; ?>
-                        <div class="file-info" id="fileInfo">No file chosen</div>
+
+                        <div class="languages">
+                            <label>Languages</label>
+                            <div id="languages-container">
+                                <div class="language-entry">
+                                    <select name="languages[]" class="language-select">
+                                        <option value="">Select a language</option>
+                                        <?php foreach (Qualifications::getAllLanguages() as $language): ?>
+                                            <option value="<?= htmlspecialchars($language) ?>" <?= in_array($language, $languages) ? 'selected' : '' ?>><?= htmlspecialchars($language) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <button type="button" class="remove-btn" onclick="removeLanguage(this)">Remove</button>
+                                </div>
+                            </div>
+                            <button type="button" class="add-btn" onclick="addLanguage()">Add Another Language</button>
+                        </div>
                     </div>
+
                     <?php if ($user->type == 'STUDENT'): ?>
                     <button type="submit" class="S_signUp">Create Profile</button>
                     <?php elseif ($user->type == 'TUTOR'): ?>
@@ -223,5 +319,81 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         </div>
         <script src="scripts/profile_image.js"></script>
         <script src="scripts/index_script.js"></script>
+        <script>
+            function addSubject() {
+                const container = document.getElementById('<?= $user->type === 'TUTOR' ? 'tutor-subjects-container' : 'student-subjects-container' ?>');
+                
+                const newEntry = document.createElement('div');
+                newEntry.className = 'subject-entry';
+                
+                newEntry.innerHTML = `
+                        <?php if($user->type === 'TUTOR'): ?>
+                            <select name="subjects[]" class="subject-select">
+                                <option value="">Select a subject</option>
+                                <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
+                                    <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <select name="tutor_level[]" class="grade-select">
+                                <option value="">School level</option>
+                                <?php foreach (Qualifications::getAllTutorLevels() as $tutor_level): ?>
+                                        <option value="<?= htmlspecialchars($tutor_level) ?>"><?= htmlspecialchars($tutor_level) ?></option>
+                                    <?php endforeach; ?>
+                            </select>
+                            <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
+                        <?php else: ?>
+                            <select name="subjects[]" class="subject-select">
+                                <option value="">Select a subject</option>
+                                <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
+                                    <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <select name="student_levels[]" class="grade-select">
+                                <option value="">Grade level</option>
+                                <?php foreach (Qualifications::getAllStudentLevels() as $student_level): ?>
+                                    <option value="<?= htmlspecialchars($student_level) ?>"><?= htmlspecialchars($student_level) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
+                        <?php endif; ?>
+                    `;
+                
+                container.appendChild(newEntry);
+            }
+
+            function removeSubject(button) {
+                const container = button.closest('#tutor-subjects-container, #student-subjects-container');
+                if (container.children.length > 1) {
+                    button.closest('.subject-entry').remove();
+                } else {
+                    alert('You need at least one subject');
+                }
+            }
+
+            function addLanguage() {
+                const container = document.getElementById('languages-container');
+                const newEntry = document.createElement('div');
+                newEntry.className = 'language-entry';
+                newEntry.innerHTML = `
+                    <select name="languages[]" class="language-select">
+                        <option value="">Select a language</option>
+                        <?php foreach (Qualifications::getAllLanguages() as $language): ?>
+                            <option value="<?= htmlspecialchars($language) ?>"><?= htmlspecialchars($language) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <button type="button" class="remove-btn" onclick="removeLanguage(this)">Remove</button>
+                `;
+                container.appendChild(newEntry);
+            }
+
+            function removeLanguage(button) {
+                const container = document.getElementById('languages-container');
+                if (container.children.length > 1) {
+                    button.parentElement.remove();
+                } else {
+                    alert('You need at least one language');
+                }
+            }
+        </script>
     </body>
 </html>
