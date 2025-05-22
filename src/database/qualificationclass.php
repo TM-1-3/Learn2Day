@@ -36,91 +36,65 @@ class Qualifications {
         return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
     }
 
-    public static function addStudentLanguage(int $studentId, string $language): bool {
-        $user = User::get_user_by_id($studentId);
-        if (!$user || $user->type !== 'STUDENT') {
-            return false;
-        }
-
+    public static function addStudentLanguage(string $studentUsername, string $language): bool {
         $db = Database::getInstance();
         $stmt = $db->prepare('
             INSERT INTO STUDENT_LANGUAGE (STUDENT, LANGUAGE)
             VALUES (?, ?)
         ');
-        return $stmt->execute([$user->username, $language]);
+        return $stmt->execute([$studentUsername, $language]);
     }
 
-    public static function addStudentSubject(int $studentId, string $subject, int $grade): bool {
-        $user = User::get_user_by_id($studentId);
-        if (!$user || $user->type !== 'STUDENT') {
-            return false;
-        }
-
+    public static function addStudentSubject(string $studentUsername, string $subject): bool {
         $db = Database::getInstance();
         $stmt = $db->prepare('
-            INSERT INTO STUDENT_SUBJECT (STUDENT, SUBJECT, GRADE)
-            VALUES (?, ?, ?)
+            INSERT INTO STUDENT_SUBJECT (STUDENT, SUBJECT)
+            VALUES (?, ?)
         ');
-        return $stmt->execute([$user->username, $subject, $grade]);
+        return $stmt->execute([$studentUsername, $subject]);
     }
 
-    public static function addTutorDegree(int $tutorId, string $degree, string $university): bool {
-        $user = User::get_user_by_id($tutorId);
-        if (!$user || $user->type !== 'TUTOR') {
-            return false;
-        }
 
+    public static function addTutorSubject(string $tutorUsername, string $subject): bool {
         $db = Database::getInstance();
         $stmt = $db->prepare('
-            INSERT INTO TUTOR_DEGREE (TUTOR, DEGREE, UNIVERSITY)
-            VALUES (?, ?, ?)
+            INSERT INTO TUTOR_SUBJECT (TUTOR, SUBJECT)
+            VALUES (?, ?)
         ');
-        return $stmt->execute([$user->username, $degree, $university]);
+        return $stmt->execute([$tutorUsername, $subject]);
     }
 
-    public static function getTutorQualifications(int $tutorId): array {
-        $user = User::get_user_by_id($tutorId);
-        if (!$user || $user->type !== 'TUTOR') {
-            return [];
-        }
-
+    public static function addTutorLanguage(string $tutorUsername, string $language): bool {
         $db = Database::getInstance();
-        
-        $stmt = $db->prepare('SELECT SUBJECT, GRADE FROM TUTOR_SUBJECT WHERE TUTOR = ?');
-        $stmt->execute([$user->username]);
+        $stmt = $db->prepare('
+            INSERT INTO TUTOR_LANGUAGE (TUTOR, LANGUAGE)
+            VALUES (?, ?)
+        ');
+        return $stmt->execute([$tutorUsername, $language]);
+    }
+
+    public static function getTutorQualifications(string $tutorUsername): array {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT SUBJECT FROM TUTOR_SUBJECT WHERE TUTOR = ?');
+        $stmt->execute([$tutorUsername]);
         $subjects = $stmt->fetchAll();
-        
-        $stmt = $db->prepare('SELECT DEGREE, UNIVERSITY FROM TUTOR_DEGREE WHERE TUTOR = ?');
-        $stmt->execute([$user->username]);
-        $degrees = $stmt->fetchAll();
-        
         $stmt = $db->prepare('SELECT LANGUAGE FROM TUTOR_LANGUAGE WHERE TUTOR = ?');
-        $stmt->execute([$user->username]);
+        $stmt->execute([$tutorUsername]);
         $languages = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-        
         return [
             'subjects' => $subjects,
-            'degrees' => $degrees,
             'languages' => $languages
         ];
     }
 
-    public static function getStudentNeeds(int $studentId): array {
-        $user = User::get_user_by_id($studentId);
-        if (!$user || $user->type !== 'STUDENT') {
-            return [];
-        }
-
+    public static function getStudentNeeds(string $studentUsername): array {
         $db = Database::getInstance();
-        
-        $stmt = $db->prepare('SELECT SUBJECT, GRADE FROM STUDENT_SUBJECT WHERE STUDENT = ?');
-        $stmt->execute([$user->username]);
+        $stmt = $db->prepare('SELECT SUBJECT FROM STUDENT_SUBJECT WHERE STUDENT = ?');
+        $stmt->execute([$studentUsername]);
         $subjects = $stmt->fetchAll();
-        
         $stmt = $db->prepare('SELECT LANGUAGE FROM STUDENT_LANGUAGE WHERE STUDENT = ?');
-        $stmt->execute([$user->username]);
+        $stmt->execute([$studentUsername]);
         $languages = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-        
         return [
             'subjects' => $subjects,
             'languages' => $languages

@@ -4,134 +4,113 @@ require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/userclass.php';
 
 class Student {
-    public int $id_student;
+    public string $username;
     public string $name;
     public string $date_of_birth;
     public string $profile_image;
     public ?string $description;
-    public string $school_institution;
 
     public function __construct(
-        int $id_student,
+        string $username,
         string $name,
         string $date_of_birth,
         string $profile_image,
-        ?string $description,
-        string $school_institution
+        ?string $description
     ) {
-        $this->id_student = $id_student;
+        $this->username = $username;
         $this->name = $name;
         $this->date_of_birth = $date_of_birth;
         $this->profile_image = $profile_image;
         $this->description = $description;
-        $this->school_institution = $school_institution;
     }
 
     public static function create(
-        int $id_student,
+        string $username,
         string $name,
         string $date_of_birth,
         string $profile_image,
-        ?string $description,
-        string $school_institution
+        ?string $description
     ): void {
         $db = Database::getInstance();
-        
-        // First get the username from the users table
-        $user = User::get_user_by_id($id_student);
-        if (!$user) {
-            throw new Exception('User not found');
-        }
-
         $stmt = $db->prepare('
             INSERT INTO STUDENT 
-            (ID_STUDENT, NAME, DATE_OF_BIRTH, PROFILE_IMAGE, DESCRIPTION, SCHOOL_INSTITUTION) 
-            VALUES (?, ?, ?, ?, ?, ?)
+            (ID_STUDENT, NAME, DATE_OF_BIRTH, PROFILE_IMAGE, DESCRIPTION) 
+            VALUES (?, ?, ?, ?, ?)
         ');
         $stmt->execute([
-            $user->username,
+            $username,
             $name,
             $date_of_birth,
             $profile_image,
-            $description,
-            $school_institution
+            $description
         ]);
     }
 
-    public static function getById(int $id_student): ?Student {
+    public static function getByUsername(string $username): ?Student {
         $db = Database::getInstance();
-        
-        // First get the username from the users table
-        $user = User::get_user_by_id($id_student);
-        if (!$user) {
-            return null;
-        }
-
         $stmt = $db->prepare('SELECT * FROM STUDENT WHERE ID_STUDENT = ?');
-        $stmt->execute([$user->username]);
-        
+        $stmt->execute([$username]);
         if ($row = $stmt->fetch()) {
             return new Student(
-                $id_student,
+                $username,
                 $row['NAME'],
                 $row['DATE_OF_BIRTH'],
                 $row['PROFILE_IMAGE'],
-                $row['DESCRIPTION'],
-                $row['SCHOOL_INSTITUTION']
+                $row['DESCRIPTION'] ?? null
             );
         }
-        
         return null;
     }
 
-    public static function updateProfileImage(int $id_student, string $new_image_path): bool {
-        $user = User::get_user_by_id($id_student);
-        if (!$user) {
-            return false;
-        }
-
+    public static function updateProfileImage(string $username, string $new_image_path): bool {
         $db = Database::getInstance();
         $stmt = $db->prepare('UPDATE STUDENT SET PROFILE_IMAGE = ? WHERE ID_STUDENT = ?');
-        return $stmt->execute([$new_image_path, $user->username]);
+        return $stmt->execute([$new_image_path, $username]);
     }
 
-    public static function updateDescription(int $id_student, string $description): bool {
-        $user = User::get_user_by_id($id_student);
-        if (!$user) {
-            return false;
-        }
-
+    public static function updateDescription(string $username, string $description): bool {
         $db = Database::getInstance();
         $stmt = $db->prepare('UPDATE STUDENT SET DESCRIPTION = ? WHERE ID_STUDENT = ?');
-        return $stmt->execute([$description, $user->username]);
+        return $stmt->execute([$description, $username]);
     }
 
     public function update(): bool {
         $db = Database::getInstance();
-        $user = User::get_user_by_id($this->id_student);
-        
-        if (!$user) {
-            return false;
-        }
-    
         $stmt = $db->prepare('
             UPDATE STUDENT 
             SET NAME = ?, 
                 DATE_OF_BIRTH = ?, 
                 PROFILE_IMAGE = ?, 
-                DESCRIPTION = ?, 
-                SCHOOL_INSTITUTION = ? 
+                DESCRIPTION = ?
             WHERE ID_STUDENT = ?
         ');
-    
         return $stmt->execute([
             $this->name,
             $this->date_of_birth,
             $this->profile_image,
             $this->description,
-            $this->school_institution,
-            $user->username 
+            $this->username
         ]);
+    }
+
+    public static function getAllStudents(): array {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT s.*, u.ID_USER 
+                             FROM STUDENT s 
+                             JOIN USERS u ON s.ID_STUDENT = u.USERNAME 
+                             WHERE u.TYPE = "STUDENT"');
+        $stmt->execute();
+        $students = [];
+        while ($row = $stmt->fetch()) {
+            $students[] = new Student(
+                $row['ID_STUDENT'],
+                $row['NAME'],
+                $row['DATE_OF_BIRTH'],
+                $row['PROFILE_IMAGE'],
+                $row['DESCRIPTION'] ?? null
+            );
+        }
+        return $students;
     }
 }
 ?>

@@ -96,12 +96,8 @@ $tutors = $stmt->fetchAll();
             <h2>Available Tutors</h2>
             <div class="cards-grid">
                 <?php foreach ($tutors as $tutor): ?>
-                    <?php 
-                        $userId = Tutor::getUserIdbyUserName($tutor['ID_TUTOR']);
-                        if ($userId === null) continue;
-                    ?>
-                     <div class="card" id="tutor<?= htmlspecialchars($tutor['ID_TUTOR']) ?>" 
-                        onclick="window.location.href='/profile.php?id=<?= $userId ?>'"
+                    <div class="card" id="tutor<?= htmlspecialchars($tutor['ID_TUTOR']) ?>" 
+                        onclick="window.location.href='/profile.php?id=<?= urlencode($tutor['ID_TUTOR']) ?>'"
                         style="cursor: pointer;">
                         <div class="container">
                             <div class="details">

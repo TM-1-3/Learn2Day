@@ -17,9 +17,9 @@ $errors = [];
 $success = false;
 
 if ($user->type === 'STUDENT') {
-    $profile = Student::getById($user->id);
+    $profile = Student::getByUsername($user->username);
 } else if ($user->type === 'TUTOR') {
-    $profile = Tutor::getById($user->id);
+    $profile = Tutor::getByUsername($user->username);
 } else {
     die('Invalid user type');
 }
@@ -30,7 +30,6 @@ if (!$profile) {
 
 $name = $profile->name ?? '';
 $date_of_birth = $profile->date_of_birth ?? '';
-$school_institution = $profile->school_institution ?? '';
 $description = $profile->description ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -40,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $name = trim($_POST['name'] ?? '');
         $date_of_birth = trim($_POST['date_of_birth'] ?? '');
-        $school_institution = trim($_POST['school_institution'] ?? '');
         $description = trim($_POST['description'] ?? '');
 
         if (empty($name)) {
@@ -49,10 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($date_of_birth)) {
             $errors[] = 'Date of birth is required';
         }
-        if (empty($school_institution)) {
-            $errors[] = 'School/Institution is required';
-        }
-
         $profile_image = $profile->profile_image;
         
         if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
@@ -84,32 +78,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (empty($errors)) {
-
             if ($user->type === 'STUDENT') {
                 $student = new Student(
-                    $user->id,
+                    $user->username,
                     $name,
                     $date_of_birth,
                     $profile_image,
-                    $description,
-                    $school_institution
+                    $description
                 );
                 $student->update();
             } else if ($user->type === 'TUTOR') {
                 $tutor = new Tutor(
-                    $user->id,
+                    $user->username,
                     $name,
                     $date_of_birth,
                     $profile_image,
-                    $description,
-                    $school_institution
+                    $description
                 );
                 $tutor->update();
             }
-            
             $success = true;
-
-            header("Location: /profile.php?id=" . $user->id);
+            header("Location: /profile.php?id=" . urlencode($user->username));
             exit();
         }
     }
@@ -143,11 +132,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="dob">
                     <input type="date" name="date_of_birth" placeholder="Date of Birth" value="<?= htmlspecialchars($date_of_birth) ?>" required />
                 </div>
-                
-                <div class="institution">
-                    <input type="text" name="school_institution" placeholder="School/Institution" value="<?= htmlspecialchars($school_institution) ?>" required maxlength="100" />
-                </div>
-                
                 <div class="description">
                     <textarea name="description" placeholder="About you..." maxlength="500"><?= htmlspecialchars($description) ?></textarea>
                 </div>
