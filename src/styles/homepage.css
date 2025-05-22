@@ -348,6 +348,39 @@ h1 {
     background-color: #3d3d3d;
 }
 
+.filter-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.filter-options {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px;
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.filter-dropdown:hover .filter-options {
+    display: block;
+}
+
+.filter-options label {
+    display: block;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.filter-options h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+
 /* If you open on smartphone it won't break the page */
 @media (max-width: 900px) {
     .cards-container {
