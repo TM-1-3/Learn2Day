@@ -212,7 +212,7 @@ $allSubjects = Qualifications::getAllSubjects();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="/scripts/admin.js"></script>
-    <script src="/scripts/homepage.js"></script>
+    <script src="/scripts/homepage_script.js"></script>
 </body>
 </html>
 
