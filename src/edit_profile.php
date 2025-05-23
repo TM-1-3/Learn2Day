@@ -181,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $level = trim($levels[$i]);
                     
                     if (!empty($subject) && !empty($level)) {
-                        Qualifications::addTutorSubject($new_username, $subject, $level);
+                        Qualifications::addStudentSubject($new_username, $subject, $level);
                     }
                 }
             }

@@ -82,6 +82,22 @@ class User {
         return null;
     }
 
+    public static function get_user_by_email(string $email): ?User {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT * FROM USERS WHERE EMAIL = ?');
+        $stmt->execute([$email]);
+        $row = $stmt->fetch();
+        if ($row) {
+            return new User(
+                (int)$row['ID_USER'],
+                $row['USERNAME'],
+                $row['EMAIL'],
+                $row['TYPE']
+            );
+        }
+        return null;
+    }
+
     public function update(string $username, string $email, string $type): bool {
         $db = Database::getInstance();
         $stmt = $db->prepare('
