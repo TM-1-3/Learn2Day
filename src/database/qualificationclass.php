@@ -130,5 +130,29 @@ class Qualifications {
             return [];
         }
     }
+
+    public static function deleteStudentSubjects(string $username): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('DELETE FROM STUDENT_SUBJECT WHERE STUDENT = ?');
+        return $stmt->execute([$username]);
+    }
+    
+    public static function deleteStudentLanguages(string $username): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('DELETE FROM STUDENT_LANGUAGE WHERE STUDENT = ?');
+        return $stmt->execute([$username]);
+    }
+    
+    public static function deleteTutorSubjects(string $username): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('DELETE FROM TUTOR_SUBJECT WHERE TUTOR = ?');
+        return $stmt->execute([$username]);
+    }
+    
+    public static function deleteTutorLanguages(string $username): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('DELETE FROM TUTOR_LANGUAGE WHERE TUTOR = ?');
+        return $stmt->execute([$username]);
+    }
 }
 ?>

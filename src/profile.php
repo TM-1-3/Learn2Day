@@ -89,7 +89,7 @@ if ($user->type === 'TUTOR') {
                 </button>
                 <div id="profile-inner" class="profile">
                     <form action="actions/logout.php" method="post" class="logout-popup">
-                        <a href='/profile.php?id=<?= $current_user->id ?>' class="viewprofile-btn">View Profile</a>
+                    <a href='/profile.php?id=<?= htmlspecialchars($session->getUserUsername()) ?>' class="viewprofile-btn">View Profile</a>
                         <hr size="18">
                         <button type="submit" class="logout-btn">Log Out</button>
                     </form>

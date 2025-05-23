@@ -74,23 +74,32 @@ class Tutor {
         return $stmt->execute([$description, $username]);
     }
 
-    public function update(): bool {
+    public function update($oldusername): bool {
         $db = Database::getInstance();
         $stmt = $db->prepare('
             UPDATE TUTOR 
-            SET NAME = ?, 
+            SET 
+                ID_TUTOR = ?,
+                NAME = ?, 
                 DATE_OF_BIRTH = ?, 
                 PROFILE_IMAGE = ?, 
                 DESCRIPTION = ?
             WHERE ID_TUTOR = ?
         ');
         return $stmt->execute([
+            $this->username,
             $this->name,
             $this->date_of_birth,
             $this->profile_image,
             $this->description,
-            $this->username
+            $oldusername
         ]);
     }
+    public static function delete(string $username): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('DELETE FROM STUDENT WHERE ID_STUDENT = ?');
+        return $stmt->execute([$username]);
+    }
+
 }
 ?>

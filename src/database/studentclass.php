@@ -74,25 +74,27 @@ class Student {
         return $stmt->execute([$description, $username]);
     }
 
-    public function update(): bool {
+    public function update($oldusername): bool {
         $db = Database::getInstance();
         $stmt = $db->prepare('
             UPDATE STUDENT 
-            SET NAME = ?, 
+            SET 
+                ID_STUDENT = ?,
+                NAME = ?, 
                 DATE_OF_BIRTH = ?, 
                 PROFILE_IMAGE = ?, 
                 DESCRIPTION = ?
             WHERE ID_STUDENT = ?
         ');
         return $stmt->execute([
+            $this->username,
             $this->name,
             $this->date_of_birth,
             $this->profile_image,
             $this->description,
-            $this->username
+            $oldusername
         ]);
     }
-
     public static function getAllStudents(): array {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT s.*, u.ID_USER 
@@ -111,6 +113,12 @@ class Student {
             );
         }
         return $students;
+    }
+
+    public static function delete(string $username): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('DELETE FROM STUDENT WHERE ID_STUDENT = ?');
+        return $stmt->execute([$username]);
     }
 }
 ?>
