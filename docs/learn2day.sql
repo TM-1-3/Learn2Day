@@ -131,7 +131,7 @@ CREATE TABLE SUBJECT(
 
 INSERT INTO SUBJECT (DESIGNATION) VALUES
 ('Portuguese'),
-('Math'),
+('Mathematics'),
 ('English'),
 ('Social and Environmental Studies'),
 ('History and Geography of Portugal'),
@@ -178,10 +178,10 @@ CREATE TABLE TUTOR_LEVEL(
 );
 
 INSERT INTO TUTOR_LEVEL (DESIGNATION) VALUES
-('1st Cycle'),
-('2nd Cycle'),
-('3rd Cycle'),
-('Secondary School');
+('Grade 1-4'),
+('Grade 5-6'),
+('Grade 7-9'),
+('Grade 10-12');
 
 DROP TABLE IF EXISTS STUDENT_LEVEL;
 
