@@ -38,10 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_G
     $showAll = false;
 
     $query = "
-        SELECT T.ID_TUTOR as id, T.NAME, 'tutor' as type, T.PROFILE_IMAGE, T.DESCRIPTION, U.USERNAME, U.IS_ACTIVE
-        FROM TUTOR T
-        JOIN USERS U ON T.ID_TUTOR = U.USERNAME
-        WHERE 1=1
+    SELECT T.ID_TUTOR as id, T.NAME, 'tutor' as type, T.PROFILE_IMAGE, T.DESCRIPTION, U.USERNAME
+    FROM TUTOR T
+    JOIN USERS U ON T.ID_TUTOR = U.USERNAME
+    WHERE 1=1
     ";
     
     $params = [];
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_G
     $tutorResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $query_students = "
-        SELECT S.ID_STUDENT as id, S.NAME, 'student' as type, S.PROFILE_IMAGE, S.DESCRIPTION, U.USERNAME, U.IS_ACTIVE
+        SELECT S.ID_STUDENT as id, S.NAME, 'student' as type, S.PROFILE_IMAGE, S.DESCRIPTION, U.USERNAME
         FROM STUDENT S
         JOIN USERS U ON S.ID_STUDENT = U.USERNAME
         WHERE 1=1
@@ -96,8 +96,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_G
     $searchResults = array_merge($tutorResults, $studentResults);
 }
 
-$allSubjects = Qualifications::getAllSubjects();
+if ($showAll) {
+    $stmt = $db->prepare("
+        SELECT T.ID_TUTOR, T.NAME, T.PROFILE_IMAGE, T.DESCRIPTION, U.USERNAME
+        FROM TUTOR T
+        JOIN USERS U ON T.ID_TUTOR = U.USERNAME
+    ");
+    $stmt->execute();
+    $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
+$allSubjects = Qualifications::getAllSubjects();
 ?>
 
 <!DOCTYPE html>
@@ -112,7 +121,7 @@ $allSubjects = Qualifications::getAllSubjects();
 <body>
     <header class="header">
         <div class="site-name">
-            <a href="/homepage.php" class="main-page">Learn2Day</a>
+            <a href="/admindashboard.php" class="main-page">Learn2Day</a>
         </div>
         <div class="search-bar">
             <form method="GET" action="/admindashboard.php">
@@ -180,39 +189,92 @@ $allSubjects = Qualifications::getAllSubjects();
             </div>
         </div>
 
-        <?php if(!$showAll && !empty($searchResults)): ?>
-            <div class="search-results">
-                <h3>Search Results</h3>
-                <div class="results-grid">
-                    <?php foreach($searchResults as $result): ?>
-                        <div class="user-card">
-                            <div class="user-image">
-                                <?php if(!empty($result['PROFILE_IMAGE'])): ?>
-                                    <img src="<?= htmlspecialchars($result['PROFILE_IMAGE']) ?>" alt="Profile image">
-                                <?php else: ?>
-                                    <span class="material-symbols-outlined default-avatar">account_circle</span>
-                                <?php endif; ?>
+        <?php if(!empty($selectedSubjects)): ?>
+            <div class="active-filters">
+                <strong>Active filters:</strong>
+                <?php foreach ($selectedSubjects as $subject): ?>
+                    <span class="filter-tag">
+                        <?= htmlspecialchars($subject) ?>
+                        <a href="?<?= http_build_query(array_merge($_GET, ['subjects' => array_diff($_GET['subjects'], [$subject])])) ?>" 
+                           class="remove-filter">×</a>
+                    </span>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (!$showAll): ?>
+            <section class="tutors-section">
+                <h2>Search Results <?= !empty($searchQuery) ? 'for "' . htmlspecialchars($searchQuery) . '"' : '' ?></h2>
+                <div class="cards-grid">
+                    <?php if (!empty($searchResults)): ?>
+                        <?php foreach ($searchResults as $user): ?>
+                            <div class="card" id="<?= $user['type'] ?><?= htmlspecialchars($user['id']) ?>"
+                                 onclick="window.location.href='/profile.php?id=<?= urlencode($user['USERNAME']) ?>'"
+                                 style="cursor: pointer;">
+                                <div class="container">
+                                    <div class="details">
+                                        <div class="content-wrapper">
+                                            <img class="img" src="/uploads/profiles/<?= htmlspecialchars($user['PROFILE_IMAGE']) ?>" 
+                                                 alt="<?= htmlspecialchars($user['NAME']) ?>"
+                                                 onerror="this.src='/uploads/profiles/default.png'">
+                                            <div class="text-content">
+                                                <h2 class="title"><?= htmlspecialchars($user['NAME']) ?></h2>
+                                                <div class="subtitle-container">
+                                                    <div class="subtitles"><?= ucfirst($user['type']) ?></div>
+                                                </div>
+                                                <?php if (!empty($user['DESCRIPTION'])): ?>
+                                                    <p class="description"><?= htmlspecialchars($user['DESCRIPTION']) ?></p>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="user-info">
-                                <h4><?= htmlspecialchars($result['NAME']) ?></h4>
-                                <p class="username">@<?= htmlspecialchars($result['USERNAME']) ?></p>
-                                <p class="type"><?= ucfirst($result['type']) ?></p>
-                                <p class="status <?= $result['IS_ACTIVE'] ? 'active' : 'inactive' ?>">
-                                    <?= $result['IS_ACTIVE'] ? 'Active' : 'Inactive' ?>
-                                </p>
-                                <a href="/profile.php?user=<?= htmlspecialchars($result['USERNAME']) ?>" class="view-btn">View Profile</a>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p>No users found matching your criteria.</p>
+                    <?php endif; ?>
+                </div>
+            </section>
+        <?php else: ?>
+            <section class="tutors-section">
+                <h2>Available Tutors</h2>
+                <div class="cards-grid">
+                    <?php foreach ($tutors as $tutor): ?>
+                        <div class="card" id="tutor<?= htmlspecialchars($tutor['ID_TUTOR']) ?>"
+                             onclick="window.location.href='/profile.php?id=<?= urlencode($tutor['USERNAME']) ?>'"
+                             style="cursor: pointer;">
+                            <div class="container">
+                                <div class="details">
+                                    <div class="content-wrapper">
+                                        <img class="img" src="/uploads/profiles/<?= htmlspecialchars($tutor['PROFILE_IMAGE']) ?>" 
+                                             alt="<?= htmlspecialchars($tutor['NAME']) ?>"
+                                             onerror="this.src='/uploads/profiles/default.png'">
+                                        <div class="text-content">
+                                            <h2 class="title"><?= htmlspecialchars($tutor['NAME']) ?></h2>
+                                            <div class="subtitle-container">
+                                                <div class="subtitles">Tutor</div>
+                                            </div>
+                                            <?php if (!empty($tutor['DESCRIPTION'])): ?>
+                                                <p class="description"><?= htmlspecialchars($tutor['DESCRIPTION']) ?></p>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
-            </div>
+            </section>
         <?php endif; ?>
     </main>
-
+    <script>
+        window.totalTutors = <?= $totalTutors ?>;
+        window.totalStudents = <?= $totalStudents ?>;
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="/scripts/admin.js"></script>
-    <script src="/scripts/homepage_script.js"></script>
+    <script src="/scripts/homepage_script.js"></script> 
 </body>
 </html>
-

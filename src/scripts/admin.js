@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 labels: ['Tutors', 'Students'],
                 datasets: [{
                     data: [totalTutors, totalStudents],
-                    backgroundColor: ['#4caf50', '#2196f3'],
+                    backgroundColor: ['#03254e', '#32533D'],
                     borderWidth: 1
                 }]
             },
@@ -49,23 +49,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             plugins: [ChartDataLabels]
-        });
-    }
-
-    const profileButton = document.getElementById('profile-button');
-    const profileInner = document.getElementById('profile-inner');
-    if (profileButton && profileInner) {
-        profileButton.addEventListener('click', function(e) {
-            e.stopPropagation();
-            profileInner.classList.toggle('open');
-        });
-
-        document.addEventListener('click', function() {
-            profileInner.classList.remove('open');
-        });
-
-        profileInner.addEventListener('click', function(e) {
-            e.stopPropagation();
         });
     }
 });
