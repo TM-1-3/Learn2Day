@@ -93,5 +93,17 @@ class User {
         ');
         return $stmt->execute([$username, $email, $type, $this->id]);
     }
+
+    public static function updatePassword(int $id, string $new_password): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('
+            UPDATE USERS
+            SET PASSWORD = ? 
+            WHERE ID_USER = ?');
+    
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+        return $stmt->execute([$hashed_password, $id]);
+    }
+
 }
 ?>
