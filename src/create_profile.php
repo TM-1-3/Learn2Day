@@ -291,7 +291,7 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                                     <select name="languages[]" class="language-select">
                                         <option value="">Select a language</option>
                                         <?php foreach (Qualifications::getAllLanguages() as $language): ?>
-                                            <option value="<?= htmlspecialchars($language) ?>" <?= in_array($language, $languages) ? 'selected' : '' ?>><?= htmlspecialchars($language) ?></option>
+                                            <option value="<?= htmlspecialchars($language) ?>"><?= htmlspecialchars($language) ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                     <button type="button" class="remove-btn" onclick="removeLanguage(this)">Remove</button>
@@ -311,6 +311,12 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         </div>
         <script src="scripts/profile_image.js"></script>
         <script src="scripts/index_script.js"></script>
+        <script>
+            const allSubjects = <?= json_encode(Qualifications::getAllSubjects()) ?>;
+            const allLanguages = <?= json_encode(Qualifications::getAllLanguages()) ?>;
+            const allTutorLevels = <?= json_encode(Qualifications::getAllTutorLevels()) ?>;
+            const allStudentLevels = <?= json_encode(Qualifications::getAllStudentLevels()) ?>;
+        </script>
         <script src="scripts/createprofile_script.js"></script>
     </body>
 </html>
