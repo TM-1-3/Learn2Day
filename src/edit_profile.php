@@ -360,7 +360,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <select name="subjects[]" class="subject-select">
                                         <option value="">Select a subject</option>
                                         <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
-                                            <option value="<?= htmlspecialchars($subject) ?>|"></option>
+                                            <option value="<?= htmlspecialchars($subject) ?>|"><?= htmlspecialchars($subject) ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                     <input type="text" name="grades[]" placeholder="Grade (e.g., 10)">
@@ -462,6 +462,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 alert('You must have at least one language');
             }
+        }
+
+        function addSubject() {
+            const container = document.getElementById('subjects-container');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'subject-entry';
+            newEntry.innerHTML = `
+                <select name="subjects[]" class="subject-select">
+                    <option value="">Select a subject</option>
+                    <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
+                        <option value="<?= htmlspecialchars($subject) ?>|"><?= htmlspecialchars($subject) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <input type="text" name="grades[]" placeholder="Grade (e.g., 10)">
+                <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
+            `;
+            container.appendChild(newEntry);
         }
     </script>
 </body>

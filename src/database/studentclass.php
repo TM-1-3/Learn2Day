@@ -84,7 +84,7 @@ class Student {
                 DATE_OF_BIRTH = ?, 
                 PROFILE_IMAGE = ?, 
                 DESCRIPTION = ?
-            WHERE ID_TUTOR = ?
+            WHERE ID_STUDENT = ?
         ');
         return $stmt->execute([
             $this->username,
@@ -95,7 +95,6 @@ class Student {
             $oldusername
         ]);
     }
-
     public static function getAllStudents(): array {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT s.*, u.ID_USER 
