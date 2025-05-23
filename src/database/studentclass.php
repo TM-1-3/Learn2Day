@@ -120,5 +120,12 @@ class Student {
         $stmt = $db->prepare('DELETE FROM STUDENT WHERE ID_STUDENT = ?');
         return $stmt->execute([$username]);
     }
+
+    public static function countAllStudents(): int {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT COUNT(*) FROM STUDENT');
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
 }
 ?>

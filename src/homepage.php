@@ -19,6 +19,13 @@ if(!$isLoggedIn){
     exit();
 }
 
+$user = $session->getUser();
+
+if($user->type == 'admin'){
+    header('Location: /admindashboard.php');
+    exit();
+}
+
 $searchQuery = '';
 $searchResults = [];
 $showAll = true;

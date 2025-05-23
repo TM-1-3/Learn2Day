@@ -13,7 +13,13 @@ $loginError = isset($_SESSION['login_error']);
 unset($_SESSION['login_error']);
 
 if($isLoggedIn){
-    header('Location: /homepage.php');
+    $user = $session->getUser();
+    if($user->type == 'ADMIN'){
+        header('Location: /admindashboard.php');
+    }
+    else{
+        header('Location: /homepage.php');
+    }
 }
 
 $db = Database::getInstance();
