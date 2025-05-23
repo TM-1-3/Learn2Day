@@ -81,5 +81,17 @@ class User {
         }
         return null;
     }
+
+    public function update(string $username, string $email, string $type): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('
+            UPDATE USERS 
+            SET USERNAME = ?, 
+                EMAIL = ?, 
+                TYPE = ? 
+            WHERE ID_USER = ?
+        ');
+        return $stmt->execute([$username, $email, $type, $this->id]);
+    }
 }
 ?>
