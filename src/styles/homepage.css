@@ -165,7 +165,7 @@ header button {
     border: none;
     border-bottom: 1px solid #535353;
     margin-top: 0px;
-    margin-bottom: 0px;
+    margin-bottom: 3px;
 }
 
 .reset-link {

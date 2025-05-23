@@ -88,11 +88,13 @@ if ($user->type === 'TUTOR') {
                     <?= htmlspecialchars($current_user->username) ?>
                 </button>
                 <div id="profile-inner" class="profile">
-                    <form action="actions/logout.php" method="post" class="logout-popup">
-                    <a href='/profile.php?id=<?= htmlspecialchars($session->getUserUsername()) ?>' class="viewprofile-btn">View Profile</a>
+                    <div class="logout-popup">
+                        <a href='/profile.php?id=<?= htmlspecialchars($session->getUserUsername()) ?>' class="viewprofile-btn">View Profile</a>
                         <hr size="18">
-                        <button type="submit" class="logout-btn">Log Out</button>
-                    </form>
+                        <form action="actions/logout.php" method="post">
+                            <button type="submit" class="logout-btn">Log Out</button>
+                        </form>
+                    </div>
                 </div>
             <?php else: ?>
                 <button id="profile-button">
@@ -151,9 +153,11 @@ if ($user->type === 'TUTOR') {
                     <div class="skills-list">
                         <?php foreach ($subjects as $subject): ?>
                             <div class="skill-item">
-                                <?= htmlspecialchars($subject['SUBJECT']) ?>
-                                <?php if (isset($subject['GRADE'])): ?>
-                                    (Grade <?= htmlspecialchars($subject['GRADE']) ?>)
+                                <?= htmlspecialchars($subject['SUBJECT'] ?? $subject['subject'] ?? '') ?>
+                                <?php if (isset($subject['GRADE']) || isset($subject['STUDENT_LEVEL'])): ?>
+                                    (Grade <?= htmlspecialchars($subject['GRADE'] ?? $subject['STUDENT_LEVEL']) ?>)
+                                <?php elseif (isset($subject['LEVEL']) || isset($subject['TUTOR_LEVEL'])): ?>
+                                    (<?= htmlspecialchars($subject['LEVEL'] ?? $subject['TUTOR_LEVEL']) ?>)
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>

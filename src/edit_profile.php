@@ -143,16 +143,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             User::updatePassword($user->id, $new_password);
         }
 
-        // Handle qualifications update (subjects, languages, degrees, levels)
-        $qualifications_updated = true; // Assume true unless an update fails
+        $qualifications_updated = true; 
 
-        // Use $new_username for all Qualification updates
         if ($user->type === 'TUTOR') {
             Qualifications::deleteTutorSubjects($new_username);
-            if (isset($_POST['subjects']) && is_array($_POST['subjects'])) {
-                foreach ($_POST['subjects'] as $subject) {
-                    if (!empty($subject)) {
-                        Qualifications::addTutorSubject($new_username, $subject);
+            if (isset($_POST['subjects']) && is_array($_POST['subjects']) && isset($_POST['tutor_level']) && is_array($_POST['tutor_level'])) {
+                 $subjects = $_POST['subjects'];
+                $levels = $_POST['tutor_level'];
+                $count = min(count($subjects), count($levels));
+                
+                for ($i = 0; $i < $count; $i++) {
+                    $subject = trim($subjects[$i]);
+                    $level = trim($levels[$i]);
+                    
+                    if (!empty($subject) && !empty($level)) {
+                        Qualifications::addTutorSubject($new_username, $subject, $level);
                     }
                 }
             }
@@ -166,11 +171,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } elseif ($user->type === 'STUDENT') {
             Qualifications::deleteStudentSubjects($new_username);
-            if (isset($_POST['subjects']) && is_array($_POST['subjects'])) {
-                foreach ($_POST['subjects'] as $subject_grade) {
-                    $parts = explode('|', $subject_grade);
-                    if (count($parts) === 2 && !empty($parts[0])) {
-                        Qualifications::addStudentSubject($new_username, $parts[0], $parts[1]);
+            if (isset($_POST['subjects']) && is_array($_POST['subjects']) && isset($_POST['student_levels']) && is_array($_POST['student_levels'])) {
+                $subjects = $_POST['subjects'];
+                $levels = $_POST['student_levels'];
+                $count = min(count($subjects), count($levels));
+                
+                for ($i = 0; $i < $count; $i++) {
+                    $subject = trim($subjects[$i]);
+                    $level = trim($levels[$i]);
+                    
+                    if (!empty($subject) && !empty($level)) {
+                        Qualifications::addStudentSubject($new_username, $subject, $level);
                     }
                 }
             }
@@ -184,11 +195,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Re-fetch the user object from the database to ensure session is up-to-date
-        // This is crucial to load all the latest changes, including the ID if it's based on username.
         $updated_user = User::get_user_by_username($new_username);
         if ($updated_user) {
-            $session->login($updated_user); // Re-login with the fresh user object
+            $session->login($updated_user); 
         }
 
         if ($user_updated && $profile_updated && $qualifications_updated) {
@@ -276,7 +285,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <?php if ($user->type === 'TUTOR'): ?>
                     <div class="form-group">
-                        <label>Subjects Taught:</label>
+                        <label>Subjects You Can Teach</label>
                         <div id="subjects-container">
                             <?php if (!empty($subjects)): ?>
                                 <?php foreach ($subjects as $subject): ?>
@@ -284,8 +293,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <select name="subjects[]" class="subject-select">
                                             <option value="">Select a subject</option>
                                             <?php foreach (Qualifications::getAllSubjects() as $all_subject): ?>
-                                                <option value="<?= htmlspecialchars($all_subject) ?>" <?= ($all_subject === $subject['SUBJECT']) ? 'selected' : '' ?>>
+                                                <option value="<?= htmlspecialchars($all_subject) ?>" <?= ($all_subject === ($subject['SUBJECT'] ?? $subject['subject'] ?? '')) ? 'selected' : '' ?>>
                                                     <?= htmlspecialchars($all_subject) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <select name="tutor_level[]" class="grade-select">
+                                            <option value="">School level</option>
+                                            <?php foreach (Qualifications::getAllTutorLevels() as $level): ?>
+                                                <option value="<?= htmlspecialchars($level) ?>" <?= ($level === ($subject['LEVEL'] ?? $subject['TUTOR_LEVEL'] ?? '')) ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($level) ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
@@ -300,15 +317,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
                                         <?php endforeach; ?>
                                     </select>
+                                    <select name="tutor_level[]" class="grade-select">
+                                        <option value="">School level</option>
+                                        <?php foreach (Qualifications::getAllTutorLevels() as $level): ?>
+                                            <option value="<?= htmlspecialchars($level) ?>"><?= htmlspecialchars($level) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                     <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <button type="button" class="add-btn" onclick="addSubject()">Add Subject</button>
+                        <button type="button" class="add-btn" onclick="addSubject()">Add Another Subject</button>
                     </div>
 
                     <div class="form-group">
-                        <label>Languages Spoken:</label>
+                        <label>Languages Spoken</label>
                         <div id="languages-container">
                             <?php if (!empty($languages)): ?>
                                 <?php foreach ($languages as $language): ?>
@@ -336,11 +359,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <button type="button" class="add-btn" onclick="addLanguage()">Add Language</button>
+                        <button type="button" class="add-btn" onclick="addLanguage()">Add Another Language</button>
                     </div>
                 <?php elseif ($user->type === 'STUDENT'): ?>
                     <div class="form-group">
-                        <label>Subjects of Interest:</label>
+                        <label>Subjects You Need Help With</label>
                         <div id="subjects-container">
                             <?php if (!empty($subjects)): ?>
                                 <?php foreach ($subjects as $subject): ?>
@@ -348,33 +371,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <select name="subjects[]" class="subject-select">
                                             <option value="">Select a subject</option>
                                             <?php foreach (Qualifications::getAllSubjects() as $all_subject): ?>
-                                                <option value="<?= htmlspecialchars($all_subject) ?>|<?= htmlspecialchars($subject['GRADE']) ?>" <?= ($all_subject === $subject['SUBJECT']) ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($all_subject) ?> (Grade <?= htmlspecialchars($subject['GRADE']) ?>)
+                                                <option value="<?= htmlspecialchars($all_subject) ?>" <?= ($all_subject === ($subject['SUBJECT'] ?? $subject['subject'] ?? '')) ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($all_subject) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <select name="student_levels[]" class="grade-select">
+                                            <option value="">Grade level</option>
+                                            <?php foreach (Qualifications::getAllStudentLevels() as $level): ?>
+                                                <option value="<?= htmlspecialchars($level) ?>" <?= ($level === ($subject['GRADE'] ?? $subject['STUDENT_LEVEL'] ?? '')) ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($level) ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
                                         <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
                                     </div>
-                                    <button type="button" class="add-btn" data-usertype="<?= $user->type ?>" onclick="addSubject()">Add Another Subject</button>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <div class="subject-entry">
                                     <select name="subjects[]" class="subject-select">
                                         <option value="">Select a subject</option>
                                         <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
-                                            <option value="<?= htmlspecialchars($subject) ?>|"><?= htmlspecialchars($subject) ?></option>
+                                            <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
                                         <?php endforeach; ?>
                                     </select>
-                                    <input type="text" name="grades[]" placeholder="Grade (e.g., 10)">
+                                    <select name="student_levels[]" class="grade-select">
+                                        <option value="">Grade level</option>
+                                        <?php foreach (Qualifications::getAllStudentLevels() as $level): ?>
+                                            <option value="<?= htmlspecialchars($level) ?>"><?= htmlspecialchars($level) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                     <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <button type="button" class="add-btn" onclick="addSubject()">Add Subject</button>
+                        <button type="button" class="add-btn" onclick="addSubject()">Add Another Subject</button>
                     </div>
 
                     <div class="form-group">
-                        <label>Languages to Learn:</label>
+                        <label>Languages Spoken</label>
                         <div id="languages-container">
                             <?php if (!empty($languages)): ?>
                                 <?php foreach ($languages as $language): ?>
@@ -402,7 +437,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <button type="button" class="add-btn" onclick="addLanguage()">Add Language</button>
+                        <button type="button" class="add-btn" onclick="addLanguage()">Add Another Language</button>
                     </div>
                 <?php endif; ?>
 
