@@ -217,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile</title>
-    <link rel="stylesheet" href="/styles/editprofile_style.css">
+    <link rel="stylesheet" href="/styles/editprofile.css">
     <link rel="stylesheet" href="/styles/homepage.css">
 </head>
 <body>
@@ -440,8 +440,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <button type="button" class="add-btn" onclick="addLanguage()">Add Another Language</button>
                     </div>
                 <?php endif; ?>
-
+                <div class="buttons">
                 <button type="submit" class="submit-btn">Save Changes</button>
+                <button type="button" class="cancel-btn" onclick="window.location.href='/profile.php?id=<?= urlencode($user->username) ?>'">Cancel</button>
+                </div>
             </form>
         </div>
         </div>
