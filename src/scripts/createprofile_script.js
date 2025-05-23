@@ -42,9 +42,10 @@ function addSubject() {
 }
 
 function removeSubject(button) {
-    const container = button.closest('#tutor-subjects-container, #student-subjects-container');
+    const entry = button.closest('.subject-entry');
+    const container = entry.parentElement;
     if (container.children.length > 1) {
-        button.closest('.subject-entry').remove();
+        entry.remove();
     } else {
         alert('You need at least one subject');
     }

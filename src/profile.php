@@ -153,9 +153,11 @@ if ($user->type === 'TUTOR') {
                     <div class="skills-list">
                         <?php foreach ($subjects as $subject): ?>
                             <div class="skill-item">
-                                <?= htmlspecialchars($subject['SUBJECT']) ?>
-                                <?php if (isset($subject['GRADE'])): ?>
-                                    (Grade <?= htmlspecialchars($subject['GRADE']) ?>)
+                                <?= htmlspecialchars($subject['SUBJECT'] ?? $subject['subject'] ?? '') ?>
+                                <?php if (isset($subject['GRADE']) || isset($subject['STUDENT_LEVEL'])): ?>
+                                    (Grade <?= htmlspecialchars($subject['GRADE'] ?? $subject['STUDENT_LEVEL']) ?>)
+                                <?php elseif (isset($subject['LEVEL']) || isset($subject['TUTOR_LEVEL'])): ?>
+                                    (<?= htmlspecialchars($subject['LEVEL'] ?? $subject['TUTOR_LEVEL']) ?>)
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>

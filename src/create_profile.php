@@ -126,8 +126,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $profile_image,
                     $description
                 );
-                foreach ($subjects as $subject) {
-                    Qualifications::addStudentSubject($user->username, $subject);
+                foreach ($subjects as $i => $subject) {
+                    $level = $_POST['student_levels'][$i] ?? null;
+                    if ($subject && $level) {
+                        Qualifications::addStudentSubject($user->username, $subject, $level);
+                    }
                 }
                 foreach ($languages as $language) {
                     Qualifications::addStudentLanguage($user->username, $language);
@@ -141,8 +144,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $profile_image,
                     $description
                 );
-                foreach ($subjects as $subject) {
-                    Qualifications::addTutorSubject($user->username, $subject);
+                foreach ($subjects as $i => $subject) {
+                    $level = $_POST['tutor_level'][$i] ?? null;
+                    if ($subject && $level) {
+                        Qualifications::addTutorSubject($user->username, $subject, $level);
+                    }
                 }
                 foreach ($languages as $language) {
                     Qualifications::addTutorLanguage($user->username, $language);

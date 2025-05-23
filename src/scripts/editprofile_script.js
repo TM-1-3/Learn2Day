@@ -1,14 +1,12 @@
 function getUserType() {
     const btn = document.querySelector('.add-btn');
     if (btn && btn.dataset.usertype) return btn.dataset.usertype;
-    // fallback: try to infer from DOM
     if (document.querySelector('.T_signUp') || document.querySelector('.upload-btnT')) return 'TUTOR';
     return 'STUDENT';
 }
 
 function addSubject() {
-    const userType = window.userType || (typeof getUserType === 'function' ? getUserType() : 'STUDENT');
-    const container = document.getElementById(userType === 'TUTOR' ? 'tutor-subjects-container' : 'student-subjects-container');
+    const container = document.getElementById('subjects-container');
     const newEntry = document.createElement('div');
     newEntry.className = 'subject-entry';
 
@@ -18,6 +16,7 @@ function addSubject() {
     });
 
     let gradeOptions = '';
+    const userType = window.userType || (typeof getUserType === 'function' ? getUserType() : 'STUDENT');
     if (userType === 'TUTOR') {
         gradeOptions = '<option value="">School level</option>';
         allTutorLevels.forEach(level => {
@@ -88,25 +87,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (uploadText) uploadText.style.display = 'none';
         if (uploadIcon) uploadIcon.style.display = 'none';
     }
-
-    // Handle form submission
+    
     const form = document.querySelector('form[action="edit_profile.php"]');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            const userType = getUserType();
-            const subjectEntries = document.querySelectorAll('#subjects-container .subject-entry');
-            
-            subjectEntries.forEach(entry => {
-                const subjectSelect = entry.querySelector('select.subject-select');
-                const gradeSelect = entry.querySelector('select.grade-select');
-                
-                if (subjectSelect && gradeSelect) {
-                    // Combine subject and grade into the subject value
-                    if (subjectSelect.value && gradeSelect.value) {
-                        subjectSelect.value = subjectSelect.value + '|' + gradeSelect.value;
-                    }
-                }
-            });
-        });
-    }
 });
