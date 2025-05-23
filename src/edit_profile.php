@@ -195,31 +195,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/edit_profile_style.css">
+    <link rel="stylesheet" href="/styles/editprofile_style.css">
+    <link rel="stylesheet" href="/styles/homepage.css">
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <a href="/homepage.php">Learn2Day</a>
-        </div>
-        <nav>
-            <ul>
-                <?php if ($session->isLoggedIn()): ?>
-                    <li><a href="/profile.php?id=<?= htmlspecialchars($session->getUserUsername()) ?>">View Profile</a></li>
-                    <li><a href="/edit_profile.php">Edit Profile</a></li>
-                    <li><a href="/logout.php">Logout</a></li>
-                <?php else: ?>
-                    <li><a href="/login.php">Login</a></li>
-                    <li><a href="/register_page.php">Register</a></li>
-                <?php endif; ?>
-            </ul>
-        </nav>
-    </header>
-
+    <?php if($user->type == 'STUDENT'): ?>
+        <body style="background-color: #32533D">
+    <?php elseif($user->type == 'TUTOR'): ?>
+        <body style="background-color: #03254E">
+    <?php endif; ?>
     <main>
+        <div id="container" class="container">
         <div class="edit-profile-container">
-            <h1>Edit Profile</h1>
+            <?php if($user->type == 'STUDENT'): ?>
+                <h1 style="color: #32533D">Edit Profile</h1>
+            <?php elseif($user->type == 'TUTOR'): ?>
+                <h1 style="color: #03254E">Edit Profile</h1>
+            <?php endif; ?>
 
             <?php if (!empty($errors)): ?>
                 <div class="errors">
@@ -237,40 +229,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form action="edit_profile.php" method="POST" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="username">Username:</label>
+                <div class="undpp">
+                <div class="username-email">
                     <input type="text" id="username" name="username" value="<?= htmlspecialchars($username) ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
                     <input type="email" id="email" name="email" value="<?= htmlspecialchars($email) ?>" required>
                 </div>
-                <div class="form-group">
-                    <label for="name">Name:</label>
+                <div class="new-password">
+                    <input type="password" id="password" name="password" placeholder="New Password (optional)">
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm New Password (optional)">
+                </div>
+                <div class="name-dob">
                     <input type="text" id="name" name="name" value="<?= htmlspecialchars($name) ?>" required>
+                    <input type="date" id="date-of-birth" name="date-of-birth" value="<?= htmlspecialchars($date_of_birth) ?>" required>
                 </div>
-                <div class="form-group">
-                    <label for="date_of_birth">Date of Birth:</label>
-                    <input type="date" id="date_of_birth" name="date_of_birth" value="<?= htmlspecialchars($date_of_birth) ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="profile_image">Profile Image:</label>
+                <div class="image-upload-container">
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <img id="image-preview" alt="Preview" style="display:<?= $profile_image ? 'block' : 'none' ?>;" src="<?= $profile_image ? htmlspecialchars((strpos($profile_image, '/') === 0 ? $profile_image : '/uploads/profiles/' . $profile_image)) : '' ?>">
+                    </div>
                     <input type="file" id="profile_image" name="profile_image" accept="image/*">
-                    <?php if ($profile_image): ?>
-                        <img src="<?= htmlspecialchars($profile_image) ?>" alt="Current Profile Image" class="current-profile-image">
+                    <?php if($user->type == 'STUDENT'): ?>
+                    <button type="button" class="upload-btnS" onclick="document.getElementById('profile_image').click()">Choose File</button>
+                    <?php elseif($user->type == 'TUTOR'): ?>
+                    <button type="button" class="upload-btnT" onclick="document.getElementById('profile_image').click()">Choose File</button>
                     <?php endif; ?>
                 </div>
-                <div class="form-group">
-                    <label for="description">Description:</label>
+                </div>
+                <div class="description">
                     <textarea id="description" name="description"><?= htmlspecialchars($description) ?></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="password">New Password (leave blank to keep current):</label>
-                    <input type="password" id="password" name="password">
-                </div>
-                <div class="form-group">
-                    <label for="confirm_password">Confirm New Password:</label>
-                    <input type="password" id="confirm_password" name="confirm_password">
                 </div>
 
                 <?php if ($user->type === 'TUTOR'): ?>
@@ -406,6 +392,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <button type="submit" class="submit-btn">Save Changes</button>
             </form>
+        </div>
         </div>
     </main>
 
