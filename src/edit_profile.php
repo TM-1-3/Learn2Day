@@ -53,13 +53,12 @@ if ($user->type === 'TUTOR') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_name = trim($_POST['name'] ?? '');
-    $new_date_of_birth = trim($_POST['date_of_birth'] ?? '');
+    $new_date_of_birth = trim($_POST['date-of-birth'] ?? ''); // FIXED: use hyphen to match form field
     $new_description = trim($_POST['description'] ?? '');
     $new_username = trim($_POST['username'] ?? '');
     $new_email = trim($_POST['email'] ?? '');
     $new_password = $_POST['password'] ?? '';
-    $confirm_password = $_POST['confirm_password'] ?? '';
-
+    $confirm_password = $_POST['confirm-password'] ?? '';
     // Validate inputs
     if (empty($new_name)) {
         $errors['name'] = 'Name cannot be empty.';
@@ -77,24 +76,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($new_email !== $user->email && User::get_user_by_email($new_email)) {
         $errors['email'] = 'Email already exists.';
     }
-    if (!empty($new_password) && $new_password !== $confirm_password) {
-        $errors['password'] = 'Passwords do not match.';
+    if (!empty($new_password)) {
+        if ($new_password !== $confirm_password) {
+            $errors['password'] = 'Passwords do not match.';
+        }
     }
 
     // Handle image upload
     if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = __DIR__ . '/uploads/profiles/';
-        if (!file_exists($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
+        $uploadDir = __DIR__ . '/uploads/profiles/';
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
         }
-        $image_ext = pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION);
-        $new_image_name = $new_username . '.' . $image_ext; // Use new username
-        $new_image_path = $upload_dir . $new_image_name;
+        
+        $fileExt = pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION);
+        $fileName = uniqid('profile_') . '.' . $fileExt;
+        $targetPath = $uploadDir . $fileName;
 
-        if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $new_image_path)) {
-            $profile_image = '/uploads/profiles/' . $new_image_name;
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        $fileType = mime_content_type($_FILES['profile_image']['tmp_name']);
+        
+        if (in_array($fileType, $allowedTypes)) {
+            if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $targetPath)) {
+
+                if ($profile->profile_image !== 'uploads/profiles/default.png' && file_exists($uploadDir . $profile->profile_image)) {
+                    unlink($uploadDir . $profile->profile_image);
+                }
+                $profile_image = $fileName;
+            } else {
+                $errors[] = 'Failed to upload image';
+            }
         } else {
-            $errors['profile_image'] = 'Failed to upload image.';
+            $errors[] = 'Invalid file type. Only JPG, PNG, and GIF are allowed.';
         }
     }
 
@@ -245,14 +258,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="image-upload-container">
                     <div class="upload-area" id="uploadArea">
                         <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <span class="upload-text">Click to upload profile image</span>
                         <img id="image-preview" alt="Preview" style="display:<?= $profile_image ? 'block' : 'none' ?>;" src="<?= $profile_image ? htmlspecialchars((strpos($profile_image, '/') === 0 ? $profile_image : '/uploads/profiles/' . $profile_image)) : '' ?>">
                     </div>
-                    <input type="file" id="profile_image" name="profile_image" accept="image/*">
+                    <input type="file" id="fileInput" class="upload-input" name="profile_image" accept="image/jpeg,image/png,image/gif">
                     <?php if($user->type == 'STUDENT'): ?>
-                    <button type="button" class="upload-btnS" onclick="document.getElementById('profile_image').click()">Choose File</button>
+                    <button type="button" class="upload-btnS" onclick="document.getElementById('fileInput').click()">Choose File</button>
                     <?php elseif($user->type == 'TUTOR'): ?>
-                    <button type="button" class="upload-btnT" onclick="document.getElementById('profile_image').click()">Choose File</button>
+                    <button type="button" class="upload-btnT" onclick="document.getElementById('fileInput').click()">Choose File</button>
                     <?php endif; ?>
+                    <div class="file-info" id="fileInfo">No file chosen</div>
                 </div>
                 </div>
                 <div class="description">
@@ -340,6 +355,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </select>
                                         <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
                                     </div>
+                                    <button type="button" class="add-btn" data-usertype="<?= $user->type ?>" onclick="addSubject()">Add Another Subject</button>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <div class="subject-entry">
@@ -395,78 +411,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         </div>
     </main>
-
-    <script>
-        // ... (your existing JavaScript functions for addSubject, removeSubject, addLanguage, removeLanguage) ...
-        function addSubject() {
-            const container = document.getElementById('subjects-container');
-            const newEntry = document.createElement('div');
-            newEntry.className = 'subject-entry';
-            newEntry.innerHTML = `
-                <select name="subjects[]" class="subject-select">
-                    <option value="">Select a subject</option>
-                    <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
-                        <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <?php if ($user->type === 'STUDENT'): ?>
-                    <input type="text" name="grades[]" placeholder="Grade (e.g., 10)">
-                <?php endif; ?>
-                <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
-            `;
-            container.appendChild(newEntry);
-        }
-
-        function removeSubject(button) {
-            const container = document.getElementById('subjects-container');
-            if (container.children.length > 1) {
-                button.parentElement.remove();
-            } else {
-                alert('You must have at least one subject');
-            }
-        }
-
-        function addLanguage() {
-            const container = document.getElementById('languages-container');
-            const newEntry = document.createElement('div');
-            newEntry.className = 'language-entry';
-            newEntry.innerHTML = `
-                <select name="languages[]" class="language-select">
-                    <option value="">Select a language</option>
-                    <?php foreach (Qualifications::getAllLanguages() as $language): ?>
-                        <option value=\"<?= htmlspecialchars($language) ?>\"><?= htmlspecialchars($language) ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <button type=\"button\" class=\"remove-btn\" onclick=\"removeLanguage(this)\">Remove</button>
-            `;
-            container.appendChild(newEntry);
-        }
-
-        function removeLanguage(button) {
-            const container = document.getElementById('languages-container');
-            if (container.children.length > 1) {
-                button.parentElement.remove();
-            } else {
-                alert('You must have at least one language');
-            }
-        }
-
-        function addSubject() {
-            const container = document.getElementById('subjects-container');
-            const newEntry = document.createElement('div');
-            newEntry.className = 'subject-entry';
-            newEntry.innerHTML = `
-                <select name="subjects[]" class="subject-select">
-                    <option value="">Select a subject</option>
-                    <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
-                        <option value="<?= htmlspecialchars($subject) ?>|"><?= htmlspecialchars($subject) ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <input type="text" name="grades[]" placeholder="Grade (e.g., 10)">
-                <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
-            `;
-            container.appendChild(newEntry);
-        }
-    </script>
+        <script src="scripts/profile_image.js"></script>
+        <script src="scripts/index_script.js"></script>
+        <script src="scripts/createprofile_script.js"></script>
+        <script>
+            const allSubjects = <?= json_encode(Qualifications::getAllSubjects()) ?>;
+            const allLanguages = <?= json_encode(Qualifications::getAllLanguages()) ?>;
+            const allTutorLevels = <?= json_encode(Qualifications::getAllTutorLevels()) ?>;
+            const allStudentLevels = <?= json_encode(Qualifications::getAllStudentLevels()) ?>;
+        </script>
+        <script src="scripts/editprofile_script.js"></script>
 </body>
 </html>
