@@ -276,7 +276,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <?php if ($user->type === 'TUTOR'): ?>
                     <div class="form-group">
-                        <label>Subjects Taught:</label>
+                        <label>Subjects You Can Teach</label>
                         <div id="subjects-container">
                             <?php if (!empty($subjects)): ?>
                                 <?php foreach ($subjects as $subject): ?>
@@ -304,11 +304,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <button type="button" class="add-btn" onclick="addSubject()">Add Subject</button>
+                        <button type="button" class="add-btn" onclick="addSubject()">Add Another Subject</button>
                     </div>
 
                     <div class="form-group">
-                        <label>Languages Spoken:</label>
+                        <label>Languages Spoken</label>
                         <div id="languages-container">
                             <?php if (!empty($languages)): ?>
                                 <?php foreach ($languages as $language): ?>
@@ -336,11 +336,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <button type="button" class="add-btn" onclick="addLanguage()">Add Language</button>
+                        <button type="button" class="add-btn" onclick="addLanguage()">Add Another Language</button>
                     </div>
                 <?php elseif ($user->type === 'STUDENT'): ?>
                     <div class="form-group">
-                        <label>Subjects of Interest:</label>
+                        <label>Subjects You Need Help With</label>
                         <div id="subjects-container">
                             <?php if (!empty($subjects)): ?>
                                 <?php foreach ($subjects as $subject): ?>
@@ -348,33 +348,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <select name="subjects[]" class="subject-select">
                                             <option value="">Select a subject</option>
                                             <?php foreach (Qualifications::getAllSubjects() as $all_subject): ?>
-                                                <option value="<?= htmlspecialchars($all_subject) ?>|<?= htmlspecialchars($subject['GRADE']) ?>" <?= ($all_subject === $subject['SUBJECT']) ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($all_subject) ?> (Grade <?= htmlspecialchars($subject['GRADE']) ?>)
+                                                <option value="<?= htmlspecialchars($all_subject) ?>" <?= ($all_subject === $subject['SUBJECT']) ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($all_subject) ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
                                         <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
                                     </div>
-                                    <button type="button" class="add-btn" data-usertype="<?= $user->type ?>" onclick="addSubject()">Add Another Subject</button>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <div class="subject-entry">
                                     <select name="subjects[]" class="subject-select">
                                         <option value="">Select a subject</option>
                                         <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
-                                            <option value="<?= htmlspecialchars($subject) ?>|"><?= htmlspecialchars($subject) ?></option>
+                                            <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
                                         <?php endforeach; ?>
                                     </select>
-                                    <input type="text" name="grades[]" placeholder="Grade (e.g., 10)">
                                     <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <button type="button" class="add-btn" onclick="addSubject()">Add Subject</button>
+                        <button type="button" class="add-btn" onclick="addSubject()">Add Another Subject</button>
                     </div>
 
                     <div class="form-group">
-                        <label>Languages to Learn:</label>
+                        <label>Languages Spoken</label>
                         <div id="languages-container">
                             <?php if (!empty($languages)): ?>
                                 <?php foreach ($languages as $language): ?>
@@ -402,7 +400,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <button type="button" class="add-btn" onclick="addLanguage()">Add Language</button>
+                        <button type="button" class="add-btn" onclick="addLanguage()">Add Another Language</button>
                     </div>
                 <?php endif; ?>
 

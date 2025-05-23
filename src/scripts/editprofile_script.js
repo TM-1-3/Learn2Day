@@ -20,7 +20,7 @@ function addSubject() {
     let gradeOptions = '';
     if (userType === 'TUTOR') {
         gradeOptions = '<option value="">School level</option>';
-        (window.allTutorLevels || []).forEach(level => {
+        allTutorLevels.forEach(level => {
             gradeOptions += `<option value="${level}">${level}</option>`;
         });
         newEntry.innerHTML = `
