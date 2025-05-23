@@ -21,7 +21,7 @@ if(!$isLoggedIn){
 
 $user = $session->getUser();
 
-if($user->type == 'admin'){
+if($user->type == 'ADMIN'){
     header('Location: /admindashboard.php');
     exit();
 }
