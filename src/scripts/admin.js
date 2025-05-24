@@ -54,3 +54,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+/*This javascript makes the graph in the admin dashboard work*/

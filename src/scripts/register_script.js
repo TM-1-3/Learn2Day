@@ -12,3 +12,5 @@ overlayBtn.addEventListener('click', () => {
         ? '#32533D'
         : '#03254E';
 });
+
+/*That cool animation that makes the login and register forms switch places*/

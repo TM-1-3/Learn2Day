@@ -3,7 +3,7 @@ function getUserType() {
     if (btn && btn.dataset.usertype) return btn.dataset.usertype;
     if (document.querySelector('.T_signUp') || document.querySelector('.upload-btnT')) return 'TUTOR';
     return 'STUDENT';
-}
+} /*This function figures out which type of user is being created based on whether the sign up as a tutor or sign up as a student button was pressed */
 
 function addSubject() {
     const userType = window.userType || (typeof getUserType === 'function' ? getUserType() : 'STUDENT');
@@ -40,6 +40,7 @@ function addSubject() {
     }
     container.appendChild(newEntry);
 }
+/*Handles the part where you add a subject to the create profile*/
 
 function removeSubject(button) {
     const entry = button.closest('.subject-entry');
@@ -50,6 +51,7 @@ function removeSubject(button) {
         alert('You need at least one subject');
     }
 }
+
 
 function addLanguage() {
     const container = document.getElementById('languages-container');
