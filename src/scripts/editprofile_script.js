@@ -90,3 +90,5 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const form = document.querySelector('form[action="edit_profile.php"]');
 });
+
+/*All of these methos function the same way as the create profile script, but they are used to edit the profile instead of creating a new one.*/

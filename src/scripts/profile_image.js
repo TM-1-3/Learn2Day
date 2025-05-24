@@ -52,3 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+
+/* This script handles the profile image upload functionality.*/

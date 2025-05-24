@@ -23,3 +23,5 @@ document.querySelector('.filter-button').addEventListener('click', (e) => {
     e.stopPropagation();
     document.querySelector('.search-bar form').submit();
 });
+
+/*Navbar Logic*/
