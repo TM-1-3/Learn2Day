@@ -97,7 +97,7 @@ class Tutor {
     }
     public static function delete(string $username): bool {
         $db = Database::getInstance();
-        $stmt = $db->prepare('DELETE FROM STUDENT WHERE ID_STUDENT = ?');
+        $stmt = $db->prepare('DELETE FROM TUTOR WHERE ID_TUTOR = ?');
         return $stmt->execute([$username]);
     }
 

@@ -52,7 +52,7 @@ CREATE TABLE ADMIN(
 );
 
 INSERT INTO ADMIN(ID_ADMIN, NAME, DATE_OF_BIRTH, PROFILE_IMAGE, DESCRIPTION) VALUES
-('martim', 'Martim', '2005-12-09', 'src/uploads/profiles/martim.png', 'Hi! I am Martim.');
+('martim', 'Martim', '2005-12-09', 'martim.png', 'Hi! I am Martim.');
 
 
 DROP TABLE IF EXISTS STUDENT_TUTOR;

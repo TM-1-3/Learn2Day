@@ -4,13 +4,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const userCtx = userChartElem.getContext('2d');
         const totalTutors = window.totalTutors || 0;
         const totalStudents = window.totalStudents || 0;
+        const totalAdmins = window.totalAdmins || 0;
+        
         const userChart = new Chart(userCtx, {
             type: 'pie',
             data: {
-                labels: ['Tutors', 'Students'],
+                labels: ['Tutors', 'Students', 'Admins'],
                 datasets: [{
-                    data: [totalTutors, totalStudents],
-                    backgroundColor: ['#03254e', '#32533D'],
+                    data: [totalTutors, totalStudents, totalAdmins],
+                    backgroundColor: ['#03254e', '#32533D', '#FFD670'],
                     borderWidth: 1
                 }]
             },

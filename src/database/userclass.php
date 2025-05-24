@@ -113,5 +113,11 @@ class User {
     }
 
 
+    public function delete(): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('DELETE FROM USERS WHERE ID_USER = ?');
+        return $stmt->execute([$this->id]);
+    }
+
 }
 ?>

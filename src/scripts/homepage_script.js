@@ -21,6 +21,5 @@ document.addEventListener("click", (e) => {
 
 document.querySelector('.filter-button').addEventListener('click', (e) => {
     e.stopPropagation();
-    // Submit the form when filter options are selected
     document.querySelector('.search-bar form').submit();
 });

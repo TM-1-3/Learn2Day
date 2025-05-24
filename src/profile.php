@@ -6,6 +6,7 @@ require_once __DIR__ . '/database/studentclass.php';
 require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/qualificationclass.php';
+require_once __DIR__ . '/database/adminclass.php';
 
 $session = Session::getInstance();
 
@@ -25,21 +26,14 @@ if (!$user) {
 }
 
 $profile = null;
-$profile_type = $user->type; // Use the actual type from the user object
+$profile_type = $user->type;
 
-// For admin, we'll just use the basic user info since they don't have a separate profile table
 if ($user->type === 'STUDENT') {
     $profile = Student::getByUsername($profile_username);
 } elseif ($user->type === 'TUTOR') {
     $profile = Tutor::getByUsername($profile_username);
 } elseif ($user->type === 'ADMIN') {
-    // For admin, create a simple profile object with available data
-    $profile = (object)[
-        'name' => $user->username, // Or you could add a name field to USERS table
-        'profile_image' => 'default.png',
-        'description' => 'Administrator',
-        'date_of_birth' => null
-    ];
+    $profile = Admin::getByUsername($profile_username);
 }
 
 if (!$profile) {
@@ -142,9 +136,9 @@ if ($user->type === 'TUTOR') {
                     <a href="/edit_profile.php" class="edit-profile-btn">Edit Profile</a>
                 <?php endif; ?>
                 <?php if($myuser->type == 'ADMIN' && $user->type !== 'ADMIN'): ?>
-                    <form action="" method="post" class="delete-user-form">
+                    <form action="/actions/ban.php" method="post" class="delete-user-form">
                         <input type="hidden" name="username" value="<?= htmlspecialchars($profile_username) ?>">
-                        <button type="submit" class="delete-user-btn">Delete User</button>
+                        <button type="submit" class="delete-user-btn">Ban User</button>
                     </form>
                     <form action="/actions/promotion.php" method="post" class="promote-user-form">
                         <input type="hidden" name="username" value="<?= htmlspecialchars($profile_username) ?>">

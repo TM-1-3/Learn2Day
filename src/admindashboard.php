@@ -7,6 +7,7 @@ require_once __DIR__ . '/database/studentclass.php';
 require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/qualificationclass.php';
+require_once __DIR__ . '/database/adminclass.php';
 
 $db = Database::getInstance();
 
@@ -25,6 +26,7 @@ if($user->type !== 'ADMIN'){
 $totalUsers = User::countAllUsers();
 $totalTutors = Tutor::countAllTutors();
 $totalStudents = Student::countAllStudents();
+$totalAdmins = Admin::countAllAdmins();
 
 $searchQuery = '';
 $searchResults = [];
@@ -37,8 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_G
     
     $showAll = false;
 
+
     $query = "
-    SELECT T.ID_TUTOR as id, T.NAME, 'tutor' as type, T.PROFILE_IMAGE, T.DESCRIPTION, U.USERNAME
+    SELECT T.ID_TUTOR as id, T.NAME, 'TUTOR' as type, T.PROFILE_IMAGE, T.DESCRIPTION, U.USERNAME
     FROM TUTOR T
     JOIN USERS U ON T.ID_TUTOR = U.USERNAME
     WHERE 1=1
@@ -65,8 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_G
     $stmt->execute($params);
     $tutorResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
     $query_students = "
-        SELECT S.ID_STUDENT as id, S.NAME, 'student' as type, S.PROFILE_IMAGE, S.DESCRIPTION, U.USERNAME
+        SELECT S.ID_STUDENT as id, S.NAME, 'STUDENT' as type, S.PROFILE_IMAGE, S.DESCRIPTION, U.USERNAME
         FROM STUDENT S
         JOIN USERS U ON S.ID_STUDENT = U.USERNAME
         WHERE 1=1
@@ -93,7 +97,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_G
     $stmt_students->execute($params_students);
     $studentResults = $stmt_students->fetchAll(PDO::FETCH_ASSOC);
 
-    $searchResults = array_merge($tutorResults, $studentResults);
+    $query_admins = "
+        SELECT A.ID_ADMIN as id, A.NAME, 'ADMIN' as type, A.PROFILE_IMAGE, A.DESCRIPTION, U.USERNAME
+        FROM ADMIN A
+        JOIN USERS U ON A.ID_ADMIN = U.USERNAME
+        WHERE 1=1
+    ";
+    
+    $params_admins = [];
+
+    if (!empty($searchQuery)) {
+        $query_admins .= " AND (A.NAME LIKE ? OR U.USERNAME LIKE ?)";
+        $searchParam = "%$searchQuery%";
+        $params_admins[] = $searchParam;
+        $params_admins[] = $searchParam;
+    }
+    
+    $stmt_admins = $db->prepare($query_admins);
+    $stmt_admins->execute($params_admins);
+    $adminResults = $stmt_admins->fetchAll(PDO::FETCH_ASSOC);
+
+    $searchResults = array_merge($tutorResults, $studentResults, $adminResults);
 }
 
 if ($showAll) {
@@ -271,6 +295,7 @@ $allSubjects = Qualifications::getAllSubjects();
     <script>
         window.totalTutors = <?= $totalTutors ?>;
         window.totalStudents = <?= $totalStudents ?>;
+        window.totalAdmins = <?= $totalAdmins ?>;
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
