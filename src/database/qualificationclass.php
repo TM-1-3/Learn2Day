@@ -102,7 +102,13 @@ class Qualifications {
                 error_log("Database error: " . implode(":", $stmt->errorInfo()));
                 return [];
             }
-            return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+            $levels = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+            usort($levels, function($a, $b) {
+                $numA = (int) filter_var($a, FILTER_SANITIZE_NUMBER_INT);
+                $numB = (int) filter_var($b, FILTER_SANITIZE_NUMBER_INT);
+                return $numA <=> $numB;
+            });
+            return $levels;
         } catch (PDOException $e) {
             error_log("Database exception: " . $e->getMessage());
             return [];
@@ -112,12 +118,18 @@ class Qualifications {
     public static function getAllStudentLevels(): array {
         try {
             $db = Database::getInstance();
-            $stmt = $db->prepare('SELECT DESIGNATION FROM STUDENT_LEVEL ORDER BY DESIGNATION');
+            $stmt = $db->prepare('SELECT DESIGNATION FROM STUDENT_LEVEL');
             if (!$stmt->execute()) {
                 error_log("Database error: " . implode(":", $stmt->errorInfo()));
                 return [];
             }
-            return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+            $levels = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+            usort($levels, function($a, $b) {
+                $numA = (int) filter_var($a, FILTER_SANITIZE_NUMBER_INT);
+                $numB = (int) filter_var($b, FILTER_SANITIZE_NUMBER_INT);
+                return $numA <=> $numB;
+            });
+            return $levels;
         } catch (PDOException $e) {
             error_log("Database exception: " . $e->getMessage());
             return [];
