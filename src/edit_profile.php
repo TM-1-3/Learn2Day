@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 require_once __DIR__ . '/includes/session.php';
 require_once __DIR__ . '/database/studentclass.php';
@@ -91,14 +92,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
-        
+
         $fileExt = pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION);
         $fileName = uniqid('profile_') . '.' . $fileExt;
         $targetPath = $uploadDir . $fileName;
 
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
         $fileType = mime_content_type($_FILES['profile_image']['tmp_name']);
-        
+
         if (in_array($fileType, $allowedTypes)) {
             if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $targetPath)) {
 
@@ -146,19 +147,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             User::updatePassword($user->id, $new_password);
         }
 
-        $qualifications_updated = true; 
+        $qualifications_updated = true;
 
         if ($user->type === 'TUTOR') {
             Qualifications::deleteTutorSubjects($new_username);
             if (isset($_POST['subjects']) && is_array($_POST['subjects']) && isset($_POST['tutor_level']) && is_array($_POST['tutor_level'])) {
-                 $subjects = $_POST['subjects'];
+                $subjects = $_POST['subjects'];
                 $levels = $_POST['tutor_level'];
                 $count = min(count($subjects), count($levels));
-                
+
                 for ($i = 0; $i < $count; $i++) {
                     $subject = trim($subjects[$i]);
                     $level = trim($levels[$i]);
-                    
+
                     if (!empty($subject) && !empty($level)) {
                         Qualifications::addTutorSubject($new_username, $subject, $level);
                     }
@@ -178,11 +179,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $subjects = $_POST['subjects'];
                 $levels = $_POST['student_levels'];
                 $count = min(count($subjects), count($levels));
-                
+
                 for ($i = 0; $i < $count; $i++) {
                     $subject = trim($subjects[$i]);
                     $level = trim($levels[$i]);
-                    
+
                     if (!empty($subject) && !empty($level)) {
                         Qualifications::addStudentSubject($new_username, $subject, $level);
                     }
@@ -200,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $updated_user = User::get_user_by_username($new_username);
         if ($updated_user) {
-            $session->login($updated_user); 
+            $session->login($updated_user);
         }
 
         if ($user_updated && $profile_updated && $qualifications_updated) {
@@ -216,6 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -223,8 +225,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="/styles/editprofile.css">
     <link rel="stylesheet" href="/styles/homepage.css">
 </head>
+
 <body>
-    <?php if($user->type == 'STUDENT'): ?>
+    <?php if ($user->type == 'STUDENT'): ?>
+
         <body style="background-color: #32533D">
     <?php elseif($user->type == 'TUTOR'): ?>
         <body style="background-color: #03254E">
@@ -242,228 +246,229 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h1 style="color: #FFD670">Edit Profile</h1>
             <?php endif; ?>
 
-            <?php if (!empty($errors)): ?>
-                <div class="errors">
-                    <?php foreach ($errors as $error): ?>
-                        <p><?= htmlspecialchars($error) ?></p>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if (isset($_SESSION['success_message'])): ?>
-                <div class="success-message">
-                    <p><?= htmlspecialchars($_SESSION['success_message']) ?></p>
-                    <?php unset($_SESSION['success_message']); ?>
-                </div>
-            <?php endif; ?>
-
-            <form action="edit_profile.php" method="POST" enctype="multipart/form-data">
-                <div class="undpp">
-                <div class="username-email">
-                    <input type="text" id="username" name="username" value="<?= htmlspecialchars($username) ?>" required>
-                    <input type="email" id="email" name="email" value="<?= htmlspecialchars($email) ?>" required>
-                </div>
-                <div class="new-password">
-                    <input type="password" id="password" name="password" placeholder="New Password (optional)">
-                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm New Password (optional)">
-                </div>
-                <div class="name-dob">
-                    <input type="text" id="name" name="name" value="<?= htmlspecialchars($name) ?>" required>
-                    <input type="date" id="date-of-birth" name="date-of-birth" value="<?= htmlspecialchars($date_of_birth) ?>" required>
-                </div>
-                <div class="image-upload-container">
-                    <div class="upload-area" id="uploadArea">
-                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                        <span class="upload-text">Click to upload profile image</span>
-                        <img id="image-preview" alt="Preview" style="display:<?= $profile_image ? 'block' : 'none' ?>;" src="<?= $profile_image ? htmlspecialchars((strpos($profile_image, '/') === 0 ? $profile_image : '/uploads/profiles/' . $profile_image)) : '' ?>">
-                    </div>
-                    <input type="file" id="fileInput" class="upload-input" name="profile_image" accept="image/jpeg,image/png,image/gif">
-                    <?php if($user->type == 'STUDENT'): ?>
-                    <button type="button" class="upload-btnS" onclick="document.getElementById('fileInput').click()">Choose File</button>
-                    <?php elseif($user->type == 'TUTOR'): ?>
-                    <button type="button" class="upload-btnT" onclick="document.getElementById('fileInput').click()">Choose File</button>
-                    <?php endif; ?>
-                    <div class="file-info" id="fileInfo">No file chosen</div>
-                </div>
-                </div>
-                <div class="description">
-                    <textarea id="description" name="description"><?= htmlspecialchars($description) ?></textarea>
-                </div>
-
-                <?php if ($user->type === 'TUTOR'): ?>
-                    <div class="form-group">
-                        <label>Subjects You Can Teach</label>
-                        <div id="subjects-container">
-                            <?php if (!empty($subjects)): ?>
-                                <?php foreach ($subjects as $subject): ?>
-                                    <div class="subject-entry">
-                                        <select name="subjects[]" class="subject-select">
-                                            <option value="">Select a subject</option>
-                                            <?php foreach (Qualifications::getAllSubjects() as $all_subject): ?>
-                                                <option value="<?= htmlspecialchars($all_subject) ?>" <?= ($all_subject === ($subject['SUBJECT'] ?? $subject['subject'] ?? '')) ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($all_subject) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                        <select name="tutor_level[]" class="grade-select">
-                                            <option value="">School level</option>
-                                            <?php foreach (Qualifications::getAllTutorLevels() as $level): ?>
-                                                <option value="<?= htmlspecialchars($level) ?>" <?= ($level === ($subject['LEVEL'] ?? $subject['TUTOR_LEVEL'] ?? '')) ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($level) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                        <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
-                                    </div>
+                        <?php if (!empty($errors)): ?>
+                            <div class="errors">
+                                <?php foreach ($errors as $error): ?>
+                                    <p><?= htmlspecialchars($error) ?></p>
                                 <?php endforeach; ?>
-                            <?php else: ?>
-                                <div class="subject-entry">
-                                    <select name="subjects[]" class="subject-select">
-                                        <option value="">Select a subject</option>
-                                        <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
-                                            <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <select name="tutor_level[]" class="grade-select">
-                                        <option value="">School level</option>
-                                        <?php foreach (Qualifications::getAllTutorLevels() as $level): ?>
-                                            <option value="<?= htmlspecialchars($level) ?>"><?= htmlspecialchars($level) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($_SESSION['success_message'])): ?>
+                            <div class="success-message">
+                                <p><?= htmlspecialchars($_SESSION['success_message']) ?></p>
+                                <?php unset($_SESSION['success_message']); ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <form action="edit_profile.php" method="POST" enctype="multipart/form-data">
+                            <div class="undpp">
+                                <div class="username-email">
+                                    <input type="text" id="username" name="username" value="<?= htmlspecialchars($username) ?>" required>
+                                    <input type="email" id="email" name="email" value="<?= htmlspecialchars($email) ?>" required>
+                                </div>
+                                <div class="new-password">
+                                    <input type="password" id="password" name="password" placeholder="New Password (optional)">
+                                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm New Password (optional)">
+                                </div>
+                                <div class="name-dob">
+                                    <input type="text" id="name" name="name" value="<?= htmlspecialchars($name) ?>" required>
+                                    <input type="date" id="date-of-birth" name="date-of-birth" value="<?= htmlspecialchars($date_of_birth) ?>" required>
+                                </div>
+                                <div class="image-upload-container">
+                                    <div class="upload-area" id="uploadArea">
+                                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                        <span class="upload-text">Click to upload profile image</span>
+                                        <img id="image-preview" alt="Preview" style="display:<?= $profile_image ? 'block' : 'none' ?>;" src="<?= $profile_image ? htmlspecialchars((strpos($profile_image, '/') === 0 ? $profile_image : '/uploads/profiles/' . $profile_image)) : '' ?>">
+                                    </div>
+                                    <input type="file" id="fileInput" class="upload-input" name="profile_image" accept="image/jpeg,image/png,image/gif">
+                                    <?php if ($user->type == 'STUDENT'): ?>
+                                        <button type="button" class="upload-btnS" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                                    <?php elseif ($user->type == 'TUTOR'): ?>
+                                        <button type="button" class="upload-btnT" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                                    <?php endif; ?>
+                                    <div class="file-info" id="fileInfo">No file chosen</div>
+                                </div>
+                            </div>
+                            <div class="description">
+                                <textarea id="description" name="description"><?= htmlspecialchars($description) ?></textarea>
+                            </div>
+
+                            <?php if ($user->type === 'TUTOR'): ?>
+                                <div class="form-group">
+                                    <label>Subjects You Can Teach</label>
+                                    <div id="subjects-container">
+                                        <?php if (!empty($subjects)): ?>
+                                            <?php foreach ($subjects as $subject): ?>
+                                                <div class="subject-entry">
+                                                    <select name="subjects[]" class="subject-select">
+                                                        <option value="">Select a subject</option>
+                                                        <?php foreach (Qualifications::getAllSubjects() as $all_subject): ?>
+                                                            <option value="<?= htmlspecialchars($all_subject) ?>" <?= ($all_subject === ($subject['SUBJECT'] ?? $subject['subject'] ?? '')) ? 'selected' : '' ?>>
+                                                                <?= htmlspecialchars($all_subject) ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                    <select name="tutor_level[]" class="grade-select">
+                                                        <option value="">School level</option>
+                                                        <?php foreach (Qualifications::getAllTutorLevels() as $level): ?>
+                                                            <option value="<?= htmlspecialchars($level) ?>" <?= ($level === ($subject['LEVEL'] ?? $subject['TUTOR_LEVEL'] ?? '')) ? 'selected' : '' ?>>
+                                                                <?= htmlspecialchars($level) ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                    <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <div class="subject-entry">
+                                                <select name="subjects[]" class="subject-select">
+                                                    <option value="">Select a subject</option>
+                                                    <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
+                                                        <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                                <select name="tutor_level[]" class="grade-select">
+                                                    <option value="">School level</option>
+                                                    <?php foreach (Qualifications::getAllTutorLevels() as $level): ?>
+                                                        <option value="<?= htmlspecialchars($level) ?>"><?= htmlspecialchars($level) ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                                <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <button type="button" class="add-btn" onclick="addSubject()">Add Another Subject</button>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Languages Spoken</label>
+                                    <div id="languages-container">
+                                        <?php if (!empty($languages)): ?>
+                                            <?php foreach ($languages as $language): ?>
+                                                <div class="language-entry">
+                                                    <select name="languages[]" class="language-select">
+                                                        <option value="">Select a language</option>
+                                                        <?php foreach (Qualifications::getAllLanguages() as $all_language): ?>
+                                                            <option value="<?= htmlspecialchars($all_language) ?>" <?= ($all_language === $language) ? 'selected' : '' ?>>
+                                                                <?= htmlspecialchars($all_language) ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                    <button type="button" class="remove-btn" onclick="removeLanguage(this)">Remove</button>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <div class="language-entry">
+                                                <select name="languages[]" class="language-select">
+                                                    <option value="">Select a language</option>
+                                                    <?php foreach (Qualifications::getAllLanguages() as $language): ?>
+                                                        <option value="<?= htmlspecialchars($language) ?>"><?= htmlspecialchars($language) ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                                <button type="button" class="remove-btn" onclick="removeLanguage(this)">Remove</button>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <button type="button" class="add-btn" onclick="addLanguage()">Add Another Language</button>
+                                </div>
+                            <?php elseif ($user->type === 'STUDENT'): ?>
+                                <div class="form-group">
+                                    <label>Subjects You Need Help With</label>
+                                    <div id="subjects-container">
+                                        <?php if (!empty($subjects)): ?>
+                                            <?php foreach ($subjects as $subject): ?>
+                                                <div class="subject-entry">
+                                                    <select name="subjects[]" class="subject-select">
+                                                        <option value="">Select a subject</option>
+                                                        <?php foreach (Qualifications::getAllSubjects() as $all_subject): ?>
+                                                            <option value="<?= htmlspecialchars($all_subject) ?>" <?= ($all_subject === ($subject['SUBJECT'] ?? $subject['subject'] ?? '')) ? 'selected' : '' ?>>
+                                                                <?= htmlspecialchars($all_subject) ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                    <select name="student_levels[]" class="grade-select">
+                                                        <option value="">Grade level</option>
+                                                        <?php foreach (Qualifications::getAllStudentLevels() as $level): ?>
+                                                            <option value="<?= htmlspecialchars($level) ?>" <?= ($level === ($subject['GRADE'] ?? $subject['STUDENT_LEVEL'] ?? '')) ? 'selected' : '' ?>>
+                                                                <?= htmlspecialchars($level) ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                    <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <div class="subject-entry">
+                                                <select name="subjects[]" class="subject-select">
+                                                    <option value="">Select a subject</option>
+                                                    <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
+                                                        <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                                <select name="student_levels[]" class="grade-select">
+                                                    <option value="">Grade level</option>
+                                                    <?php foreach (Qualifications::getAllStudentLevels() as $level): ?>
+                                                        <option value="<?= htmlspecialchars($level) ?>"><?= htmlspecialchars($level) ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                                <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <button type="button" class="add-btn" onclick="addSubject()">Add Another Subject</button>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Languages Spoken</label>
+                                    <div id="languages-container">
+                                        <?php if (!empty($languages)): ?>
+                                            <?php foreach ($languages as $language): ?>
+                                                <div class="language-entry">
+                                                    <select name="languages[]" class="language-select">
+                                                        <option value="">Select a language</option>
+                                                        <?php foreach (Qualifications::getAllLanguages() as $all_language): ?>
+                                                            <option value="<?= htmlspecialchars($all_language) ?>" <?= ($all_language === $language) ? 'selected' : '' ?>>
+                                                                <?= htmlspecialchars($all_language) ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                    <button type="button" class="remove-btn" onclick="removeLanguage(this)">Remove</button>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <div class="language-entry">
+                                                <select name="languages[]" class="language-select">
+                                                    <option value="">Select a language</option>
+                                                    <?php foreach (Qualifications::getAllLanguages() as $language): ?>
+                                                        <option value="<?= htmlspecialchars($language) ?>"><?= htmlspecialchars($language) ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                                <button type="button" class="remove-btn" onclick="removeLanguage(this)">Remove</button>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <button type="button" class="add-btn" onclick="addLanguage()">Add Another Language</button>
                                 </div>
                             <?php endif; ?>
-                        </div>
-                        <button type="button" class="add-btn" onclick="addSubject()">Add Another Subject</button>
+                            <div class="buttons">
+                                <button type="submit" class="submit-btn">Save Changes</button>
+                                <button type="button" class="cancel-btn" onclick="window.location.href='/profile.php?id=<?= urlencode($user->username) ?>'">Cancel</button>
+                            </div>
+                        </form>
                     </div>
-
-                    <div class="form-group">
-                        <label>Languages Spoken</label>
-                        <div id="languages-container">
-                            <?php if (!empty($languages)): ?>
-                                <?php foreach ($languages as $language): ?>
-                                    <div class="language-entry">
-                                        <select name="languages[]" class="language-select">
-                                            <option value="">Select a language</option>
-                                            <?php foreach (Qualifications::getAllLanguages() as $all_language): ?>
-                                                <option value="<?= htmlspecialchars($all_language) ?>" <?= ($all_language === $language) ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($all_language) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                        <button type="button" class="remove-btn" onclick="removeLanguage(this)">Remove</button>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <div class="language-entry">
-                                    <select name="languages[]" class="language-select">
-                                        <option value="">Select a language</option>
-                                        <?php foreach (Qualifications::getAllLanguages() as $language): ?>
-                                            <option value="<?= htmlspecialchars($language) ?>"><?= htmlspecialchars($language) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <button type="button" class="remove-btn" onclick="removeLanguage(this)">Remove</button>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                        <button type="button" class="add-btn" onclick="addLanguage()">Add Another Language</button>
-                    </div>
-                <?php elseif ($user->type === 'STUDENT'): ?>
-                    <div class="form-group">
-                        <label>Subjects You Need Help With</label>
-                        <div id="subjects-container">
-                            <?php if (!empty($subjects)): ?>
-                                <?php foreach ($subjects as $subject): ?>
-                                    <div class="subject-entry">
-                                        <select name="subjects[]" class="subject-select">
-                                            <option value="">Select a subject</option>
-                                            <?php foreach (Qualifications::getAllSubjects() as $all_subject): ?>
-                                                <option value="<?= htmlspecialchars($all_subject) ?>" <?= ($all_subject === ($subject['SUBJECT'] ?? $subject['subject'] ?? '')) ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($all_subject) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                        <select name="student_levels[]" class="grade-select">
-                                            <option value="">Grade level</option>
-                                            <?php foreach (Qualifications::getAllStudentLevels() as $level): ?>
-                                                <option value="<?= htmlspecialchars($level) ?>" <?= ($level === ($subject['GRADE'] ?? $subject['STUDENT_LEVEL'] ?? '')) ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($level) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                        <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <div class="subject-entry">
-                                    <select name="subjects[]" class="subject-select">
-                                        <option value="">Select a subject</option>
-                                        <?php foreach (Qualifications::getAllSubjects() as $subject): ?>
-                                            <option value="<?= htmlspecialchars($subject) ?>"><?= htmlspecialchars($subject) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <select name="student_levels[]" class="grade-select">
-                                        <option value="">Grade level</option>
-                                        <?php foreach (Qualifications::getAllStudentLevels() as $level): ?>
-                                            <option value="<?= htmlspecialchars($level) ?>"><?= htmlspecialchars($level) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                        <button type="button" class="add-btn" onclick="addSubject()">Add Another Subject</button>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Languages Spoken</label>
-                        <div id="languages-container">
-                            <?php if (!empty($languages)): ?>
-                                <?php foreach ($languages as $language): ?>
-                                    <div class="language-entry">
-                                        <select name="languages[]" class="language-select">
-                                            <option value="">Select a language</option>
-                                            <?php foreach (Qualifications::getAllLanguages() as $all_language): ?>
-                                                <option value="<?= htmlspecialchars($all_language) ?>" <?= ($all_language === $language) ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($all_language) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                        <button type="button" class="remove-btn" onclick="removeLanguage(this)">Remove</button>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <div class="language-entry">
-                                    <select name="languages[]" class="language-select">
-                                        <option value="">Select a language</option>
-                                        <?php foreach (Qualifications::getAllLanguages() as $language): ?>
-                                            <option value="<?= htmlspecialchars($language) ?>"><?= htmlspecialchars($language) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <button type="button" class="remove-btn" onclick="removeLanguage(this)">Remove</button>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                        <button type="button" class="add-btn" onclick="addLanguage()">Add Another Language</button>
-                    </div>
-                <?php endif; ?>
-                <div class="buttons">
-                <button type="submit" class="submit-btn">Save Changes</button>
-                <button type="button" class="cancel-btn" onclick="window.location.href='/profile.php?id=<?= urlencode($user->username) ?>'">Cancel</button>
                 </div>
-            </form>
-        </div>
-        </div>
-    </main>
-        <script src="scripts/profile_image.js"></script>
-        <script src="scripts/index_script.js"></script>
-        <script src="scripts/createprofile_script.js"></script>
-        <script>
-            const allSubjects = <?= json_encode(Qualifications::getAllSubjects()) ?>;
-            const allLanguages = <?= json_encode(Qualifications::getAllLanguages()) ?>;
-            const allTutorLevels = <?= json_encode(Qualifications::getAllTutorLevels()) ?>;
-            const allStudentLevels = <?= json_encode(Qualifications::getAllStudentLevels()) ?>;
-        </script>
-        <script src="scripts/editprofile_script.js"></script>
-</body>
+            </main>
+            <script src="scripts/profile_image.js"></script>
+            <script src="scripts/index_script.js"></script>
+            <script src="scripts/createprofile_script.js"></script>
+            <script>
+                const allSubjects = <?= json_encode(Qualifications::getAllSubjects()) ?>;
+                const allLanguages = <?= json_encode(Qualifications::getAllLanguages()) ?>;
+                const allTutorLevels = <?= json_encode(Qualifications::getAllTutorLevels()) ?>;
+                const allStudentLevels = <?= json_encode(Qualifications::getAllStudentLevels()) ?>;
+            </script>
+            <script src="scripts/editprofile_script.js"></script>
+            </body>
+
 </html>

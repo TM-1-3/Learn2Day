@@ -1,38 +1,43 @@
 <?php
+
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/database.php';
 
-class User {
+class User
+{
     public int $id;
     public string $username;
     public string $email;
     public string $type;
 
-    public function __construct(int $id, string $username, string $email, string $type) {
+    public function __construct(int $id, string $username, string $email, string $type)
+    {
         $this->id = $id;
         $this->username = $username;
         $this->email = $email;
         $this->type = $type;
     }
 
-    public static function create(string $username, string $password, string $email, string $type): int {
+    public static function create(string $username, string $password, string $email, string $type): int
+    {
         $db = Database::getInstance();
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        
+
         $stmt = $db->prepare('
             INSERT INTO USERS (USERNAME, PASSWORD, EMAIL, TYPE) 
             VALUES (?, ?, ?, ?)
         ');
         $stmt->execute([$username, $hashed_password, $email, $type]);
-        
+
         return (int)$db->lastInsertId();
     }
 
-    public static function get_user_by_username_password(string $username, string $password): ?User {
+    public static function get_user_by_username_password(string $username, string $password): ?User
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT * FROM USERS WHERE USERNAME = ?');
         $stmt->execute([$username]);
-        
+
         if ($row = $stmt->fetch()) {
             if (password_verify($password, $row['PASSWORD'])) {
                 return new User(
@@ -46,7 +51,8 @@ class User {
         return null;
     }
 
-    public static function get_user_by_username(string $username): ?User {
+    public static function get_user_by_username(string $username): ?User
+    {
         if (empty($username)) {
             throw new InvalidArgumentException("Username cannot be empty");
         }
@@ -66,11 +72,12 @@ class User {
         return null;
     }
 
-    public static function get_user_by_id(int $id): ?User {
+    public static function get_user_by_id(int $id): ?User
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT * FROM USERS WHERE ID_USER = ?');
         $stmt->execute([$id]);
-        
+
         if ($row = $stmt->fetch()) {
             return new User(
                 (int)$row['ID_USER'],
@@ -82,7 +89,8 @@ class User {
         return null;
     }
 
-    public static function get_user_by_email(string $email): ?User {
+    public static function get_user_by_email(string $email): ?User
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT * FROM USERS WHERE EMAIL = ?');
         $stmt->execute([$email]);
@@ -98,7 +106,8 @@ class User {
         return null;
     }
 
-    public function update(string $username, string $email, string $type): bool {
+    public function update(string $username, string $email, string $type): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('
             UPDATE USERS 
@@ -110,18 +119,20 @@ class User {
         return $stmt->execute([$username, $email, $type, $this->id]);
     }
 
-    public static function updatePassword(int $id, string $new_password): bool {
+    public static function updatePassword(int $id, string $new_password): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('
             UPDATE USERS
             SET PASSWORD = ? 
             WHERE ID_USER = ?');
-    
+
         $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
         return $stmt->execute([$hashed_password, $id]);
     }
 
-    public static function countAllUsers(): int {
+    public static function countAllUsers(): int
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT COUNT(*) FROM USERS');
         $stmt->execute();
@@ -129,11 +140,10 @@ class User {
     }
 
 
-    public function delete(): bool {
+    public function delete(): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('DELETE FROM USERS WHERE ID_USER = ?');
         return $stmt->execute([$this->id]);
     }
-
 }
-?>

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/session.php';
@@ -12,13 +13,13 @@ require_once __DIR__ . '/database/adminclass.php';
 $db = Database::getInstance();
 
 $session = Session::getInstance();
-if(!$session->isLoggedIn()) {
+if (!$session->isLoggedIn()) {
     header('Location: /');
     exit;
 }
 
 $user = $session->getUser();
-if($user->type !== 'ADMIN'){
+if ($user->type !== 'ADMIN') {
     header('Location: /homepage.php');
     exit;
 }
@@ -36,7 +37,7 @@ $selectedSubjects = [];
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_GET['subjects']))) {
     $searchQuery = trim($_GET['search'] ?? '');
     $selectedSubjects = $_GET['subjects'] ?? [];
-    
+
     $showAll = false;
 
 
@@ -46,16 +47,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_G
     JOIN USERS U ON T.ID_TUTOR = U.USERNAME
     WHERE 1=1
     ";
-    
+
     $params = [];
-    
+
     if (!empty($searchQuery)) {
         $query .= " AND (T.NAME LIKE ? OR U.USERNAME LIKE ?)";
         $searchParam = "%$searchQuery%";
         $params[] = $searchParam;
         $params[] = $searchParam;
     }
-    
+
     if (!empty($selectedSubjects)) {
         $subjectPlaceholders = implode(',', array_fill(0, count($selectedSubjects), '?'));
         $query .= " AND T.ID_TUTOR IN (SELECT TUTOR FROM TUTOR_SUBJECT WHERE SUBJECT IN ($subjectPlaceholders))";
@@ -75,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_G
         JOIN USERS U ON S.ID_STUDENT = U.USERNAME
         WHERE 1=1
     ";
-    
+
     $params_students = [];
 
     if (!empty($searchQuery)) {
@@ -92,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_G
             $params_students[] = $subject;
         }
     }
-    
+
     $stmt_students = $db->prepare($query_students);
     $stmt_students->execute($params_students);
     $studentResults = $stmt_students->fetchAll(PDO::FETCH_ASSOC);
@@ -103,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_G
         JOIN USERS U ON A.ID_ADMIN = U.USERNAME
         WHERE 1=1
     ";
-    
+
     $params_admins = [];
 
     if (!empty($searchQuery)) {
@@ -112,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_G
         $params_admins[] = $searchParam;
         $params_admins[] = $searchParam;
     }
-    
+
     $stmt_admins = $db->prepare($query_admins);
     $stmt_admins->execute($params_admins);
     $adminResults = $stmt_admins->fetchAll(PDO::FETCH_ASSOC);
@@ -135,6 +136,7 @@ $allSubjects = Qualifications::getAllSubjects();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -142,6 +144,7 @@ $allSubjects = Qualifications::getAllSubjects();
     <link rel="stylesheet" href="/styles/admin.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
+
 <body>
     <header class="header">
         <div class="site-name">
@@ -161,7 +164,7 @@ $allSubjects = Qualifications::getAllSubjects();
                         <h4>Filter by Subject</h4>
                         <?php foreach ($allSubjects as $subject): ?>
                             <label>
-                                <input type="checkbox" name="subjects[]" value="<?= htmlspecialchars($subject) ?>" 
+                                <input type="checkbox" name="subjects[]" value="<?= htmlspecialchars($subject) ?>"
                                     <?= (isset($_GET['subjects']) && in_array($subject, $_GET['subjects'])) ? 'checked' : '' ?>>
                                 <?= htmlspecialchars($subject) ?>
                             </label>
@@ -188,7 +191,7 @@ $allSubjects = Qualifications::getAllSubjects();
     <main>
         <h1>Admin Dashboard</h1>
         <h2>Welcome, <?= htmlspecialchars($user->username) ?>!</h2>
-        
+
         <div class="admin-info">
             <div class="stats-container">
                 <div class="stat-card">
@@ -213,19 +216,19 @@ $allSubjects = Qualifications::getAllSubjects();
             </div>
         </div>
 
-        <?php if(!empty($selectedSubjects)): ?>
+        <?php if (!empty($selectedSubjects)): ?>
             <div class="active-filters">
                 <strong>Active filters:</strong>
                 <?php foreach ($selectedSubjects as $subject): ?>
                     <span class="filter-tag">
                         <?= htmlspecialchars($subject) ?>
-                        <a href="?<?= http_build_query(array_merge($_GET, ['subjects' => array_diff($_GET['subjects'], [$subject])])) ?>" 
-                           class="remove-filter">×</a>
+                        <a href="?<?= http_build_query(array_merge($_GET, ['subjects' => array_diff($_GET['subjects'], [$subject])])) ?>"
+                            class="remove-filter">×</a>
                     </span>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
-        
+
         <?php if (!$showAll): ?>
             <section class="tutors-section">
                 <h2>Search Results <?= !empty($searchQuery) ? 'for "' . htmlspecialchars($searchQuery) . '"' : '' ?></h2>
@@ -233,14 +236,14 @@ $allSubjects = Qualifications::getAllSubjects();
                     <?php if (!empty($searchResults)): ?>
                         <?php foreach ($searchResults as $user): ?>
                             <div class="card" id="<?= $user['type'] ?><?= htmlspecialchars($user['id']) ?>"
-                                 onclick="window.location.href='/profile.php?id=<?= urlencode($user['USERNAME']) ?>'"
-                                 style="cursor: pointer;">
+                                onclick="window.location.href='/profile.php?id=<?= urlencode($user['USERNAME']) ?>'"
+                                style="cursor: pointer;">
                                 <div class="container">
                                     <div class="details">
                                         <div class="content-wrapper">
-                                            <img class="img" src="/uploads/profiles/<?= htmlspecialchars($user['PROFILE_IMAGE']) ?>" 
-                                                 alt="<?= htmlspecialchars($user['NAME']) ?>"
-                                                 onerror="this.src='/uploads/profiles/default.png'">
+                                            <img class="img" src="/uploads/profiles/<?= htmlspecialchars($user['PROFILE_IMAGE']) ?>"
+                                                alt="<?= htmlspecialchars($user['NAME']) ?>"
+                                                onerror="this.src='/uploads/profiles/default.png'">
                                             <div class="text-content">
                                                 <h2 class="title"><?= htmlspecialchars($user['NAME']) ?></h2>
                                                 <div class="subtitle-container">
@@ -266,14 +269,14 @@ $allSubjects = Qualifications::getAllSubjects();
                 <div class="cards-grid">
                     <?php foreach ($tutors as $tutor): ?>
                         <div class="card" id="tutor<?= htmlspecialchars($tutor['ID_TUTOR']) ?>"
-                             onclick="window.location.href='/profile.php?id=<?= urlencode($tutor['USERNAME']) ?>'"
-                             style="cursor: pointer;">
+                            onclick="window.location.href='/profile.php?id=<?= urlencode($tutor['USERNAME']) ?>'"
+                            style="cursor: pointer;">
                             <div class="container">
                                 <div class="details">
                                     <div class="content-wrapper">
-                                        <img class="img" src="/uploads/profiles/<?= htmlspecialchars($tutor['PROFILE_IMAGE']) ?>" 
-                                             alt="<?= htmlspecialchars($tutor['NAME']) ?>"
-                                             onerror="this.src='/uploads/profiles/default.png'">
+                                        <img class="img" src="/uploads/profiles/<?= htmlspecialchars($tutor['PROFILE_IMAGE']) ?>"
+                                            alt="<?= htmlspecialchars($tutor['NAME']) ?>"
+                                            onerror="this.src='/uploads/profiles/default.png'">
                                         <div class="text-content">
                                             <h2 class="title"><?= htmlspecialchars($tutor['NAME']) ?></h2>
                                             <div class="subtitle-container">
@@ -300,6 +303,7 @@ $allSubjects = Qualifications::getAllSubjects();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="/scripts/admin.js"></script>
-    <script src="/scripts/homepage_script.js"></script> 
+    <script src="/scripts/homepage_script.js"></script>
 </body>
+
 </html>

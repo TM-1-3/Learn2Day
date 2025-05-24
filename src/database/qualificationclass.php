@@ -5,8 +5,10 @@ require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/studentclass.php';
 require_once __DIR__ . '/tutorclass.php';
 
-class Qualifications {
-    public static function getAllSubjects(): array {
+class Qualifications
+{
+    public static function getAllSubjects(): array
+    {
         try {
             $db = Database::getInstance();
             $stmt = $db->prepare('SELECT DESIGNATION FROM SUBJECT ORDER BY DESIGNATION');
@@ -19,24 +21,20 @@ class Qualifications {
         } catch (PDOException $e) {
             error_log("Database exception: " . $e->getMessage());
             return [];
-        }   
+        }
     }
 
-    public static function getAllLanguages(): array {
+    public static function getAllLanguages(): array
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT DESIGNATION FROM LANGUAGE ORDER BY DESIGNATION');
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
     }
 
-    public static function getAllDegrees(): array {
-        $db = Database::getInstance();
-        $stmt = $db->prepare('SELECT DESIGNATION FROM DEGREE ORDER BY DESIGNATION');
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-    }
 
-    public static function addStudentLanguage(string $studentUsername, string $language): bool {
+    public static function addStudentLanguage(string $studentUsername, string $language): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('
             INSERT INTO STUDENT_LANGUAGE (STUDENT, LANGUAGE)
@@ -45,19 +43,22 @@ class Qualifications {
         return $stmt->execute([$studentUsername, $language]);
     }
 
-    public static function addStudentSubject(string $studentUsername, string $subject, string $level): bool {
+    public static function addStudentSubject(string $studentUsername, string $subject, string $level): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('INSERT INTO STUDENT_SUBJECT (STUDENT, SUBJECT, STUDENT_LEVEL) VALUES (?, ?, ?)');
         return $stmt->execute([$studentUsername, $subject, $level]);
     }
 
-    public static function addTutorSubject(string $tutorUsername, string $subject, string $level): bool {
+    public static function addTutorSubject(string $tutorUsername, string $subject, string $level): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('INSERT INTO TUTOR_SUBJECT (TUTOR, SUBJECT, TUTOR_LEVEL) VALUES (?, ?, ?)');
         return $stmt->execute([$tutorUsername, $subject, $level]);
     }
 
-    public static function addTutorLanguage(string $tutorUsername, string $language): bool {
+    public static function addTutorLanguage(string $tutorUsername, string $language): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('
             INSERT INTO TUTOR_LANGUAGE (TUTOR, LANGUAGE)
@@ -66,7 +67,8 @@ class Qualifications {
         return $stmt->execute([$tutorUsername, $language]);
     }
 
-    public static function getTutorQualifications(string $tutorUsername): array {
+    public static function getTutorQualifications(string $tutorUsername): array
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT SUBJECT, TUTOR_LEVEL as LEVEL FROM TUTOR_SUBJECT WHERE TUTOR = ?');
         $stmt->execute([$tutorUsername]);
@@ -80,7 +82,8 @@ class Qualifications {
         ];
     }
 
-    public static function getStudentNeeds(string $studentUsername): array {
+    public static function getStudentNeeds(string $studentUsername): array
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT SUBJECT, STUDENT_LEVEL as GRADE FROM STUDENT_SUBJECT WHERE STUDENT = ?');
         $stmt->execute([$studentUsername]);
@@ -94,7 +97,8 @@ class Qualifications {
         ];
     }
 
-    public static function getAllTutorLevels(): array {
+    public static function getAllTutorLevels(): array
+    {
         try {
             $db = Database::getInstance();
             $stmt = $db->prepare('SELECT DESIGNATION FROM TUTOR_LEVEL ORDER BY DESIGNATION');
@@ -103,7 +107,7 @@ class Qualifications {
                 return [];
             }
             $levels = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-            usort($levels, function($a, $b) {
+            usort($levels, function ($a, $b) {
                 $numA = (int) filter_var($a, FILTER_SANITIZE_NUMBER_INT);
                 $numB = (int) filter_var($b, FILTER_SANITIZE_NUMBER_INT);
                 return $numA <=> $numB;
@@ -115,7 +119,8 @@ class Qualifications {
         }
     }
 
-    public static function getAllStudentLevels(): array {
+    public static function getAllStudentLevels(): array
+    {
         try {
             $db = Database::getInstance();
             $stmt = $db->prepare('SELECT DESIGNATION FROM STUDENT_LEVEL');
@@ -124,7 +129,7 @@ class Qualifications {
                 return [];
             }
             $levels = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-            usort($levels, function($a, $b) {
+            usort($levels, function ($a, $b) {
                 $numA = (int) filter_var($a, FILTER_SANITIZE_NUMBER_INT);
                 $numB = (int) filter_var($b, FILTER_SANITIZE_NUMBER_INT);
                 return $numA <=> $numB;
@@ -136,28 +141,31 @@ class Qualifications {
         }
     }
 
-    public static function deleteStudentSubjects(string $username): bool {
+    public static function deleteStudentSubjects(string $username): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('DELETE FROM STUDENT_SUBJECT WHERE STUDENT = ?');
         return $stmt->execute([$username]);
     }
-    
-    public static function deleteStudentLanguages(string $username): bool {
+
+    public static function deleteStudentLanguages(string $username): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('DELETE FROM STUDENT_LANGUAGE WHERE STUDENT = ?');
         return $stmt->execute([$username]);
     }
-    
-    public static function deleteTutorSubjects(string $username): bool {
+
+    public static function deleteTutorSubjects(string $username): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('DELETE FROM TUTOR_SUBJECT WHERE TUTOR = ?');
         return $stmt->execute([$username]);
     }
-    
-    public static function deleteTutorLanguages(string $username): bool {
+
+    public static function deleteTutorLanguages(string $username): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('DELETE FROM TUTOR_LANGUAGE WHERE TUTOR = ?');
         return $stmt->execute([$username]);
     }
 }
-?>

@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/userclass.php';
 
-class Tutor {
+class Tutor
+{
     public string $username;
     public string $name;
     public string $date_of_birth;
@@ -46,7 +48,8 @@ class Tutor {
         ]);
     }
 
-    public static function getByUsername(string $username): ?Tutor {
+    public static function getByUsername(string $username): ?Tutor
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT * FROM TUTOR WHERE ID_TUTOR = ?');
         $stmt->execute([$username]);
@@ -62,19 +65,22 @@ class Tutor {
         return null;
     }
 
-    public static function updateProfileImage(string $username, string $new_image_path): bool {
+    public static function updateProfileImage(string $username, string $new_image_path): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('UPDATE TUTOR SET PROFILE_IMAGE = ? WHERE ID_TUTOR = ?');
         return $stmt->execute([$new_image_path, $username]);
     }
 
-    public static function updateDescription(string $username, string $description): bool {
+    public static function updateDescription(string $username, string $description): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('UPDATE TUTOR SET DESCRIPTION = ? WHERE ID_TUTOR = ?');
         return $stmt->execute([$description, $username]);
     }
 
-    public function update($oldusername): bool {
+    public function update($oldusername): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('
             UPDATE TUTOR 
@@ -95,25 +101,26 @@ class Tutor {
             $oldusername
         ]);
     }
-    public static function delete(string $username): bool {
+    public static function delete(string $username): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('DELETE FROM TUTOR WHERE ID_TUTOR = ?');
         return $stmt->execute([$username]);
     }
 
-    public static function getAllTutors(): array {
+    public static function getAllTutors(): array
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT * FROM TUTOR');
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, Tutor::class);
     }
 
-    public static function countAllTutors(): int {
+    public static function countAllTutors(): int
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT COUNT(*) FROM TUTOR');
         $stmt->execute();
         return (int)$stmt->fetchColumn();
     }
-
 }
-?>

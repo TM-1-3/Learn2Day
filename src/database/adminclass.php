@@ -1,8 +1,10 @@
 <?php
+
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/database.php';
 
-class Admin {
+class Admin
+{
     public string $username;
     public string $name;
     public string $date_of_birth;
@@ -45,7 +47,8 @@ class Admin {
         ]);
     }
 
-    public static function getByUsername(string $username): ?Admin {
+    public static function getByUsername(string $username): ?Admin
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT * FROM ADMIN WHERE ID_ADMIN = ?');
         $stmt->execute([$username]);
@@ -61,13 +64,15 @@ class Admin {
         return null;
     }
 
-    public static function delete(string $username): bool {
+    public static function delete(string $username): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('DELETE FROM ADMIN WHERE ID_ADMIN = ?');
         return $stmt->execute([$username]);
     }
 
-    public static function countAllAdmins(): int{
+    public static function countAllAdmins(): int
+    {
         $db = Database::getInstance();
         $stmt = $db->query('SELECT COUNT(*) FROM ADMIN');
         $stmt->execute();
@@ -87,4 +92,3 @@ class Admin {
         ]);
     }
 }
-?>
