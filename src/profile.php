@@ -6,6 +6,7 @@ require_once __DIR__ . '/database/studentclass.php';
 require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/qualificationclass.php';
+require_once __DIR__ . '/database/adminclass.php';
 
 $session = Session::getInstance();
 
@@ -13,6 +14,8 @@ if (!$session->isLoggedIn()) {
     header('Location: /register_page.php');
     exit();
 }
+
+$myuser = $session->getUser();
 
 $profile_username = $_GET['id'] ?? $session->getUser()->username;
 $user = User::get_user_by_username($profile_username);
@@ -23,13 +26,14 @@ if (!$user) {
 }
 
 $profile = null;
-$profile_type = '';
+$profile_type = $user->type;
+
 if ($user->type === 'STUDENT') {
     $profile = Student::getByUsername($profile_username);
-    $profile_type = 'Student';
 } elseif ($user->type === 'TUTOR') {
     $profile = Tutor::getByUsername($profile_username);
-    $profile_type = 'Tutor';
+} elseif ($user->type === 'ADMIN') {
+    $profile = Admin::getByUsername($profile_username);
 }
 
 if (!$profile) {
@@ -67,7 +71,8 @@ if ($user->type === 'TUTOR') {
     <link rel="stylesheet" href="styles/homepage.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
-<header class="header">
+<body>
+    <header class="header">
         <div class="site-name">
             <a href="/homepage.php" class="main-page">Learn2Day</a>
         </div>
@@ -94,6 +99,7 @@ if ($user->type === 'TUTOR') {
             </div>
         </div>
         <div class="access-profile">
+
             <?php $current_user = $session->getUser(); ?>
             <button id="profile-button">
                 <span class="material-symbols-outlined">account_circle</span>
@@ -110,7 +116,7 @@ if ($user->type === 'TUTOR') {
             </div>
         </div>
     </header>
-<body>
+
     <div class="container">
         <div class="profile-header">
             <img src="/uploads/profiles/<?= htmlspecialchars($profile->profile_image) ?>" 
@@ -123,11 +129,21 @@ if ($user->type === 'TUTOR') {
                 <?php if ($age): ?>
                     <p><?= $age ?> years old</p>
                 <?php endif; ?>
-                <span class="badge <?= $profile_type === 'Tutor' ? 'tutor-badge' : '' ?>">
+                <span class="badge <?= strtolower($profile_type) ?>-badge">
                     <?= htmlspecialchars($profile_type) ?>
                 </span>
                 <?php if ($session->getUser()->username === $profile_username): ?>
                     <a href="/edit_profile.php" class="edit-profile-btn">Edit Profile</a>
+                <?php endif; ?>
+                <?php if($myuser->type == 'ADMIN' && $user->type !== 'ADMIN'): ?>
+                    <form action="/actions/ban.php" method="post" class="delete-user-form">
+                        <input type="hidden" name="username" value="<?= htmlspecialchars($profile_username) ?>">
+                        <button type="submit" class="delete-user-btn">Ban User</button>
+                    </form>
+                    <form action="/actions/promotion.php" method="post" class="promote-user-form">
+                        <input type="hidden" name="username" value="<?= htmlspecialchars($profile_username) ?>">
+                        <button type="submit" class="promote-user-btn">Promote to Admin</button>
+                    </form>  
                 <?php endif; ?>
             </div>
         </div>
@@ -138,11 +154,13 @@ if ($user->type === 'TUTOR') {
                 <p><?= !empty($profile->description) ? nl2br(htmlspecialchars($profile->description)) : 'No description provided.' ?></p>
             </div>
 
-            <div class="personal-info">
-                <h2 class="section-title">Personal Information</h2>
-                <p><strong>Date of Birth:</strong> <?= htmlspecialchars($profile->date_of_birth) ?></p>
-                <p><strong>Member Since:</strong> <?= date('F Y', strtotime($user->created_at ?? 'now')) ?></p>
-            </div>
+            <?php if ($profile_type !== 'ADMIN'): ?>
+                <div class="personal-info">
+                    <h2 class="section-title">Personal Information</h2>
+                    <p><strong>Date of Birth:</strong> <?= htmlspecialchars($profile->date_of_birth) ?></p>
+                    <p><strong>Member Since:</strong> <?= date('F Y', strtotime($user->created_at ?? 'now')) ?></p>
+                </div>
+            <?php endif; ?>
 
             <?php if (!empty($subjects)): ?>
                 <div class="skills-section">

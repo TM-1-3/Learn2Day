@@ -97,8 +97,22 @@ class Tutor {
     }
     public static function delete(string $username): bool {
         $db = Database::getInstance();
-        $stmt = $db->prepare('DELETE FROM STUDENT WHERE ID_STUDENT = ?');
+        $stmt = $db->prepare('DELETE FROM TUTOR WHERE ID_TUTOR = ?');
         return $stmt->execute([$username]);
+    }
+
+    public static function getAllTutors(): array {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT * FROM TUTOR');
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_CLASS, Tutor::class);
+    }
+
+    public static function countAllTutors(): int {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT COUNT(*) FROM TUTOR');
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
     }
 
 }

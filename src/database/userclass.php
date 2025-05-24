@@ -121,5 +121,19 @@ class User {
         return $stmt->execute([$hashed_password, $id]);
     }
 
+    public static function countAllUsers(): int {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT COUNT(*) FROM USERS');
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
+
+
+    public function delete(): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('DELETE FROM USERS WHERE ID_USER = ?');
+        return $stmt->execute([$this->id]);
+    }
+
 }
 ?>
