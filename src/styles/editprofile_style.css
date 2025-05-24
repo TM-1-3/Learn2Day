@@ -1,66 +1,66 @@
 * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 body {
-    min-height: 100vh;
-    background: #D8D4D5;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    font-family: Arial, sans-serif;
-    padding: 20px;
+  min-height: 100vh;
+  background: #d8d4d5;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: Arial, sans-serif;
+  padding: 20px;
 }
 
 .container {
-    width: 100%;
-    max-width: 900px;
-    min-height: calc(100vh - 40px);
-    background-color: #FFF;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
+  width: 100%;
+  max-width: 900px;
+  min-height: calc(100vh - 40px);
+  background-color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
 }
 
 .edit-profile-container {
-    width: 100%;
-    padding: 30px;
+  width: 100%;
+  padding: 30px;
 }
 
 form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
 }
 
 h1 {
-    color: #000;
-    margin-bottom: 20px;
-    text-align: center; 
-    width: 100%;
+  color: #000;
+  margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
 }
 
 .languages,
 .form-group {
-    background-color: #E5E5E5;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-    padding: 15px 20px;
-    border-radius: 10px;
-    margin: 25px auto 0 auto;
-    position: relative;
-    z-index: 1;
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 720px;
+  background-color: #e5e5e5;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 10px;
+  margin: 25px auto 0 auto;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 720px;
 }
 
 #name,
@@ -69,14 +69,14 @@ h1 {
 #email,
 #password,
 #confirm-password {
-    display: flex;
-    align-items: center;
-    background-color: white;
-    width: 350px;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin-top: 15px;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  width: 350px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 15px;
 }
 
 #date-of-birth input,
@@ -86,374 +86,374 @@ h1 {
 #password input,
 #confirm-password input,
 #description input {
-    border: none;
-    outline: none;
-    font-size: 15px;
-    width: 100%;
-    background: transparent;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  width: 100%;
+  background: transparent;
 }
 
 #description {
-    display: flex;
-    align-items: flex-start;
-    background-color: white;
-    width: 720px;
-    max-width: 720px;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin: 25px 0;
-    min-height: 120px;
+  display: flex;
+  align-items: flex-start;
+  background-color: white;
+  width: 720px;
+  max-width: 720px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin: 25px 0;
+  min-height: 120px;
 }
 
 .language-select,
 .subject-select,
 .grade-select {
-    display: flex;
-    align-items: center;
-    background-color: white;
-    width: 200px;
-    height: 40px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin-top: 15px;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  width: 200px;
+  height: 40px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 15px;
 }
-
 
 .username-email,
 .name-dob,
 .new-password {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 15px;
-    width: 100%;
-    flex-wrap: wrap;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .undpp {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 30px;
-    width: 100%;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 30px;
+  width: 100%;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
 .language-entry,
 .subject-entry {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
 }
 
 .description textarea {
-    border: none;
-    outline: none;
-    font-size: 15px;
-    width: 100%;
-    resize: vertical;
-    min-height: 100px;
-    font-family: Arial, sans-serif;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  width: 100%;
+  resize: vertical;
+  min-height: 100px;
+  font-family: Arial, sans-serif;
 }
 
 .qualifications-section {
-    width: 100%;
-    max-width: 720px;
-    margin-bottom: 20px;
+  width: 100%;
+  max-width: 720px;
+  margin-bottom: 20px;
 }
 
 .remove-btn {
-    border: none;
-    border-radius: 6px;
-    height: 40px;
-    color: white;
-    font-weight: 550;
-    font-size: 13px;
-    padding: 13.5px;
-    margin-top: 15px;
-    cursor: pointer;
-    background-color: #721c24;
-    transition: background-color 0.3s;
+  border: none;
+  border-radius: 6px;
+  height: 40px;
+  color: white;
+  font-weight: 550;
+  font-size: 13px;
+  padding: 13.5px;
+  margin-top: 15px;
+  cursor: pointer;
+  background-color: #721c24;
+  transition: background-color 0.3s;
 }
 
 .remove-btn:hover {
-    background-color: #5a161d;
+  background-color: #5a161d;
 }
 
 .add-btn,
 .submit-btn {
-    border: none;
-    border-radius: 6px;
-    color: white;
-    height: 40px;
-    font-weight: 550;
-    font-size: 13px;
-    padding: 13.5px;
-    margin-top: 5px;
-    cursor: pointer;
-    background-color: #535353;
-    transition: background-color 0.3s;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  height: 40px;
+  font-weight: 550;
+  font-size: 13px;
+  padding: 13.5px;
+  margin-top: 5px;
+  cursor: pointer;
+  background-color: #535353;
+  transition: background-color 0.3s;
 }
 
 .submit-btn {
-    margin-top: 50px;
+  margin-top: 50px;
 }
 
 .add-btn:hover,
 .submit-btn:hover {
-    background-color: #3d3d3d;
+  background-color: #3d3d3d;
 }
 
 .image-upload-container {
-    position: relative;
-    width: 350px;
-    margin: 25px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
+  position: relative;
+  width: 350px;
+  margin: 25px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
 }
 
 .upload-area {
-    width: 150px;
-    height: 150px;
-    border: 2px dashed #ccc;
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    overflow: hidden;
-    position: relative;
+  width: 150px;
+  height: 150px;
+  border: 2px dashed #ccc;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
 }
 
 .upload-area:hover {
-    border-color: #32533D;
-    background-color: #f9f9f9;
+  border-color: #32533d;
+  background-color: #f9f9f9;
 }
 
 .upload-area.has-image {
-    border: none;
+  border: none;
 }
 
 .upload-icon {
-    font-size: 40px;
-    color: #ccc;
-    margin-bottom: 10px;
+  font-size: 40px;
+  color: #ccc;
+  margin-bottom: 10px;
 }
 
 .upload-text {
-    font-size: 14px;
-    color: #777;
-    text-align: center;
+  font-size: 14px;
+  color: #777;
+  text-align: center;
 }
 
 #image-preview {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
 }
 
 .upload-input {
-    display: none;
+  display: none;
 }
 
 .upload-btnS {
-    padding: 10px 20px;
-    background-color: #32533D;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  padding: 10px 20px;
+  background-color: #32533d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-
 .upload-btnT {
-    padding: 10px 20px;
-    background-color: #1a3a6e;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  padding: 10px 20px;
+  background-color: #1a3a6e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .upload-btnT:hover {
-    background-color: #122a54;
+  background-color: #122a54;
 }
 
 .file-info {
-    font-size: 12px;
-    color: #777;
-    margin-top: 5px;
+  font-size: 12px;
+  color: #777;
+  margin-top: 5px;
 }
 
 .alert {
-    width: 100%;
-    max-width: 350px;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    font-size: 14px;
+  width: 100%;
+  max-width: 350px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  font-size: 14px;
 }
 
 .alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 
 .alert-danger ul {
-    list-style-type: none;
-    padding-left: 10px;
+  list-style-type: none;
+  padding-left: 10px;
 }
 
 .alert-danger li {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .image-upload-container {
-    position: relative;
-    width: 350px;
-    margin: 25px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
+  position: relative;
+  width: 350px;
+  margin: 25px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
 }
 
 .upload-area {
-    width: 150px;
-    height: 150px;
-    border: 2px dashed #ccc;
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    overflow: hidden;
-    position: relative;
+  width: 150px;
+  height: 150px;
+  border: 2px dashed #ccc;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
 }
 
 .upload-area:hover {
-    border-color: #32533D;
-    background-color: #f9f9f9;
+  border-color: #32533d;
+  background-color: #f9f9f9;
 }
 
 .upload-area.has-image {
-    border: none;
+  border: none;
 }
 
 .upload-icon {
-    font-size: 40px;
-    color: #ccc;
-    margin-bottom: 10px;
+  font-size: 40px;
+  color: #ccc;
+  margin-bottom: 10px;
 }
 
 .upload-btnS {
-    padding: 10px 20px;
-    background-color: #32533D;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  padding: 10px 20px;
+  background-color: #32533d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .upload-btnS:hover {
-    background-color: #23402a;
+  background-color: #23402a;
 }
 
 .upload-btnT {
-    padding: 10px 20px;
-    background-color: #1a3a6e;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  padding: 10px 20px;
+  background-color: #1a3a6e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .upload-btnT:hover {
-    background-color: #122a54;
+  background-color: #122a54;
 }
 
 #profile_image {
-    display: none;
+  display: none;
 }
 
 /* Responsive adjustments */
 @media (max-width: 920px) {
-    .container {
-        width: 95%;
-        margin: 10px;
-    }
-    
-    .ndp {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .name-dob {
-        flex-direction: column;
-    }
-    
-    .name, .dob, .description {
-        width: 100%;
-        max-width: 400px;
-    }
-    
-    .image-upload-container {
-        width: 100%;
-        max-width: 350px;
-    }
+  .container {
+    width: 95%;
+    margin: 10px;
+  }
+
+  .ndp {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .name-dob {
+    flex-direction: column;
+  }
+
+  .name,
+  .dob,
+  .description {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .image-upload-container {
+    width: 100%;
+    max-width: 350px;
+  }
 }
 
 @media (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
-    
-    .container {
-        width: 100%;
-        margin: 0;
-        border-radius: 0;
-    }
-    
-    form {
-        padding: 15px;
-    }
-    
-    .language-entry,
-    .subject-entry {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .language-select,
-    .subject-select,
-    .grade-select {
-        width: 100%;
-    }
-    
-    .remove-btn {
-        margin-top: 10px;
-    }
-    
-    .upload-btnS,
-    .upload-btnT {
-        width: 100%;
-    }
+  body {
+    padding: 10px;
+  }
+
+  .container {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  form {
+    padding: 15px;
+  }
+
+  .language-entry,
+  .subject-entry {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .language-select,
+  .subject-select,
+  .grade-select {
+    width: 100%;
+  }
+
+  .remove-btn {
+    margin-top: 10px;
+  }
+
+  .upload-btnS,
+  .upload-btnT {
+    width: 100%;
+  }
 }

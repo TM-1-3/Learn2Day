@@ -27,7 +27,8 @@ $subjects = [];
 $languages = [];
 $profile_image = '';
 
-function uploadErrorToString(int $error_code): string {
+function uploadErrorToString(int $error_code): string
+{
     $errors = [
         UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
         UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
@@ -80,15 +81,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $upload_success = false;
     $destination = '';
-    
+
     if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] !== UPLOAD_ERR_NO_FILE) {
         $file_error = $_FILES['profile_image']['error'];
-        
+
         if ($file_error === UPLOAD_ERR_OK) {
             $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
             $file_type = $_FILES['profile_image']['type'];
             $file_size = $_FILES['profile_image']['size'];
-            
+
             if (!in_array($file_type, $allowed_types)) {
                 $errors[] = 'Only JPG, PNG, and GIF images are allowed';
             } elseif ($file_size > 2 * 1024 * 1024) {
@@ -98,11 +99,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!is_dir($upload_dir)) {
                     mkdir($upload_dir, 0755, true);
                 }
-                
+
                 $file_ext = strtolower(pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION));
                 $profile_image = 'profile_' . $user_id . '_' . bin2hex(random_bytes(8)) . '.' . $file_ext;
                 $destination = $upload_dir . $profile_image;
-                
+
                 if (!move_uploaded_file($_FILES['profile_image']['tmp_name'], $destination)) {
                     $errors[] = 'Failed to upload profile image';
                 } else {
@@ -118,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         try {
-            if($user->type == 'STUDENT'){
+            if ($user->type == 'STUDENT') {
                 Student::create(
                     $user->username,
                     $name,
@@ -136,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Qualifications::addStudentLanguage($user->username, $language);
                 }
             }
-            if($user->type == 'TUTOR'){
+            if ($user->type == 'TUTOR') {
                 Tutor::create(
                     $user->username,
                     $name,
@@ -174,26 +175,29 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Create Profile</title>
-        <link rel="stylesheet" href="styles/createprofile.css">
-        <link rel="stylesheet" href="styles/index.css">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
-    </head>
-    
-    <?php if($user->type == 'STUDENT'): ?>
-        <body style="background-color: #32533D">
-    <?php elseif($user->type == 'TUTOR'): ?>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Profile</title>
+    <link rel="stylesheet" href="styles/createprofile.css">
+    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+</head>
+
+<?php if ($user->type == 'STUDENT'): ?>
+
+    <body style="background-color: #32533D">
+    <?php elseif ($user->type == 'TUTOR'): ?>
+
         <body style="background-color: #03254E">
-    <?php endif; ?>
+        <?php endif; ?>
         <div class="container" id="container">
             <div class="profile-form-container">
                 <form action="create_profile.php" method="POST" enctype="multipart/form-data">
-                    <?php if($user->type == 'STUDENT'): ?>
+                    <?php if ($user->type == 'STUDENT'): ?>
                         <h1 style="color: #32533D">Create Profile</h1>
-                    <?php elseif($user->type == 'TUTOR'): ?>
+                    <?php elseif ($user->type == 'TUTOR'): ?>
                         <h1 style="color: #03254E">Create Profile</h1>
                     <?php endif; ?>
 
@@ -213,7 +217,7 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                             <div class="name">
                                 <input type="text" name="name" placeholder="Name" value="<?= htmlspecialchars($name) ?>" required maxlength="100" />
                             </div>
-                            
+
                             <div class="dob">
                                 <input type="date" name="date_of_birth" placeholder="Date of Birth" value="<?= htmlspecialchars($date_of_birth) ?>" required />
                             </div>
@@ -226,10 +230,10 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                                 <img id="image-preview" alt="Preview">
                             </div>
                             <input type="file" id="fileInput" class="upload-input" name="profile_image" accept="image/jpeg,image/png,image/gif">
-                            <?php if($user->type == 'STUDENT'): ?>
-                            <button type="button" class="upload-btnS" onclick="document.getElementById('fileInput').click()">Choose File</button>
-                            <?php elseif($user->type == 'TUTOR'): ?>
-                            <button type="button" class="upload-btnT" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                            <?php if ($user->type == 'STUDENT'): ?>
+                                <button type="button" class="upload-btnS" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                            <?php elseif ($user->type == 'TUTOR'): ?>
+                                <button type="button" class="upload-btnT" onclick="document.getElementById('fileInput').click()">Choose File</button>
                             <?php endif; ?>
                             <div class="file-info" id="fileInfo">No file chosen</div>
                         </div>
@@ -238,10 +242,10 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                     <div class="description">
                         <textarea name="description" placeholder="About you..." maxlength="500"><?= htmlspecialchars($description) ?></textarea>
                     </div>
-                    
+
                     <div class="qualifications-section">
                         <h2 style="margin-top: 50px;"><?= $user->type === 'TUTOR' ? 'Your Qualifications' : 'Your Needs' ?></h2>
-                        
+
                         <?php if ($user->type === 'TUTOR'): ?>
                             <!-- Tutor Qualifications -->
                             <div class="form-group">
@@ -257,8 +261,8 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                                         <select name="tutor_level[]" class="grade-select">
                                             <option value="">School level</option>
                                             <?php foreach (Qualifications::getAllTutorLevels() as $tutor_level): ?>
-                                                    <option value="<?= htmlspecialchars($tutor_level) ?>"><?= htmlspecialchars($tutor_level) ?></option>
-                                                <?php endforeach; ?>
+                                                <option value="<?= htmlspecialchars($tutor_level) ?>"><?= htmlspecialchars($tutor_level) ?></option>
+                                            <?php endforeach; ?>
                                         </select>
                                         <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
                                     </div>
@@ -308,9 +312,9 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                     </div>
 
                     <?php if ($user->type == 'STUDENT'): ?>
-                    <button type="submit" class="S_signUp">Create Profile</button>
+                        <button type="submit" class="S_signUp">Create Profile</button>
                     <?php elseif ($user->type == 'TUTOR'): ?>
-                    <button type="submit" class="T_signUp">Create Profile</button>
+                        <button type="submit" class="T_signUp">Create Profile</button>
                     <?php endif; ?>
                 </form>
             </div>
@@ -324,5 +328,6 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             const allStudentLevels = <?= json_encode(Qualifications::getAllStudentLevels()) ?>;
         </script>
         <script src="scripts/createprofile_script.js"></script>
-    </body>
+        </body>
+
 </html>

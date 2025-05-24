@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/session.php';
@@ -12,12 +13,11 @@ $isLoggedIn = $session->isLoggedIn();
 $loginError = isset($_SESSION['login_error']);
 unset($_SESSION['login_error']);
 
-if($isLoggedIn){
+if ($isLoggedIn) {
     $user = $session->getUser();
-    if($user->type == 'ADMIN'){
+    if ($user->type == 'ADMIN') {
         header('Location: /admindashboard.php');
-    }
-    else{
+    } else {
         header('Location: /homepage.php');
     }
 }
@@ -37,6 +37,7 @@ $tutors = $stmt->fetchAll();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Learn2Day</title>
@@ -44,6 +45,7 @@ $tutors = $stmt->fetchAll();
     <link rel="stylesheet" href="styles/index.css">
     <link href="https://fonts.googleapis.com/css2?family=Acme&family=Poetsen+One&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <header class="access-profile">
         <div class="profile">
@@ -52,7 +54,7 @@ $tutors = $stmt->fetchAll();
             </div>
             <div class="sections">
                 <a href="#teacher-mode" style="color: #03254E; text-decoration: none;">Teacher Mode</a>
-                <a href="#student-mode" style="color: #32533D; text-decoration: none;">Student Mode</a>    
+                <a href="#student-mode" style="color: #32533D; text-decoration: none;">Student Mode</a>
                 <button type="submit" id="log-btn" class="log-btn" style="background-color: #535353;">Log In</button>
                 <div id="popup-overlay" class="<?= $loginError ? 'open' : '' ?>">
                     <div id="profile-inner" class="<?= $loginError ? 'open' : '' ?>">
@@ -112,4 +114,5 @@ $tutors = $stmt->fetchAll();
     </main>
     <script src="scripts/index_script.js"></script>
 </body>
+
 </html>

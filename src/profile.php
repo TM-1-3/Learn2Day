@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/session.php';
@@ -63,6 +64,7 @@ if ($user->type === 'TUTOR') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -71,6 +73,7 @@ if ($user->type === 'TUTOR') {
     <link rel="stylesheet" href="styles/homepage.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
+
 <body>
     <header class="header">
         <div class="site-name">
@@ -87,10 +90,10 @@ if ($user->type === 'TUTOR') {
                 </button>
                 <div class="filter-options">
                     <h4>Filter by Subject</h4>
-                    <?php 
+                    <?php
                     foreach ($allSubjects as $subject): ?>
                         <label>
-                            <input type="checkbox" name="subjects[]" value="<?= htmlspecialchars($subject) ?>" 
+                            <input type="checkbox" name="subjects[]" value="<?= htmlspecialchars($subject) ?>"
                                 <?= (isset($_GET['subjects']) && in_array($subject, $_GET['subjects'])) ? 'checked' : '' ?>>
                             <?= htmlspecialchars($subject) ?>
                         </label>
@@ -119,10 +122,10 @@ if ($user->type === 'TUTOR') {
 
     <div class="container">
         <div class="profile-header">
-            <img src="/uploads/profiles/<?= htmlspecialchars($profile->profile_image) ?>" 
-                 alt="Profile Picture" 
-                 class="profile-picture"
-                 onerror="this.src='/uploads/profiles/default.png'">
+            <img src="/uploads/profiles/<?= htmlspecialchars($profile->profile_image) ?>"
+                alt="Profile Picture"
+                class="profile-picture"
+                onerror="this.src='/uploads/profiles/default.png'">
             <div class="profile-info">
                 <h1><?= htmlspecialchars($profile->name) ?></h1>
                 <p class="username">@<?= htmlspecialchars($user->username) ?></p>
@@ -135,7 +138,7 @@ if ($user->type === 'TUTOR') {
                 <?php if ($session->getUser()->username === $profile_username): ?>
                     <a href="/edit_profile.php" class="edit-profile-btn">Edit Profile</a>
                 <?php endif; ?>
-                <?php if($myuser->type == 'ADMIN' && $user->type !== 'ADMIN'): ?>
+                <?php if ($myuser->type == 'ADMIN' && $user->type !== 'ADMIN'): ?>
                     <form action="/actions/ban.php" method="post" class="delete-user-form">
                         <input type="hidden" name="username" value="<?= htmlspecialchars($profile_username) ?>">
                         <button type="submit" class="delete-user-btn">Ban User</button>
@@ -143,7 +146,7 @@ if ($user->type === 'TUTOR') {
                     <form action="/actions/promotion.php" method="post" class="promote-user-form">
                         <input type="hidden" name="username" value="<?= htmlspecialchars($profile_username) ?>">
                         <button type="submit" class="promote-user-btn">Promote to Admin</button>
-                    </form>  
+                    </form>
                 <?php endif; ?>
             </div>
         </div>
@@ -196,4 +199,5 @@ if ($user->type === 'TUTOR') {
     </div>
     <script src="scripts/homepage_script.js"></script>
 </body>
+
 </html>

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once(__DIR__ . '/../includes/session.php');
@@ -30,7 +31,7 @@ try {
     $db = Database::getInstance();
     $stmt = $db->prepare('SELECT * FROM USERS WHERE USERNAME = ? OR EMAIL = ?');
     $stmt->execute([$username, $email]);
-    
+
     if ($stmt->fetch()) {
         throw new Exception('Username or email already exists');
     }
@@ -48,4 +49,3 @@ try {
     header('Location: /register_page.php?error=' . urlencode($e->getMessage()));
     exit();
 }
-?>
