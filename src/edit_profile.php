@@ -230,6 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if ($user->type == 'STUDENT'): ?>
 
         <body style="background-color: #32533D">
+
     <?php elseif($user->type == 'TUTOR'): ?>
         <body style="background-color: #03254E">
     <?php elseif($user->type == 'ADMIN'): ?>
@@ -372,6 +373,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
                                     <button type="button" class="add-btn" onclick="addLanguage()">Add Another Language</button>
                                 </div>
+
                             <?php elseif ($user->type === 'STUDENT'): ?>
                                 <div class="form-group">
                                     <label>Subjects You Need Help With</label>
