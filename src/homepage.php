@@ -124,8 +124,8 @@ $allSubjects = Qualifications::getAllSubjects();
     <div class="site-name">
         <a href="/homepage.php" class="main-page">Learn2Day</a>
     </div>
-    <div class="search-bar">
-        <form method="GET" action="/homepage.php">
+    <form method="GET" action="/homepage.php" class="search-form">
+        <div class="search-bar">
             <input type="text" name="search" placeholder="Search..." value="<?= htmlspecialchars($searchQuery) ?>" />
             <button type="submit" class="search-button">
                 <span class="material-symbols-outlined">search</span>
@@ -146,41 +146,23 @@ $allSubjects = Qualifications::getAllSubjects();
                     <?php endforeach; ?>
                 </div>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
     <div class="access-profile">
-        <?php if ($isLoggedIn): ?>
-            <?php $user = $session->getUser(); ?>
-            <button id="profile-button">
-                <span class="material-symbols-outlined">account_circle</span>
-                <?= htmlspecialchars($user->username) ?>
-            </button>
-            <div id="profile-inner" class="profile">
-                <form action="actions/logout.php" method="post" class="logout-popup">
-                    <a href='/profile.php?id=<?= $user->id ?>' class="viewprofile-btn">View Profile</a>
-                    <hr size="18">
+        <?php $user = $session->getUser(); ?>
+        <button id="profile-button">
+            <span class="material-symbols-outlined">account_circle</span>
+            <?= htmlspecialchars($user->username) ?>
+        </button>
+        <div id="profile-inner" class="profile">
+            <div class="logout-popup">
+                <a href='/profile.php?id=<?= htmlspecialchars($session->getUserUsername()) ?>' class="viewprofile-btn">View Profile</a>
+                <hr size="18">
+                <form action="actions/logout.php" method="post">
                     <button type="submit" class="logout-btn">Log Out</button>
                 </form>
             </div>
-        <?php else: ?>
-            <button id="profile-button">
-                <span class="material-symbols-outlined">account_circle</span>
-            </button>
-            <div id="profile-inner" class="profile">
-                <form action="/actions/login.php" method="post" class="login-popup">
-                    <input type="text" name="username" placeholder="Username" required />
-                    <input type="password" name="password" placeholder="Password" required />
-                    <button type="submit" class="login-btn">Log In</button>
-                    <div class="divider">or</div>
-                    <a href='/register_page.php'><button type="button" class="signup-btn">Sign Up</button></a>
-                    <?php if ($loginError): ?>
-                        <div class="error-message">Invalid username or password</div>
-                    <?php endif; ?>
-                    <hr size="18">
-                    <a href="#" class="reset-link">Reset your password</a>
-                </form>
-            </div>
-        <?php endif; ?>
+        </div>
     </div>
 </header>
 

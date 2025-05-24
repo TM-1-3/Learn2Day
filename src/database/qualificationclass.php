@@ -45,23 +45,16 @@ class Qualifications {
         return $stmt->execute([$studentUsername, $language]);
     }
 
-    public static function addStudentSubject(string $studentUsername, string $subject): bool {
+    public static function addStudentSubject(string $studentUsername, string $subject, string $level): bool {
         $db = Database::getInstance();
-        $stmt = $db->prepare('
-            INSERT INTO STUDENT_SUBJECT (STUDENT, SUBJECT)
-            VALUES (?, ?)
-        ');
-        return $stmt->execute([$studentUsername, $subject]);
+        $stmt = $db->prepare('INSERT INTO STUDENT_SUBJECT (STUDENT, SUBJECT, STUDENT_LEVEL) VALUES (?, ?, ?)');
+        return $stmt->execute([$studentUsername, $subject, $level]);
     }
 
-
-    public static function addTutorSubject(string $tutorUsername, string $subject): bool {
+    public static function addTutorSubject(string $tutorUsername, string $subject, string $level): bool {
         $db = Database::getInstance();
-        $stmt = $db->prepare('
-            INSERT INTO TUTOR_SUBJECT (TUTOR, SUBJECT)
-            VALUES (?, ?)
-        ');
-        return $stmt->execute([$tutorUsername, $subject]);
+        $stmt = $db->prepare('INSERT INTO TUTOR_SUBJECT (TUTOR, SUBJECT, TUTOR_LEVEL) VALUES (?, ?, ?)');
+        return $stmt->execute([$tutorUsername, $subject, $level]);
     }
 
     public static function addTutorLanguage(string $tutorUsername, string $language): bool {
@@ -75,9 +68,9 @@ class Qualifications {
 
     public static function getTutorQualifications(string $tutorUsername): array {
         $db = Database::getInstance();
-        $stmt = $db->prepare('SELECT SUBJECT FROM TUTOR_SUBJECT WHERE TUTOR = ?');
+        $stmt = $db->prepare('SELECT SUBJECT, TUTOR_LEVEL as LEVEL FROM TUTOR_SUBJECT WHERE TUTOR = ?');
         $stmt->execute([$tutorUsername]);
-        $subjects = $stmt->fetchAll();
+        $subjects = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt = $db->prepare('SELECT LANGUAGE FROM TUTOR_LANGUAGE WHERE TUTOR = ?');
         $stmt->execute([$tutorUsername]);
         $languages = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
@@ -89,9 +82,9 @@ class Qualifications {
 
     public static function getStudentNeeds(string $studentUsername): array {
         $db = Database::getInstance();
-        $stmt = $db->prepare('SELECT SUBJECT FROM STUDENT_SUBJECT WHERE STUDENT = ?');
+        $stmt = $db->prepare('SELECT SUBJECT, STUDENT_LEVEL as GRADE FROM STUDENT_SUBJECT WHERE STUDENT = ?');
         $stmt->execute([$studentUsername]);
-        $subjects = $stmt->fetchAll();
+        $subjects = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt = $db->prepare('SELECT LANGUAGE FROM STUDENT_LANGUAGE WHERE STUDENT = ?');
         $stmt->execute([$studentUsername]);
         $languages = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
@@ -109,7 +102,13 @@ class Qualifications {
                 error_log("Database error: " . implode(":", $stmt->errorInfo()));
                 return [];
             }
-            return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+            $levels = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+            usort($levels, function($a, $b) {
+                $numA = (int) filter_var($a, FILTER_SANITIZE_NUMBER_INT);
+                $numB = (int) filter_var($b, FILTER_SANITIZE_NUMBER_INT);
+                return $numA <=> $numB;
+            });
+            return $levels;
         } catch (PDOException $e) {
             error_log("Database exception: " . $e->getMessage());
             return [];
@@ -119,12 +118,18 @@ class Qualifications {
     public static function getAllStudentLevels(): array {
         try {
             $db = Database::getInstance();
-            $stmt = $db->prepare('SELECT DESIGNATION FROM STUDENT_LEVEL ORDER BY DESIGNATION');
+            $stmt = $db->prepare('SELECT DESIGNATION FROM STUDENT_LEVEL');
             if (!$stmt->execute()) {
                 error_log("Database error: " . implode(":", $stmt->errorInfo()));
                 return [];
             }
-            return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+            $levels = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+            usort($levels, function($a, $b) {
+                $numA = (int) filter_var($a, FILTER_SANITIZE_NUMBER_INT);
+                $numB = (int) filter_var($b, FILTER_SANITIZE_NUMBER_INT);
+                return $numA <=> $numB;
+            });
+            return $levels;
         } catch (PDOException $e) {
             error_log("Database exception: " . $e->getMessage());
             return [];

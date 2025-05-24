@@ -126,8 +126,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $profile_image,
                     $description
                 );
-                foreach ($subjects as $subject) {
-                    Qualifications::addStudentSubject($user->username, $subject);
+                foreach ($subjects as $i => $subject) {
+                    $level = $_POST['student_levels'][$i] ?? null;
+                    if ($subject && $level) {
+                        Qualifications::addStudentSubject($user->username, $subject, $level);
+                    }
                 }
                 foreach ($languages as $language) {
                     Qualifications::addStudentLanguage($user->username, $language);
@@ -141,8 +144,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $profile_image,
                     $description
                 );
-                foreach ($subjects as $subject) {
-                    Qualifications::addTutorSubject($user->username, $subject);
+                foreach ($subjects as $i => $subject) {
+                    $level = $_POST['tutor_level'][$i] ?? null;
+                    if ($subject && $level) {
+                        Qualifications::addTutorSubject($user->username, $subject, $level);
+                    }
                 }
                 foreach ($languages as $language) {
                     Qualifications::addTutorLanguage($user->username, $language);
@@ -291,7 +297,7 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                                     <select name="languages[]" class="language-select">
                                         <option value="">Select a language</option>
                                         <?php foreach (Qualifications::getAllLanguages() as $language): ?>
-                                            <option value="<?= htmlspecialchars($language) ?>" <?= in_array($language, $languages) ? 'selected' : '' ?>><?= htmlspecialchars($language) ?></option>
+                                            <option value="<?= htmlspecialchars($language) ?>"><?= htmlspecialchars($language) ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                     <button type="button" class="remove-btn" onclick="removeLanguage(this)">Remove</button>
@@ -311,6 +317,12 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         </div>
         <script src="scripts/profile_image.js"></script>
         <script src="scripts/index_script.js"></script>
+        <script>
+            const allSubjects = <?= json_encode(Qualifications::getAllSubjects()) ?>;
+            const allLanguages = <?= json_encode(Qualifications::getAllLanguages()) ?>;
+            const allTutorLevels = <?= json_encode(Qualifications::getAllTutorLevels()) ?>;
+            const allStudentLevels = <?= json_encode(Qualifications::getAllStudentLevels()) ?>;
+        </script>
         <script src="scripts/createprofile_script.js"></script>
     </body>
 </html>

@@ -31,16 +31,25 @@ header button {
     padding: 4px;
 }
 
-/* Search Bar */
-.search-bar {
+.search-form {
     display: flex;
     align-items: center;
     gap: 5px;
+    background-color: transparent;
+    padding: 0px;
+    border: none;
+    border-radius: 8px;
+    width: 35%;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
     background-color: white;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    width: 40%;
+    width: 100%;
 }
 
 .search-bar input {
@@ -120,27 +129,6 @@ header button {
     border-radius: 13px;
 }
 
-.login-popup {
-    background: #E5E5E5;
-    padding: 13px;
-    border-radius: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 13px;
-    width: 250px;
-    height: 310px;
-}
-
-.login-popup input {
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    font-size: 15px;
-    color: #535353;
-}
-
-.login-btn,
-.signup-btn,
 .logout-btn,
 .viewprofile-btn {
     padding: 10px;
@@ -153,27 +141,11 @@ header button {
     width: 224px;
 }
 
-.divider {
-    text-align: center;
-    color: #535353;
-    font-size: 15px;
-}
-
-
-.logout-popup hr,
-.login-popup hr {
+.logout-popup hr {
     border: none;
     border-bottom: 1px solid #535353;
     margin-top: 0px;
-    margin-bottom: 0px;
-}
-
-.reset-link {
-    font-size: 15px;
-    text-align: center;
-    color: #535353;
-    text-decoration: underline;
-    cursor: pointer;
+    margin-bottom: 3px;
 }
 
 body {
