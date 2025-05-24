@@ -175,8 +175,7 @@ $allSubjects = Qualifications::getAllSubjects();
             <?php foreach ($selectedSubjects as $subject): ?>
                 <span class="filter-tag">
                     <?= htmlspecialchars($subject) ?>
-                    <a href="?<?= http_build_query(array_merge($_GET, ['subjects' => array_diff($_GET['subjects'], [$subject])])) ?>" 
-                       class="remove-filter">×</a>
+                    <a href="?" class="remove-filter">×</a>
                 </span>
             <?php endforeach; ?>
         </div>
