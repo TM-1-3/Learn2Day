@@ -73,5 +73,18 @@ class Admin {
         $stmt->execute();
         return (int)$stmt->fetchColumn();
     }
+
+    public function update($old_username) {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('UPDATE ADMIN SET ID_ADMIN = ?, NAME = ?, DATE_OF_BIRTH = ?, PROFILE_IMAGE = ?, DESCRIPTION = ? WHERE ID_ADMIN = ?');
+        return $stmt->execute([
+            $this->username,
+            $this->name,
+            $this->date_of_birth,
+            $this->profile_image,
+            $this->description,
+            $old_username
+        ]);
+    }
 }
 ?>

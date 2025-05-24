@@ -5,6 +5,7 @@ require_once __DIR__ . '/database/studentclass.php';
 require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/qualificationclass.php';
+require_once __DIR__ . '/database/adminclass.php';
 
 $session = Session::getInstance();
 $user = $session->getUser();
@@ -19,6 +20,8 @@ if ($user->type === 'STUDENT') {
     $profile = Student::getByUsername($user->username);
 } elseif ($user->type === 'TUTOR') {
     $profile = Tutor::getByUsername($user->username);
+} elseif ($user->type === 'ADMIN') {
+    $profile = Admin::getByUsername($user->username);
 } else {
     header('Location: /');
     exit();
@@ -225,6 +228,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <body style="background-color: #32533D">
     <?php elseif($user->type == 'TUTOR'): ?>
         <body style="background-color: #03254E">
+    <?php elseif($user->type == 'ADMIN'): ?>
+        <body style="background-color: #FFFFFF">
     <?php endif; ?>
     <main>
         <div id="container" class="container">
@@ -233,6 +238,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h1 style="color: #32533D">Edit Profile</h1>
             <?php elseif($user->type == 'TUTOR'): ?>
                 <h1 style="color: #03254E">Edit Profile</h1>
+            <?php elseif($user->type == 'ADMIN'): ?>
+                <h1 style="color: #000000">Edit Profile</h1>
             <?php endif; ?>
 
             <?php if (!empty($errors)): ?>
