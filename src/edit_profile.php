@@ -6,6 +6,7 @@ require_once __DIR__ . '/database/studentclass.php';
 require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/qualificationclass.php';
+require_once __DIR__ . '/database/adminclass.php';
 
 $session = Session::getInstance();
 $user = $session->getUser();
@@ -20,6 +21,8 @@ if ($user->type === 'STUDENT') {
     $profile = Student::getByUsername($user->username);
 } elseif ($user->type === 'TUTOR') {
     $profile = Tutor::getByUsername($user->username);
+} elseif ($user->type === 'ADMIN') {
+    $profile = Admin::getByUsername($user->username);
 } else {
     header('Location: /');
     exit();
@@ -227,18 +230,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if ($user->type == 'STUDENT'): ?>
 
         <body style="background-color: #32533D">
-        <?php elseif ($user->type == 'TUTOR'): ?>
 
-            <body style="background-color: #03254E">
+    <?php elseif($user->type == 'TUTOR'): ?>
+        <body style="background-color: #03254E">
+    <?php elseif($user->type == 'ADMIN'): ?>
+        <body style="background-color: #FFD670">
+    <?php endif; ?>
+    <main>
+        <div id="container" class="container">
+        <div class="edit-profile-container">
+            <?php if($user->type == 'STUDENT'): ?>
+                <h1 style="color: #32533D">Edit Profile</h1>
+            <?php elseif($user->type == 'TUTOR'): ?>
+                <h1 style="color: #03254E">Edit Profile</h1>
+            <?php elseif($user->type == 'ADMIN'): ?>
+                <h1 style="color: #FFD670">Edit Profile</h1>
             <?php endif; ?>
-            <main>
-                <div id="container" class="container">
-                    <div class="edit-profile-container">
-                        <?php if ($user->type == 'STUDENT'): ?>
-                            <h1 style="color: #32533D">Edit Profile</h1>
-                        <?php elseif ($user->type == 'TUTOR'): ?>
-                            <h1 style="color: #03254E">Edit Profile</h1>
-                        <?php endif; ?>
 
                         <?php if (!empty($errors)): ?>
                             <div class="errors">
@@ -366,6 +373,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
                                     <button type="button" class="add-btn" onclick="addLanguage()">Add Another Language</button>
                                 </div>
+
                             <?php elseif ($user->type === 'STUDENT'): ?>
                                 <div class="form-group">
                                     <label>Subjects You Need Help With</label>
