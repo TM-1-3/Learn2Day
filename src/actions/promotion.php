@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once(__DIR__ . '/../includes/session.php');
@@ -18,12 +19,12 @@ if (!$session->isLoggedIn() || $session->getUser()->type !== 'ADMIN') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'])) {
     $username = trim($_POST['username']);
-    
+
     try {
         $db->beginTransaction();
 
         $user = User::get_user_by_username($username);
-        
+
         if (!$user) {
             throw new Exception("User not found");
         }
@@ -74,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'])) {
         )) {
             throw new Exception("Failed to create admin profile");
         }
-        
+
         $db->commit();
 
         header('Location: /profile.php?id=' . urlencode($username) . '&promote_success=1');

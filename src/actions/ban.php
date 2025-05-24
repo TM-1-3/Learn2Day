@@ -16,12 +16,12 @@ if (!$session->isLoggedIn() || $session->getUser()->type !== 'ADMIN') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'])) {
     $username = trim($_POST['username']);
-    
+
     try {
         $db->beginTransaction();
 
         $user = User::get_user_by_username($username);
-        
+
         if (!$user) {
             throw new Exception("User not found");
         }
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'])) {
             throw new Exception("Failed to update user type");
         }
 
-        
+
         $db->commit();
 
         header('Location: /');
@@ -58,8 +58,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'])) {
     header('Location: /');
     exit();
 }
-
-
-
-
-?>

@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/userclass.php';
 
-class Student {
+class Student
+{
     public string $username;
     public string $name;
     public string $date_of_birth;
@@ -46,7 +48,8 @@ class Student {
         ]);
     }
 
-    public static function getByUsername(string $username): ?Student {
+    public static function getByUsername(string $username): ?Student
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT * FROM STUDENT WHERE ID_STUDENT = ?');
         $stmt->execute([$username]);
@@ -62,19 +65,22 @@ class Student {
         return null;
     }
 
-    public static function updateProfileImage(string $username, string $new_image_path): bool {
+    public static function updateProfileImage(string $username, string $new_image_path): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('UPDATE STUDENT SET PROFILE_IMAGE = ? WHERE ID_STUDENT = ?');
         return $stmt->execute([$new_image_path, $username]);
     }
 
-    public static function updateDescription(string $username, string $description): bool {
+    public static function updateDescription(string $username, string $description): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('UPDATE STUDENT SET DESCRIPTION = ? WHERE ID_STUDENT = ?');
         return $stmt->execute([$description, $username]);
     }
 
-    public function update($oldusername): bool {
+    public function update($oldusername): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('
             UPDATE STUDENT 
@@ -95,7 +101,8 @@ class Student {
             $oldusername
         ]);
     }
-    public static function getAllStudents(): array {
+    public static function getAllStudents(): array
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT s.*, u.ID_USER 
                              FROM STUDENT s 
@@ -115,17 +122,18 @@ class Student {
         return $students;
     }
 
-    public static function delete(string $username): bool {
+    public static function delete(string $username): bool
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('DELETE FROM STUDENT WHERE ID_STUDENT = ?');
         return $stmt->execute([$username]);
     }
 
-    public static function countAllStudents(): int {
+    public static function countAllStudents(): int
+    {
         $db = Database::getInstance();
         $stmt = $db->prepare('SELECT COUNT(*) FROM STUDENT');
         $stmt->execute();
         return (int)$stmt->fetchColumn();
     }
 }
-?>

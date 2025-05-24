@@ -1,80 +1,89 @@
 function getUserType() {
-    const btn = document.querySelector('.add-btn');
-    if (btn && btn.dataset.usertype) return btn.dataset.usertype;
-    if (document.querySelector('.T_signUp') || document.querySelector('.upload-btnT')) return 'TUTOR';
-    return 'STUDENT';
+  const btn = document.querySelector(".add-btn");
+  if (btn && btn.dataset.usertype) return btn.dataset.usertype;
+  if (
+    document.querySelector(".T_signUp") ||
+    document.querySelector(".upload-btnT")
+  )
+    return "TUTOR";
+  return "STUDENT";
 } /*This function figures out which type of user is being created based on whether the sign up as a tutor or sign up as a student button was pressed */
 
 function addSubject() {
-    const userType = window.userType || (typeof getUserType === 'function' ? getUserType() : 'STUDENT');
-    const container = document.getElementById(userType === 'TUTOR' ? 'tutor-subjects-container' : 'student-subjects-container');
-    const newEntry = document.createElement('div');
-    newEntry.className = 'subject-entry';
+  const userType =
+    window.userType ||
+    (typeof getUserType === "function" ? getUserType() : "STUDENT");
+  const container = document.getElementById(
+    userType === "TUTOR"
+      ? "tutor-subjects-container"
+      : "student-subjects-container"
+  );
+  const newEntry = document.createElement("div");
+  newEntry.className = "subject-entry";
 
-    let subjectOptions = '<option value="">Select a subject</option>';
-    allSubjects.forEach(subject => {
-        subjectOptions += `<option value="${subject}">${subject}</option>`;
+  let subjectOptions = '<option value="">Select a subject</option>';
+  allSubjects.forEach((subject) => {
+    subjectOptions += `<option value="${subject}">${subject}</option>`;
+  });
+
+  let gradeOptions = "";
+  if (userType === "TUTOR") {
+    gradeOptions = '<option value="">School level</option>';
+    allTutorLevels.forEach((level) => {
+      gradeOptions += `<option value="${level}">${level}</option>`;
     });
-
-    let gradeOptions = '';
-    if (userType === 'TUTOR') {
-        gradeOptions = '<option value="">School level</option>';
-        allTutorLevels.forEach(level => {
-            gradeOptions += `<option value="${level}">${level}</option>`;
-        });
-        newEntry.innerHTML = `
+    newEntry.innerHTML = `
             <select name="subjects[]" class="subject-select">${subjectOptions}</select>
             <select name="tutor_level[]" class="grade-select">${gradeOptions}</select>
             <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
         `;
-    } else {
-        gradeOptions = '<option value="">Grade level</option>';
-        allStudentLevels.forEach(level => {
-            gradeOptions += `<option value="${level}">${level}</option>`;
-        });
-        newEntry.innerHTML = `
+  } else {
+    gradeOptions = '<option value="">Grade level</option>';
+    allStudentLevels.forEach((level) => {
+      gradeOptions += `<option value="${level}">${level}</option>`;
+    });
+    newEntry.innerHTML = `
             <select name="subjects[]" class="subject-select">${subjectOptions}</select>
             <select name="student_levels[]" class="grade-select">${gradeOptions}</select>
             <button type="button" class="remove-btn" onclick="removeSubject(this)">Remove</button>
         `;
-    }
-    container.appendChild(newEntry);
+  }
+  container.appendChild(newEntry);
 }
 /*Handles the part where you add a subject to the create profile*/
 
 function removeSubject(button) {
-    const entry = button.closest('.subject-entry');
-    const container = entry.parentElement;
-    if (container.children.length > 1) {
-        entry.remove();
-    } else {
-        alert('You need at least one subject');
-    }
+  const entry = button.closest(".subject-entry");
+  const container = entry.parentElement;
+  if (container.children.length > 1) {
+    entry.remove();
+  } else {
+    alert("You need at least one subject");
+  }
 }
 
-
 function addLanguage() {
-    const container = document.getElementById('languages-container');
-    const newEntry = document.createElement('div');
-    newEntry.className = 'language-entry';
+  const container = document.getElementById("languages-container");
+  const newEntry = document.createElement("div");
+  newEntry.className = "language-entry";
 
-    let options = '<option value="">Select a language</option>';
-    allLanguages.forEach(language => {
-        options += `<option value="${language}">${language}</option>`;
-    });
+  let options = '<option value="">Select a language</option>';
+  allLanguages.forEach((language) => {
+    options += `<option value="${language}">${language}</option>`;
+  });
 
-    newEntry.innerHTML = `
+  newEntry.innerHTML = `
         <select name="languages[]" class="language-select">${options}</select>
         <button type="button" class="remove-btn" onclick="removeLanguage(this)">Remove</button>
     `;
-    container.appendChild(newEntry);
+  container.appendChild(newEntry);
 }
 
 function removeLanguage(button) {
-    const container = document.getElementById('languages-container');
-    if (container.children.length > 1) {
-        button.parentElement.remove();
-    } else {
-        alert('You need at least one language');
-    }
+  const container = document.getElementById("languages-container");
+  if (container.children.length > 1) {
+    button.parentElement.remove();
+  } else {
+    alert("You need at least one language");
+  }
 }

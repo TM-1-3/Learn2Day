@@ -1,14 +1,15 @@
 <?php
-    include_once(__DIR__ . '/includes/session.php');
-    include_once(__DIR__ . '/includes/database.php');
-    include_once(__DIR__ . '/database/userclass.php');
-    $error = '';
-    if (isset($_GET['error'])) {
-        $error = htmlspecialchars($_GET['error']);
-    }
+include_once(__DIR__ . '/includes/session.php');
+include_once(__DIR__ . '/includes/database.php');
+include_once(__DIR__ . '/database/userclass.php');
+$error = '';
+if (isset($_GET['error'])) {
+    $error = htmlspecialchars($_GET['error']);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Registration</title>
@@ -16,6 +17,7 @@
     <link rel="stylesheet" href="styles/register.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
+
 <body>
     <div class="background-image"></div>
     <div class="container" id="container">
@@ -73,4 +75,5 @@
     </div>
     <script src="scripts/register_script.js"></script>
 </body>
+
 </html>
