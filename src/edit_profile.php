@@ -229,7 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php elseif($user->type == 'TUTOR'): ?>
         <body style="background-color: #03254E">
     <?php elseif($user->type == 'ADMIN'): ?>
-        <body style="background-color: #F4C75B">
+        <body style="background-color: #FFD670">
     <?php endif; ?>
     <main>
         <div id="container" class="container">
@@ -239,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php elseif($user->type == 'TUTOR'): ?>
                 <h1 style="color: #03254E">Edit Profile</h1>
             <?php elseif($user->type == 'ADMIN'): ?>
-                <h1 style="color: #F4C75B">Edit Profile</h1>
+                <h1 style="color: #FFD670">Edit Profile</h1>
             <?php endif; ?>
 
             <?php if (!empty($errors)): ?>
