@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/session.php';
@@ -27,14 +26,17 @@ if (!$user) {
 }
 
 $profile = null;
-$profile_type = $user->type;
+$profile_type = '';
 
 if ($user->type === 'STUDENT') {
     $profile = Student::getByUsername($profile_username);
+    $profile_type = 'Student';
 } elseif ($user->type === 'TUTOR') {
     $profile = Tutor::getByUsername($profile_username);
+    $profile_type = 'Tutor';
 } elseif ($user->type === 'ADMIN') {
     $profile = Admin::getByUsername($profile_username);
+    $profile_type = 'Admin';
 }
 
 if (!$profile) {
@@ -64,7 +66,6 @@ if ($user->type === 'TUTOR') {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -72,13 +73,13 @@ if ($user->type === 'TUTOR') {
     <link rel="stylesheet" href="styles/profile.css">
     <link rel="stylesheet" href="styles/homepage.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
 </head>
-
 <body>
-    <header class="header">
-        <div class="site-name">
-            <a href="/homepage.php" class="main-page">Learn2Day</a>
-        </div>
+<header class="header">
+         <div class="name">
+                <a href="#first-section" style="text-decoration:none;"><span style="color: #03254E;">Learn</span><span style="color: black;">2</span><span style="color: #32533D;">Day</span></a>
+            </div>
         <div class="search-bar">
             <input type="text" placeholder="Search..." />
             <button class="search-button">
@@ -102,39 +103,51 @@ if ($user->type === 'TUTOR') {
             </div>
         </div>
         <div class="access-profile">
-
-            <?php $current_user = $session->getUser(); ?>
-            <button id="profile-button">
-                <span class="material-symbols-outlined">account_circle</span>
-                <?= htmlspecialchars($current_user->username) ?>
-            </button>
-            <div id="profile-inner" class="profile">
-                <div class="logout-popup">
+            <?php if ($session->isLoggedIn()): ?>
+                <?php $current_user = $session->getUser(); ?>
+                <button id="profile-button">
+                    <span class="material-symbols-outlined">account_circle</span>
+                    <?= htmlspecialchars($current_user->username) ?>
+                </button>
+                <div id="profile-inner" class="profile">
+                    <form action="actions/logout.php" method="post" class="logout-popup">
                     <a href='/profile.php?id=<?= htmlspecialchars($session->getUserUsername()) ?>' class="viewprofile-btn">View Profile</a>
-                    <hr size="18">
-                    <form action="actions/logout.php" method="post">
+                        <hr size="18">
                         <button type="submit" class="logout-btn">Log Out</button>
                     </form>
                 </div>
-            </div>
+            <?php else: ?>
+                <button id="profile-button">
+                    <span class="material-symbols-outlined">account_circle</span>
+                </button>
+                <div id="profile-inner" class="profile">
+                    <form action="/actions/login.php" method="post" class="login-popup">
+                        <input type="text" name="username" placeholder="Username" required />
+                        <input type="password" name="password" placeholder="Password" required />
+                        <button type="submit" class="login-btn">Log In</button>
+                        <div class="divider">or</div>
+                        <a href='/register_page.php'><button type="button" class="signup-btn">Sign Up</button></a>
+                        <a href="#" class="reset-link">Reset your password</a>
+                    </form>
+                </div>
+            <?php endif; ?>
         </div>
     </header>
-
+    <main>
     <div class="container">
         <div class="profile-header">
-            <img src="/uploads/profiles/<?= htmlspecialchars($profile->profile_image) ?>"
-                alt="Profile Picture"
+            <img src="/uploads/profiles/<?= htmlspecialchars($profile->profile_image) ?>" 
+                alt="Profile Picture" 
                 class="profile-picture"
                 onerror="this.src='/uploads/profiles/default.png'">
-            <div class="profile-info">
-                <h1><?= htmlspecialchars($profile->name) ?></h1>
-                <p class="username">@<?= htmlspecialchars($user->username) ?></p>
-                <?php if ($age): ?>
-                    <p><?= $age ?> years old</p>
-                <?php endif; ?>
-                <span class="badge <?= strtolower($profile_type) ?>-badge">
+            <div class="name-only">
+                <span class="badge <?= $profile_type === 'Tutor' ? 'tutor-badge' : '' ?>">
                     <?= htmlspecialchars($profile_type) ?>
                 </span>
+                <div class="name-username">
+                    <h1><?= htmlspecialchars($profile->name) ?></h1>
+                    <p class="username"> @<?= htmlspecialchars($user->username) ?></p>
+                </div>
                 <?php if ($session->getUser()->username === $profile_username): ?>
                     <a href="/edit_profile.php" class="edit-profile-btn">Edit Profile</a>
                 <?php endif; ?>
@@ -149,55 +162,111 @@ if ($user->type === 'TUTOR') {
                     </form>
                 <?php endif; ?>
             </div>
-        </div>
-
-        <div class="profile-details">
-            <div class="about-section">
+        </div>    
+        <div class="other-flex-wrapper">
+            <div class="about-container info-left">
                 <h2 class="section-title">About</h2>
-                <p><?= !empty($profile->description) ? nl2br(htmlspecialchars($profile->description)) : 'No description provided.' ?></p>
+                <p class="about-section">
+                    <?= !empty($profile->description) ? nl2br(htmlspecialchars($profile->description)) : 'No description provided.' ?>
+                </p>
             </div>
-
-            <?php if ($profile_type !== 'ADMIN'): ?>
-                <div class="personal-info">
-                    <h2 class="section-title">Personal Information</h2>
+            <div class="image-stack">
+                <img src="/images/blue_blob.png" alt="Blue Blob" class="blue-blob">
+                <img src="/images/teacher_description.png" alt="Information Icon" class="description-image">
+            </div>
+        </div> 
+        <?php if ($profile_type !== 'ADMIN'): ?>   
+        <div class="about-flex-wrapper">
+            <div class="image-stack">
+                <img src="/images/blue_blob.png" alt="Blue Blob" class="blue-blob">
+                <img src="/images/teacher_info.png" alt="Information Icon" class="info-image">
+            </div>
+            <div class="about-container info-right">
+                <h2 class="section-title">Information</h2>
+                <div class="about-section">
+                    <?php if ($age): ?>
+                        <p><strong>Age:</strong> <?= $age ?> years old</p>
+                    <?php endif; ?>
                     <p><strong>Date of Birth:</strong> <?= htmlspecialchars($profile->date_of_birth) ?></p>
                     <p><strong>Member Since:</strong> <?= date('F Y', strtotime($user->created_at ?? 'now')) ?></p>
                 </div>
-            <?php endif; ?>
-
-            <?php if (!empty($subjects)): ?>
-                <div class="skills-section">
-                    <h2 class="section-title">Subjects</h2>
-                    <div class="skills-list">
-                        <?php foreach ($subjects as $subject): ?>
-                            <div class="skill-item">
-                                <?= htmlspecialchars($subject['SUBJECT'] ?? $subject['subject'] ?? '') ?>
-                                <?php if (isset($subject['GRADE']) || isset($subject['STUDENT_LEVEL'])): ?>
-                                    (Grade <?= htmlspecialchars($subject['GRADE'] ?? $subject['STUDENT_LEVEL']) ?>)
-                                <?php elseif (isset($subject['LEVEL']) || isset($subject['TUTOR_LEVEL'])): ?>
-                                    (<?= htmlspecialchars($subject['LEVEL'] ?? $subject['TUTOR_LEVEL']) ?>)
-                                <?php endif; ?>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
+            </div>
+        </div>
+        <?php endif; ?>
+        <?php
+$subjectImages = [
+    'Portuguese' => '/images/portuguese.gif',
+    'Math' => '/images/math.gif',
+    'Physics and Chemistry' => '/images/physics.gif',
+    'Natural Sciences' => '/images/naturalSciences.gif',
+    'Biology and Geology' => '/images/biology.gif',
+    'History' => '/images/history.gif',
+    'English' => '/images/english.gif',
+    'French' => '/images/french.gif',
+    'Spanish' => '/images/spanish.gif',
+    'German' => '/images/german.gif',
+    'Social and Environmental Studies' => '/images/social.gif',
+    'History and Geography of Portugal' => '/images/historyPortugal.gif',
+    'Geography' => '/images/geography.gif',
+    'Phylosophy' => '/images/phylosophy.gif',
+    'Economics' => '/images/economics.gif',
+    'Drawing' => '/images/drawing.gif',
+    'Mathematics Applied to Social Sciences' => '/images/mathSocial.gif',
+    'History and Culture of the Arts' => '/images/historyArt.gif',
+    'Descriptive Geometry' => '/images/geometry.gif'
+];
+?>
+<?php if (!empty($subjects)): ?>
+    <div class="about-container">
+        <h2 class="section-title">Subjects</h2>
+        <div class="about-section subject-cards-container">
+            <?php foreach ($subjects as $subject): 
+                $name = $subject['SUBJECT'];
+                $imagePath = $subjectImages[$name] ?? '/images/subjects/default.jpg'; // fallback image
+            ?>
+                <div class="subject-card">
+                    <div class="subject-name"><?= htmlspecialchars($name) ?></div>
+                    <img src="<?= htmlspecialchars($imagePath) ?>" alt="<?= htmlspecialchars($name) ?> image" class="subject-image" />
                 </div>
-            <?php endif; ?>
-
-            <?php if (!empty($languages)): ?>
-                <div class="languages-section">
-                    <h2 class="section-title">Languages</h2>
-                    <div class="languages-list">
-                        <?php foreach ($languages as $language): ?>
-                            <div class="language-item">
-                                <?= htmlspecialchars($language) ?>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
+            <?php endforeach; ?>
         </div>
     </div>
+<?php endif; ?>
+<?php
+$languageFlags = [
+    'English' => 'https://cdn-icons-png.flaticon.com/512/206/206592.png',
+    'Spanish' => 'https://cdn-icons-png.flaticon.com/512/330/330557.png',
+    'French' => 'https://cdn-icons-png.flaticon.com/512/206/206657.png',
+    'German' => 'https://cdn-icons-png.flaticon.com/512/330/330523.png',
+    'Mandarin' => 'https://cdn-icons-png.flaticon.com/512/206/206818.png',
+    'Japanese' => 'https://cdn-icons-png.flaticon.com/512/206/206789.png',
+    'Portuguese' => 'https://cdn-icons-png.flaticon.com/512/206/206628.png',
+    'Russian' => 'https://cdn-icons-png.flaticon.com/512/940/940307.png',
+    'Arabic' => 'https://cdn-icons-png.flaticon.com/512/330/330552.png',
+    'Italian' => 'https://cdn-icons-png.flaticon.com/512/330/330672.png'
+];
+?>
+<?php if (!empty($languages)): ?>
+    <div class="about-container">
+        <h2 class="section-title">Languages</h2>
+        <div class="about-section subject-cards-container">
+            <?php foreach ($languages as $language): 
+                $flagUrl = $languageFlags[$language] ?? null;
+            ?>
+                <div class="subject-card">
+                    <div class="subject-name"><?= htmlspecialchars($language) ?></div>
+                    <img src="<?= htmlspecialchars($flagUrl) ?>" alt="<?= htmlspecialchars($language) ?> image" class="subject-image" />
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+<?php endif; ?>
+        </div>
+    </div>
+            </main>
+    <footer class="rights">
+            <p>© 2025 Learn2Day. All rights reserved.</p>
+    </footer>
     <script src="scripts/homepage_script.js"></script>
 </body>
-
 </html>
