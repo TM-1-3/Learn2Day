@@ -213,6 +213,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                         </div>
                     </div>
                 </div>
+            </div>
         </form>
         <div class="access-profile">
             <?php $user = $session->getUser(); ?>
