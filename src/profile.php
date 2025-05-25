@@ -62,6 +62,93 @@ if ($user->type === 'TUTOR') {
     $subjects = $qual['subjects'] ?? [];
     $languages = $qual['languages'] ?? [];
 }
+
+$allSubjects = Qualifications::getAllSubjects();
+$allLanguages = Qualifications::getAllLanguages();
+$allLevels = Qualifications::getAllTutorLevels();
+
+$searchResults = [];
+$selectedSubjects = $_GET['subjects'] ?? [];
+$selectedLanguages = $_GET['languages'] ?? [];
+$selectedLevels = $_GET['levels'] ?? [];
+$searchQuery = trim($_GET['search'] ?? '');
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects || $selectedLanguages || $selectedLevels)) {
+    $db = Database::getInstance();
+    // Tutors
+    $query = "SELECT T.ID_TUTOR as id, T.NAME, 'tutor' as type, T.PROFILE_IMAGE, T.DESCRIPTION, U.USERNAME
+        FROM TUTOR T
+        JOIN USERS U ON T.ID_TUTOR = U.USERNAME
+        WHERE 1=1";
+    $params = [];
+    if ($searchQuery) {
+        $query .= " AND (T.NAME LIKE ? OR U.USERNAME LIKE ? )";
+        $searchParam = "%$searchQuery%";
+        $params[] = $searchParam;
+        $params[] = $searchParam;
+    }
+    if (!empty($selectedSubjects)) {
+        $subjectPlaceholders = implode(',', array_fill(0, count($selectedSubjects), '?'));
+        $query .= " AND T.ID_TUTOR IN (SELECT TUTOR FROM TUTOR_SUBJECT WHERE SUBJECT IN ($subjectPlaceholders))";
+        foreach ($selectedSubjects as $subject) {
+            $params[] = $subject;
+        }
+    }
+    if (!empty($selectedLanguages)) {
+        $langPlaceholders = implode(',', array_fill(0, count($selectedLanguages), '?'));
+        $query .= " AND T.ID_TUTOR IN (SELECT TUTOR FROM TUTOR_LANGUAGE WHERE LANGUAGE IN ($langPlaceholders))";
+        foreach ($selectedLanguages as $lang) {
+            $params[] = $lang;
+        }
+    }
+    if (!empty($selectedLevels)) {
+        $levelPlaceholders = implode(',', array_fill(0, count($selectedLevels), '?'));
+        $query .= " AND T.ID_TUTOR IN (SELECT TUTOR FROM TUTOR_SUBJECT WHERE TUTOR_LEVEL IN ($levelPlaceholders))";
+        foreach ($selectedLevels as $level) {
+            $params[] = $level;
+        }
+    }
+    $stmt = $db->prepare($query);
+    $stmt->execute($params);
+    $tutorResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Students
+    $query_students = "SELECT S.ID_STUDENT as id, S.NAME, 'student' as type, S.PROFILE_IMAGE, S.DESCRIPTION, U.USERNAME
+        FROM STUDENT S
+        JOIN USERS U ON S.ID_STUDENT = U.USERNAME
+        WHERE 1=1";
+    $params_students = [];
+    if ($searchQuery) {
+        $query_students .= " AND (S.NAME LIKE ? OR U.USERNAME LIKE ? )";
+        $searchParam = "%$searchQuery%";
+        $params_students[] = $searchParam;
+        $params_students[] = $searchParam;
+    }
+    if (!empty($selectedSubjects)) {
+        $subjectPlaceholders = implode(',', array_fill(0, count($selectedSubjects), '?'));
+        $query_students .= " AND S.ID_STUDENT IN (SELECT STUDENT FROM STUDENT_SUBJECT WHERE SUBJECT IN ($subjectPlaceholders))";
+        foreach ($selectedSubjects as $subject) {
+            $params_students[] = $subject;
+        }
+    }
+    if (!empty($selectedLanguages)) {
+        $langPlaceholders = implode(',', array_fill(0, count($selectedLanguages), '?'));
+        $query_students .= " AND S.ID_STUDENT IN (SELECT STUDENT FROM STUDENT_LANGUAGE WHERE LANGUAGE IN ($langPlaceholders))";
+        foreach ($selectedLanguages as $lang) {
+            $params_students[] = $lang;
+        }
+    }
+    if (!empty($selectedLevels)) {
+        $levelPlaceholders = implode(',', array_fill(0, count($selectedLevels), '?'));
+        $query_students .= " AND S.ID_STUDENT IN (SELECT STUDENT FROM STUDENT_SUBJECT WHERE STUDENT_LEVEL IN ($levelPlaceholders))";
+        foreach ($selectedLevels as $level) {
+            $params_students[] = $level;
+        }
+    }
+    $stmt_students = $db->prepare($query_students);
+    $stmt_students->execute($params_students);
+    $studentResults = $stmt_students->fetchAll(PDO::FETCH_ASSOC);
+    $searchResults = array_merge($tutorResults, $studentResults);
+}
 ?>
 
 <!DOCTYPE html>
@@ -70,49 +157,77 @@ if ($user->type === 'TUTOR') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($profile->name) ?>'s Profile</title>
-    <link rel="stylesheet" href="styles/profile.css">
-    <link rel="stylesheet" href="styles/homepage.css">
+    <link rel="stylesheet" href="/styles/profile.css">
+    <link rel="stylesheet" href="/styles/homepage.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
 <body>
-<header class="header">
-        <div class="name">
+    <header class="header">
+        <div class="site-name">
             <a href="/homepage.php" class="main-page" style="text-decoration:none;"><span style="color: #03254E;">Learn</span><span style="color: black;">2</span><span style="color: #32533D;">Day</span></a>
         </div>
-        <div class="search-bar">
-            <input type="text" placeholder="Search..." />
-            <button class="search-button">
-                <span class="material-symbols-outlined">search</span>
-            </button>
-            <div class="filter-dropdown">
-                <button type="button" class="filter-button">
-                    <span class="material-symbols-outlined">filter_alt</span>
+        <form method="GET" action="/homepage.php" class="search-form">
+            <div class="search-bar">
+                <input type="text" name="search" placeholder="Search..." value="<?= htmlspecialchars($searchQuery) ?>" />
+                <button type="submit" class="search-button">
+                    <span class="material-symbols-outlined">search</span>
                 </button>
-                <div class="filter-options">
-                    <h4>Filter by Subject</h4>
-                    <?php
-                    foreach ($allSubjects as $subject): ?>
-                        <label>
-                            <input type="checkbox" name="subjects[]" value="<?= htmlspecialchars($subject) ?>"
-                                <?= (isset($_GET['subjects']) && in_array($subject, $_GET['subjects'])) ? 'checked' : '' ?>>
-                            <?= htmlspecialchars($subject) ?>
-                        </label>
-                    <?php endforeach; ?>
+                <div class="filter-dropdown">
+                    <button type="button" class="filter-button">
+                        <span class="material-symbols-outlined">filter_alt</span>
+                    </button>
+                    <div class="filter-options">
+                        <div class="filter-subject">
+                            <h4>Filter by Subject</h4>
+                            <?php
+                            foreach ($allSubjects as $subject): ?>
+                                <label>
+                                    <input type="checkbox" name="subjects[]" value="<?= htmlspecialchars($subject) ?>"
+                                        <?= (isset($_GET['subjects']) && in_array($subject, $_GET['subjects'])) ? 'checked' : '' ?>>
+                                    <?= htmlspecialchars($subject) ?>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="filter-languages">
+                            <h4>Filter by Language</h4>
+                            <?php
+                            foreach ($allLanguages as $language): ?>
+                                <label>
+                                    <input type="checkbox" name="languages[]" value="<?= htmlspecialchars($language) ?>"
+                                        <?= (isset($_GET['languages']) && in_array($language, $_GET['languages'])) ? 'checked' : '' ?>>
+                                    <?= htmlspecialchars($language) ?>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <div class="filter-levels">
+                            <h4>Filter by Level</h4>
+                            <?php
+                            foreach ($allLevels as $level): ?>
+                                <label>
+                                    <input type="checkbox" name="levels[]" value="<?= htmlspecialchars($level) ?>"
+                                        <?= (isset($_GET['levels']) && in_array($level, $_GET['levels'])) ? 'checked' : '' ?>>
+                                    <?= htmlspecialchars($level) ?>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+        </form>
         <div class="access-profile">
-            <?php $current_user = $session->getUser(); ?>
+            <?php $user = $session->getUser(); ?>
             <button id="profile-button">
                 <span class="material-symbols-outlined">account_circle</span>
-                <?= htmlspecialchars($current_user->username) ?>
+                <?= htmlspecialchars($user->username) ?>
             </button>
             <div id="profile-inner" class="profile">
-                <form action="actions/logout.php" method="post" class="logout-popup">
-                <a href='/profile.php?id=<?= htmlspecialchars($session->getUserUsername()) ?>' class="viewprofile-btn">View Profile</a>
+                <div class="logout-popup">
+                    <a href='/profile.php?id=<?= htmlspecialchars($session->getUserUsername()) ?>' class="viewprofile-btn">View Profile</a>
                     <hr size="18">
-                    <button type="submit" class="logout-btn">Log Out</button>
-                </form>
+                    <form action="actions/logout.php" method="post">
+                        <button type="submit" class="logout-btn">Log Out</button>
+                    </form>
+                </div>
             </div>
         </div>
     </header>
