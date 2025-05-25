@@ -151,7 +151,7 @@ $allLevels = Qualifications::getAllTutorLevels();
 <body>
     <header class="header">
         <div class="site-name">
-            <a href="/homepage.php" class="main-page">Learn2Day</a>
+            <a href="/homepage.php" class="main-page" style="text-decoration:none;"><span style="color: #03254E;">Learn</span><span style="color: black;">2</span><span style="color: #32533D;">Day</span></a>
         </div>
         <form method="GET" action="/homepage.php" class="search-form">
             <div class="search-bar">

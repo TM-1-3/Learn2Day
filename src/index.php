@@ -43,7 +43,6 @@ $tutors = $stmt->fetchAll();
     <title>Learn2Day</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/index.css">
-    <link href="https://fonts.googleapis.com/css2?family=Acme&family=Poetsen+One&display=swap" rel="stylesheet">
 </head>
 
 <body>
