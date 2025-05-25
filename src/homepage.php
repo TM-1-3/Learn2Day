@@ -200,6 +200,7 @@ $allLevels = Qualifications::getAllTutorLevels();
                         </div>
                     </div>
                 </div>
+            </div>
         </form>
         <div class="access-profile">
             <?php $user = $session->getUser(); ?>
