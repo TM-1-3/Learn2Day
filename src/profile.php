@@ -6,6 +6,7 @@ require_once __DIR__ . '/database/studentclass.php';
 require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/qualificationclass.php';
+require_once __DIR__ . '/database/adminclass.php';
 
 $session = Session::getInstance();
 
@@ -13,6 +14,8 @@ if (!$session->isLoggedIn()) {
     header('Location: /register_page.php');
     exit();
 }
+
+$myuser = $session->getUser();
 
 $profile_username = $_GET['id'] ?? $session->getUser()->username;
 $user = User::get_user_by_username($profile_username);
@@ -24,12 +27,16 @@ if (!$user) {
 
 $profile = null;
 $profile_type = '';
+
 if ($user->type === 'STUDENT') {
     $profile = Student::getByUsername($profile_username);
     $profile_type = 'Student';
 } elseif ($user->type === 'TUTOR') {
     $profile = Tutor::getByUsername($profile_username);
     $profile_type = 'Tutor';
+} elseif ($user->type === 'ADMIN') {
+    $profile = Admin::getByUsername($profile_username);
+    $profile_type = 'Admin';
 }
 
 if (!$profile) {
@@ -78,9 +85,22 @@ if ($user->type === 'TUTOR') {
             <button class="search-button">
                 <span class="material-symbols-outlined">search</span>
             </button>
-            <button class="filter-button">
-                <span class="material-symbols-outlined">filter_alt</span>
-            </button>
+            <div class="filter-dropdown">
+                <button type="button" class="filter-button">
+                    <span class="material-symbols-outlined">filter_alt</span>
+                </button>
+                <div class="filter-options">
+                    <h4>Filter by Subject</h4>
+                    <?php
+                    foreach ($allSubjects as $subject): ?>
+                        <label>
+                            <input type="checkbox" name="subjects[]" value="<?= htmlspecialchars($subject) ?>"
+                                <?= (isset($_GET['subjects']) && in_array($subject, $_GET['subjects'])) ? 'checked' : '' ?>>
+                            <?= htmlspecialchars($subject) ?>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+            </div>
         </div>
         <div class="access-profile">
             <?php if ($session->isLoggedIn()): ?>
@@ -131,6 +151,16 @@ if ($user->type === 'TUTOR') {
                 <?php if ($session->getUser()->username === $profile_username): ?>
                     <a href="/edit_profile.php" class="edit-profile-btn">Edit Profile</a>
                 <?php endif; ?>
+                <?php if ($myuser->type == 'ADMIN' && $user->type !== 'ADMIN'): ?>
+                    <form action="/actions/ban.php" method="post" class="delete-user-form">
+                        <input type="hidden" name="username" value="<?= htmlspecialchars($profile_username) ?>">
+                        <button type="submit" class="delete-user-btn">Ban User</button>
+                    </form>
+                    <form action="/actions/promotion.php" method="post" class="promote-user-form">
+                        <input type="hidden" name="username" value="<?= htmlspecialchars($profile_username) ?>">
+                        <button type="submit" class="promote-user-btn">Promote to Admin</button>
+                    </form>
+                <?php endif; ?>
             </div>
         </div>    
         <div class="other-flex-wrapper">
@@ -144,7 +174,8 @@ if ($user->type === 'TUTOR') {
                 <img src="/images/blue_blob.png" alt="Blue Blob" class="blue-blob">
                 <img src="/images/teacher_description.png" alt="Information Icon" class="description-image">
             </div>
-        </div>    
+        </div> 
+        <?php if ($profile_type !== 'ADMIN'): ?>   
         <div class="about-flex-wrapper">
             <div class="image-stack">
                 <img src="/images/blue_blob.png" alt="Blue Blob" class="blue-blob">
@@ -161,6 +192,7 @@ if ($user->type === 'TUTOR') {
                 </div>
             </div>
         </div>
+        <?php endif; ?>
         <?php
 $subjectImages = [
     'Portuguese' => '/images/portuguese.gif',
