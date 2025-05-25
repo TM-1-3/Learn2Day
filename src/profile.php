@@ -244,34 +244,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                         onerror="this.src='/uploads/profiles/default.png'">
                         <div class="name-only">
                             <div class="name-username">
-                                <?php if ($user->type == 'STUDENT'): ?>
+                                <?php if ($profile_type == 'Student'): ?>
                                     <h1 style="color: #32533D"><?= htmlspecialchars($profile->name) ?></h1>
-                                <?php elseif($user->type == 'TUTOR'): ?>
+                                <?php elseif($profile_type == 'Tutor'): ?>
                                     <h1 style="color: #03254E"><?= htmlspecialchars($profile->name) ?></h1>
+                                <?php elseif($profile_type == 'Admin'): ?>
+                                    <h1 style="color: #FFD670"><?= htmlspecialchars($profile->name) ?></h1>
                                 <?php endif; ?>
-                                <p class="username"> @<?= htmlspecialchars($user->username) ?></p>
-                                <span class="badge <?= $profile_type === 'Tutor' ? 'tutor-badge' : '' ?>">
-                                    <?= htmlspecialchars($profile_type) ?>
-                                </span>
+                                <p class="username"> @<?= htmlspecialchars($profile_username) ?></p>
+                                <?php if ($profile_type == 'Student'): ?>
+                                    <span class="badge" style="background-color: #32533D">Student</span>
+                                <?php elseif($profile_type == 'Tutor'): ?>
+                                    <span class="badge" style="background-color: #03254E">Tutor</span>
+                                <?php elseif($profile_type == 'Admin'): ?>
+                                    <span class="badge" style="background-color: #FFD670">Admin</span>
+                                <?php endif; ?>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                         <div class="profile-info">
-                        <?php if ($myuser->type == 'ADMIN' && $user->type !== 'ADMIN'): ?>
-                            <form action="/actions/ban.php" method="post" class="delete-user-form">
-                                <input type="hidden" name="username" value="<?= htmlspecialchars($profile_username) ?>">
-                                <button type="submit" class="delete-user-btn">Ban User</button>
-                            </form>
-                            <form action="/actions/promotion.php" method="post" class="promote-user-form">
-                                <input type="hidden" name="username" value="<?= htmlspecialchars($profile_username) ?>">
-                                <button type="submit" class="promote-user-btn">Promote to Admin</button>
-                            </form>
-                        <?php endif; ?>
+                        <div class="profile-info">
+                            <?php if ($myuser->type === 'ADMIN' && strtoupper($profile_type) !== 'ADMIN'): ?>
+                                <div class="admin-feats">
+                                <form action="/actions/ban.php" method="post" class="delete-user-form">
+                                    <input type="hidden" name="username" value="<?= htmlspecialchars($profile_username) ?>">
+                                    <?php if (strtoupper($profile_type) === 'STUDENT'): ?>
+                                        <button type="submit" class="delete-user-btn" style="background-color: #32533D">Ban User</button>
+                                    <?php elseif (strtoupper($profile_type) === 'TUTOR'): ?>
+                                        <button type="submit" class="delete-user-btn" style="background-color: #03254E">Ban User</button>
+                                    <?php endif; ?>
+                                </form>
+                                <form action="/actions/promotion.php" method="post" class="promote-user-form">
+                                    <input type="hidden" name="username" value="<?= htmlspecialchars($profile_username) ?>">
+                                    <?php if (strtoupper($profile_type) === 'STUDENT'): ?>
+                                        <button type="submit" class="promote-user-btn" style="background-color: #32533D">Promote to Admin</button>
+                                    <?php elseif (strtoupper($profile_type) === 'TUTOR'): ?>
+                                        <button type="submit" class="promote-user-btn" style="background-color: #03254E">Promote to Admin</button>
+                                    <?php endif; ?>
+                                </form>
+                                </div>
+                            <?php endif; ?>
                         <?php if ($session->getUser()->username === $profile_username): ?>
                             <?php if ($user->type == 'STUDENT'): ?>
                                 <a href="/edit_profile.php" class="edit-profile-btn" style="background-color: #32533D">Edit Profile</a>
                             <?php elseif($user->type == 'TUTOR'): ?>
                                 <a href="/edit_profile.php" class="edit-profile-btn" style="background-color: #03254E">Edit Profile</a>
+                            <?php elseif($user->type == 'ADMIN'): ?>
+                                <a href="/edit_profile.php" class="edit-profile-btn" style="background-color: #FFD670">Edit Profile</a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        <?php if ($myuser->username !== $profile_username): ?>
+                            <?php if($myuser->type == 'STUDENT' && strtoupper($profile_type) == 'TUTOR'): ?>
+                                <div class="ask-profile-btn">Ask For Tutoring</div>
                             <?php endif; ?>
                         <?php endif; ?>
                     </div>
@@ -281,33 +304,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                         <div class="other-flex-wrapper">
                             <div class="profile-details-container">
                                 <div class="age">
-                                    <?php if ($user->type == 'STUDENT'): ?>
+                                    <?php if ($profile_type == 'Student'): ?>
                                         <div class="profile-details" style="background-color: #32533D">Age</div>
-                                    <?php elseif($user->type == 'TUTOR'): ?>
+                                    <?php elseif($profile_type == 'Tutor'): ?>
                                         <div class="profile-details" style="background-color: #03254E">Age</div>
                                     <?php endif; ?>
                                     <div class="profile-description1">
-                                        <?php if ($age): ?>
-                                            <p><?= $age ?> years old</p>
+                                        <?php if ($profile_type !== 'Admin'): ?>
+                                            <?php if ($age): ?>
+                                                <p><?= $age ?> years old</p>
+                                            <?php endif; ?>
                                         <?php endif; ?>
                                     </div>
                                 </div>
                                 <div class="member">
-                                    <?php if ($user->type == 'STUDENT'): ?>
-                                        <div class="profile-details" style="background-color: #32533D; width: 150px;">Member since</div>
-                                    <?php elseif($user->type == 'TUTOR'): ?>
-                                        <div class="profile-details" style="background-color: #03254E; width: 150px;">Member since</div>
+                                    <?php if ($profile_type == 'Student'): ?>
+                                        <div class="profile-details" style="background-color: #32533D; width: 140px;">Member since</div>
+                                    <?php elseif($profile_type == 'Tutor'): ?>
+                                        <div class="profile-details" style="background-color: #03254E; width: 140px;">Member since</div>
                                     <?php endif; ?>
                                     <div class="profile-description1">
+                                        <?php if ($profile_type !== 'Admin'): ?>
                                         <p><?= date('F Y', strtotime($user->created_at ?? 'now')) ?></p>
+                                        <?php endif; ?>
                                     </div>
                                     </div>
                                 </div>
-                                <?php if ($user->type == 'STUDENT'): ?>
+                                <?php if ($profile_type == 'Student'): ?>
                                     <div class="profile-details" style="background-color: #32533D">About</div>
-                                <?php elseif($user->type == 'TUTOR'): ?>
+                                <?php elseif($profile_type == 'Tutor'): ?>
                                     <div class="profile-details" style="background-color: #03254E">About</div>
-                                <?php elseif($user->type == 'ADMIN'): ?>
+                                <?php elseif($profile_type == 'Admin'): ?>
                                     <div class="profile-details" style="background-color: #FFD670">About</div>
                                 <?php endif; ?>
                                 <div class="profile-description2">
