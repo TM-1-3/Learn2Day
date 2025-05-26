@@ -141,6 +141,24 @@ $selectedLanguages = $_GET['languages'] ?? [];
 $selectedLevels = $_GET['levels'] ?? [];
 $searchQuery = trim($_GET['search'] ?? '');
 
+$profile_image = 'default.png';
+if ($user->type === 'STUDENT') {
+    $profile = Student::getByUsername($user->username);
+    if ($profile && !empty($profile->profile_image)) {
+        $profile_image = $profile->profile_image;
+    }
+} elseif ($user->type === 'TUTOR') {
+    $profile = Tutor::getByUsername($user->username);
+    if ($profile && !empty($profile->profile_image)) {
+        $profile_image = $profile->profile_image;
+    }
+} elseif ($user->type === 'ADMIN') {
+    $profile = Admin::getByUsername($user->username);
+    if ($profile && !empty($profile->profile_image)) {
+        $profile_image = $profile->profile_image;
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects || $selectedLanguages || $selectedLevels)) {
     $db = Database::getInstance();
     // Tutors
@@ -226,6 +244,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/styles/homepage.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <link rel="stylesheet" href="/styles/admin.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
@@ -248,8 +268,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                     <div class="filter-options">
                         <div class="filter-subject">
                             <h4>Filter by Subject</h4>
-                            <?php
-                            foreach ($allSubjects as $subject): ?>
+                            <?php foreach ($allSubjects as $subject): ?>
                                 <label>
                                     <input type="checkbox" name="subjects[]" value="<?= htmlspecialchars($subject) ?>"
                                         <?= (isset($_GET['subjects']) && in_array($subject, $_GET['subjects'])) ? 'checked' : '' ?>>
@@ -259,8 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                         </div>
                         <div class="filter-languages">
                             <h4>Filter by Language</h4>
-                            <?php
-                            foreach ($allLanguages as $language): ?>
+                            <?php foreach ($allLanguages as $language): ?>
                                 <label>
                                     <input type="checkbox" name="languages[]" value="<?= htmlspecialchars($language) ?>"
                                         <?= (isset($_GET['languages']) && in_array($language, $_GET['languages'])) ? 'checked' : '' ?>>
@@ -268,11 +286,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                                 </label>
                             <?php endforeach; ?>
                         </div>
-
                         <div class="filter-levels">
                             <h4>Filter by Level</h4>
-                            <?php
-                            foreach ($allLevels as $level): ?>
+                            <?php foreach ($allLevels as $level): ?>
                                 <label>
                                     <input type="checkbox" name="levels[]" value="<?= htmlspecialchars($level) ?>"
                                         <?= (isset($_GET['levels']) && in_array($level, $_GET['levels'])) ? 'checked' : '' ?>>
@@ -284,11 +300,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                 </div>
             </div>
         </form>
+        <div class="notifications">
+            <button id="notification-button">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <div id="notification-inner" class="notification-popup">
+                <a href="/messages.php" class="viewprofile-btn">Messages</a>
+            </div>
+        </div>
         <div class="access-profile">
-            <?php $user = $session->getUser(); ?>
             <button id="profile-button">
-                <span class="material-symbols-outlined">account_circle</span>
-                <?= htmlspecialchars($user->username) ?>
+                @<?= htmlspecialchars($user->username) ?>
+                <span class="material-symbols-outlined" style="display: flex; align-items: center;">
+                    <img class="profile-header-img" src="/uploads/profiles/<?= htmlspecialchars($profile_image) ?>"
+                         alt="Profile Image">
+                </span>
             </button>
             <div id="profile-inner" class="profile">
                 <div class="logout-popup">
