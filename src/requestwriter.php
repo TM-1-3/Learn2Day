@@ -19,22 +19,24 @@ $tutorusername = $_GET['id'] ?? $session->getUser()->username;
 $tutor = Tutor::getByUsername($tutorusername);
 
 $message = '';
+$success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = trim($_POST['message'] ?? '');
+    if (!empty($message)) {
+        $request = new Request(
+            usernametutor: $tutorusername,
+            usernamestudent: $student->username,
+            accepted: false,
+            date_sent: date('Y-m-d H:i:s'),
+            message: $message
+        );
+
+        $request->create();
+        header('Location: /profile.php?id=' . urlencode($tutorusername));
+        exit();
+    }
 }
-
-$request = new Request(
-    usernametutor: $tutorusername,
-    usernamestudent: $student->username,
-    accepted: false,
-    date_sent: date('Y-m-d H:i:s'),
-    message: $message
-);
-
-$request->create();
-
-
 
 ?>
 
@@ -49,15 +51,11 @@ $request->create();
 </head>
 
 <body>
-    <h1>
-        <?php
-        if (isset($_POST['message']) && !empty($_POST['message'])) {
-            echo "Request sent to $tutorusername";
-        } else {
-            echo "Please write a message to $tutorusername";
-        }
-        ?>
-    </h1>
+    <?php if (!empty($success)): ?>
+        <h1>Request sent to <?= htmlspecialchars($tutorusername) ?></h1>
+    <?php else: ?>
+        <h1>Please write a message to <?= htmlspecialchars($tutorusername) ?></h1>
+    <?php endif; ?>
     <div class="profile-header-inner1">
         <img src="/uploads/profiles/<?= htmlspecialchars($tutor->profile_image) ?>"
             alt="Profile Picture"
@@ -71,12 +69,12 @@ $request->create();
             </div>
         </div>
     </div>
-    <form method="post" action="">
+    <form method="post" action="/requestwriter.php?id=<?= urlencode($tutorusername) ?>">
         <label for="message">Message:</label>
         <textarea id="message" name="message" rows="4" cols="50"></textarea>
         <br>
         <button type="submit" class="request-send">Send Request</button>
-        <button type="button" class="cancel" onclick="window.location.href='/profile.php?id=<?= urlencode($tutor->username['ID_TUTOR']) ?>'">Cancel</button>
+        <button type="button" class="cancel" onclick="window.location.href='/profile.php?id=<?= urlencode($tutorusername) ?>'">Cancel</button>
     </form>
 </body>
 </html>
