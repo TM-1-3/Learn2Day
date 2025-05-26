@@ -67,20 +67,20 @@ if ($user->type === 'TUTOR') {
 }
 
 $profile_image = 'default.png';
-if ($user->type === 'STUDENT') {
-    $profile = Student::getByUsername($user->username);
-    if ($profile && !empty($profile->profile_image)) {
-        $profile_image = $profile->profile_image;
+if ($myuser->type === 'STUDENT') {
+    $profile2 = Student::getByUsername($myuser->username);
+    if ($profile2 && !empty($profile2->profile_image)) {
+        $profile_image = $profile2->profile_image;
     }
-} elseif ($user->type === 'TUTOR') {
-    $profile = Tutor::getByUsername($user->username);
-    if ($profile && !empty($profile->profile_image)) {
-        $profile_image = $profile->profile_image;
+} elseif ($myuser->type === 'TUTOR') {
+    $profile2 = Tutor::getByUsername($myuser->username);
+    if ($profile2 && !empty($profile2->profile_image)) {
+        $profile_image = $profile2->profile_image;
     }
-} elseif ($user->type === 'ADMIN') {
-    $profile = Admin::getByUsername($user->username);
-    if ($profile && !empty($profile->profile_image)) {
-        $profile_image = $profile->profile_image;
+} elseif ($myuser->type === 'ADMIN') {
+    $profile2 = Admin::getByUsername($myuser->username);
+    if ($profile2 && !empty($profile2->profile_image)) {
+        $profile_image = $profile2->profile_image;
     }
 }
 
@@ -239,12 +239,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
         </button>
         <div id="notification-inner" class="notification-popup">
             <?php if ($user->type === 'STUDENT'): ?>
-                <a href="/studentrequests.php" class="notification-link">View Requests</a>
+                <a href="/viewrequests.php?id=<?=htmlspecialchars($session->getUserUsername()) ?>" class="viewprofile-btn">View Requests</a>
             <?php elseif ($user->type === 'TUTOR'): ?>
-                <a href="/tutorrequests.php" class="notification-link">View Requests</a>
+                <a href="/viewrequests.php?id=<?=htmlspecialchars($session->getUserUsername()) ?>" class="viewprofile-btn">View Requests</a>
             <?php endif; ?>
             <hr size="5">
-            <a href="/messages.php" class="notification-link">Messages</a>
+            <a href="/messages.php" class="viewprofile-btn">Messages</a>
         </div>
     </div>
     <div class="access-profile">
