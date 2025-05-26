@@ -22,6 +22,25 @@ if (!$isLoggedIn) {
 
 $user = $session->getUser();
 
+// Fetch the latest profile image from the correct table
+$profile_image = 'default.png';
+if ($user->type === 'STUDENT') {
+    $profile = Student::getByUsername($user->username);
+    if ($profile && !empty($profile->profile_image)) {
+        $profile_image = $profile->profile_image;
+    }
+} elseif ($user->type === 'TUTOR') {
+    $profile = Tutor::getByUsername($user->username);
+    if ($profile && !empty($profile->profile_image)) {
+        $profile_image = $profile->profile_image;
+    }
+} elseif ($user->type === 'ADMIN') {
+    $profile = Admin::getByUsername($user->username);
+    if ($profile && !empty($profile->profile_image)) {
+        $profile_image = $profile->profile_image;
+    }
+}
+
 if ($user->type == 'ADMIN') {
     header('Location: /admindashboard.php');
     exit();
@@ -202,11 +221,28 @@ $allLevels = Qualifications::getAllTutorLevels();
                 </div>
             </div>
         </form>
+        <div class="notifications">
+            <?php $user = $session->getUser(); ?>
+            <button id="notification-button">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <div id="notification-inner" class="notification-popup">
+                <?php if ($user->type === 'STUDENT'): ?>
+                    <a href="/studentrequests.php" class="notification-link">View Requests</a>
+                <?php elseif ($user->type === 'TUTOR'): ?>
+                    <a href="/tutorrequests.php" class="notification-link">View Requests</a>
+                <?php endif; ?>
+                <hr size="5">
+                <a href="/messages.php" class="notification-link">Messages</a>
+        </div>
         <div class="access-profile">
             <?php $user = $session->getUser(); ?>
             <button id="profile-button">
-                <span class="material-symbols-outlined">account_circle</span>
-                <?= htmlspecialchars($user->username) ?>
+                @<?= htmlspecialchars($user->username) ?>
+                <span class="material-symbols-outlined" style="display: flex; align-items: center;">
+                    <img class="profile-header-img" src="/uploads/profiles/<?= htmlspecialchars($profile_image) ?>"
+                         alt="Profile Image">
+                </span>
             </button>
             <div id="profile-inner" class="profile">
                 <div class="logout-popup">
@@ -316,5 +352,8 @@ $allLevels = Qualifications::getAllTutorLevels();
 
     <script src="scripts/homepage_script.js"></script>
 </body>
+<footer class="rights">
+<p>© 2025 Learn2Day. All rights reserved.</p>
+</footer>
 
 </html>

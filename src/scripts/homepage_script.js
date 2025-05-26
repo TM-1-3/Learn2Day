@@ -1,20 +1,36 @@
 const openButton = document.getElementById("profile-button");
 const profile = document.getElementById("profile-inner");
+const notificationButton = document.getElementById("notification-button");
+const notificationPopup = document.getElementById("notification-inner");
 const filterButton = document.querySelector('.filter-button');
 const filterOptions = document.querySelector('.filter-options');
 const logoutForm = document.querySelector('#profile-inner form');
 
 // Profile dropdown logic
 openButton.addEventListener("click", (e) => {
-    e.preventDefault(); // Prevent form submission or button default
+    e.preventDefault();
     e.stopPropagation();
     profile.classList.toggle("open");
+    // Close notification popup when opening profile
+    notificationPopup.classList.remove("open");
+});
+
+// Notifications dropdown logic
+notificationButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    notificationPopup.classList.toggle("open");
+    // Close profile popup when opening notifications
+    profile.classList.remove("open");
 });
 
 // Close dropdowns when clicking outside
 document.addEventListener("click", (e) => {
     if (!profile.contains(e.target) && e.target !== openButton) {
         profile.classList.remove("open");
+    }
+    if (!notificationPopup.contains(e.target) && e.target !== notificationButton) {
+        notificationPopup.classList.remove("open");
     }
     if (!filterOptions.contains(e.target) && e.target !== filterButton) {
         filterOptions.style.display = 'none';
@@ -32,6 +48,9 @@ if (filterButton && filterOptions) {
         } else {
             filterOptions.style.display = 'block';
         }
+        // Close other popups when opening filters
+        profile.classList.remove("open");
+        notificationPopup.classList.remove("open");
     });
 }
 
@@ -59,8 +78,7 @@ if (filterOptions) {
 // Ensure logout form submits properly
 if (logoutForm) {
     logoutForm.addEventListener('submit', (e) => {
-        e.stopPropagation(); // Prevent event from bubbling up
-        // The form will submit normally to actions/logout.php
+        e.stopPropagation();
     });
 }
 
