@@ -15,16 +15,20 @@ body {
 }
 
 header {
-  padding: 7px 20px;
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  border-radius: 8px;
+  padding: 12px 28px;
+  justify-content: space-between;
   position: fixed;
-  border-radius: 100px;
-  background-color: #fff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
-  top: 10px;
-  left: 300px;
-  right: 300px;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
-  min-width: 512px;
+  gap: 24px;
+  margin: 0 auto;
+  max-width: 1200px;
+  height: 75px;
 }
 
 .profile {
@@ -35,11 +39,12 @@ header {
 
 .name {
   font-size: 30px;
-  font-family: "Acme", sans-serif;
-  font-weight: 600;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: bold;
 }
 
 .sections {
+  margin-top: 5.5px;
   align-items: center;
   display: flex;
   font-family: Arial, sans-serif;
@@ -136,10 +141,10 @@ header {
 }
 
 .slogan {
-  font-family: "Acme", sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 600;
   font-size: 70px;
-  width: 550px;
+  width: 650px;
   color: black;
   margin: 100px auto 0 100px;
 }
@@ -188,9 +193,9 @@ header {
 
 .log-btn {
   padding: 10px;
-  font-size: 15px;
-  width: 80px;
-  height: 36px;
+  font-size: 18px;
+  width: 90px;
+  height: 40px;
 }
 
 .login-btn {

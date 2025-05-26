@@ -228,9 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <?php if ($user->type == 'STUDENT'): ?>
-
         <body style="background-color: #32533D">
-
     <?php elseif($user->type == 'TUTOR'): ?>
         <body style="background-color: #03254E">
     <?php elseif($user->type == 'ADMIN'): ?>

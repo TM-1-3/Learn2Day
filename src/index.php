@@ -43,7 +43,6 @@ $tutors = $stmt->fetchAll();
     <title>Learn2Day</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/index.css">
-    <link href="https://fonts.googleapis.com/css2?family=Acme&family=Poetsen+One&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -53,8 +52,8 @@ $tutors = $stmt->fetchAll();
                 <a href="#first-section" style="text-decoration:none;"><span style="color: #03254E;">Learn</span><span style="color: black;">2</span><span style="color: #32533D;">Day</span></a>
             </div>
             <div class="sections">
-                <a href="#teacher-mode" style="color: #03254E; text-decoration: none;">Teacher Mode</a>
-                <a href="#student-mode" style="color: #32533D; text-decoration: none;">Student Mode</a>
+                <a href="#teacher-mode" style="color: #03254E; text-decoration: none; font-size: 18px;">Teacher Mode</a>
+                <a href="#student-mode" style="color: #32533D; text-decoration: none;font-size: 18px;">Student Mode</a>
                 <button type="submit" id="log-btn" class="log-btn" style="background-color: #535353;">Log In</button>
                 <div id="popup-overlay" class="<?= $loginError ? 'open' : '' ?>">
                     <div id="profile-inner" class="<?= $loginError ? 'open' : '' ?>">
