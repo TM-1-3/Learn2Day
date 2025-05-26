@@ -7,6 +7,7 @@ require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/qualificationclass.php';
 require_once __DIR__ . '/database/adminclass.php';
+require_once __DIR__ . '/database/requestclass.php';
 
 $session = Session::getInstance();
 
@@ -293,8 +294,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                             <?php endif; ?>
                         <?php endif; ?>
                         <?php if ($myuser->username !== $profile_username): ?>
-                            <?php if($myuser->type == 'STUDENT' && strtoupper($profile_type) == 'TUTOR'): ?>
-                                <div class="ask-profile-btn">Ask For Tutoring</div>
+                            <?php if($myuser->type == 'STUDENT' && strtoupper($profile_type) == 'TUTOR'):
+                                $studentUsername = $myuser->username ?? '';
+                                $tutorUsername = $profile_username ?? '';
+                            ?>
+                                <?php if ($studentUsername && $tutorUsername && Request::exists($studentUsername, $tutorUsername) && Request::isApproved($studentUsername, $tutorUsername)): ?>
+                                    <a href="/requestwriter.php?id=<?= htmlspecialchars($profile_username) ?>" class="ask-profile-btn" style="background-color: #03254E">Send a Message</a>
+                                <?php elseif($studentUsername && $tutorUsername && Request::exists($studentUsername, $tutorUsername) && !Request::isApproved($studentUsername, $tutorUsername)): ?>
+                                    <div class="ask-profile-btn">Request Sent</div>
+                                <?php else: ?>
+                                    <a href="/requestwriter.php?id=<?= htmlspecialchars($profile_username) ?>" class="ask-profile-btn">Ask For Tutoring</a>
+                                <?php endif; ?>
                             <?php endif; ?>
                         <?php endif; ?>
                     </div>

@@ -2,8 +2,8 @@
 
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../includes/session.php';
-require_once __DIR__ .'/tutorialclass.php';
-require_once __DIR__ .'studentclass.php';
+require_once __DIR__ .'/studentclass.php';
+require_once __DIR__ .'/tutorclass.php';
 
 
 class Request{
@@ -22,27 +22,38 @@ class Request{
         string $usernamestudent,
         bool $accepted,
         string $date_sent,
-        string $date_accepted,
         string $message
     ) {
         $this->usernametutor = $usernametutor;
         $this->usernamestudent = $usernamestudent;
         $this->accepted = $accepted;
         $this->date_sent = $date_sent;
-        $this->date_accepted = $date_accepted;
         $this->message = $message;
     }
     
     public function create(): void {
         $db = Database::getInstance();
+        // Check if a request already exists for this student-tutor pair
+        $stmt = $db->prepare('
+            SELECT COUNT(*) FROM REQUEST WHERE STUDENT = ? AND TUTOR = ?
+        ');
+        $stmt->execute([
+            $this->usernamestudent,
+            $this->usernametutor
+        ]);
+        $exists = $stmt->fetchColumn();
+        if ($exists > 0) {
+            header('Location: /profile.php?id=' . $this->usernametutor);
+            throw new Exception('A request already exists for this student and tutor.');
+        }
         $stmt = $db->prepare('
             INSERT INTO REQUEST 
             (STUDENT, TUTOR, REQUEST_DATE, MESSAGE) 
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?)
         ');
         $stmt->execute([
-            $this->usernametutor,
             $this->usernamestudent,
+            $this->usernametutor,
             $this->date_sent,
             $this->message
         ]);
@@ -58,6 +69,16 @@ class Request{
         $stmt->execute([
             true,
             date('Y-m-d H:i:s'),
+            $this->usernamestudent,
+            $this->usernametutor
+        ]);
+
+        $stmt = $db->prepare('
+            INSERT INTO STUDENT_TUTOR
+            (STUDENT, TUTOR)
+            VALUES (?, ?)
+        ');
+        $stmt->execute([
             $this->usernamestudent,
             $this->usernametutor
         ]);
@@ -89,7 +110,6 @@ class Request{
                 $row['STUDENT'],
                 (bool)$row['ACCEPTED'],
                 $row['REQUEST_DATE'],
-                $row['DATE_ACCEPTED'] ?? '',
                 $row['MESSAGE']
             );
         }
@@ -107,11 +127,30 @@ class Request{
                 $row['STUDENT'],
                 (bool)$row['ACCEPTED'],
                 $row['REQUEST_DATE'],
-                $row['DATE_ACCEPTED'] ?? '',
                 $row['MESSAGE']
             );
         }
         return $requests;
+    }
+
+    public static function exists(string $usernamestudent, string $usernametutor): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('
+            SELECT COUNT(*) FROM REQUEST 
+            WHERE STUDENT = ? AND TUTOR = ?
+        ');
+        $stmt->execute([$usernamestudent, $usernametutor]);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    public static function isApproved(string $usernamestudent, string $usernametutor): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('
+            SELECT COUNT(*) FROM REQUEST 
+            WHERE STUDENT = ? AND TUTOR = ? AND ACCEPTED = 1
+        ');
+        $stmt->execute([$usernamestudent, $usernametutor]);
+        return $stmt->fetchColumn() > 0;
     }
 }
 
