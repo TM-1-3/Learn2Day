@@ -5,6 +5,7 @@ require_once __DIR__ . '/includes/session.php';
 require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/studentclass.php';
+require_once __DIR__ . '/database/adminclass.php';
 require_once __DIR__ . '/database/message.php';
 
 $session = Session::getInstance();
@@ -28,7 +29,7 @@ if ($reciever->type == 'TUTOR') {
     $profile = Tutor::getByUsername($recieverusername);
 } else if ($reciever->type == 'STUDENT') {
     $profile = Student::getByUsername($recieverusername);
-} else {
+} else if ($reciever->type == 'ADMIN') {
     $profile = Admin::getByUsername($recieverusername);
 }
 
@@ -62,10 +63,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Write your message</title>
-    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="styles/messagewriter.css">
 </head>
 
-<body>
+<?php if ($type == 'STUDENT'): ?>
+    <body style="background-color: #32533D">
+<?php elseif ($type == 'TUTOR'): ?>
+    <body style="background-color: #03254E">
+<?php elseif ($type == 'ADMIN'): ?>
+    <body style="background-color: #FFD670">
+<?php endif; ?>
+    <div class="container">
     <h1>Please write a message to <?= htmlspecialchars($profile->name) ?></h1>
     <div class="profile-header-inner1">
         <img src="/uploads/profiles/<?= htmlspecialchars($profile->profile_image) ?>"
@@ -91,12 +99,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
     <form method="post" action="/messagewriter.php?id=<?= urlencode($recieverusername) ?>">
-        <label for="message">Message:</label>
+        <label for="message" id="message-title">Your Message</label>
         <textarea id="message" name="message" rows="4" cols="50"></textarea>
         <br>
-        <button type="submit" class="request-send">Send Message</button>
+        <div class="buttons">
+            <?php if ($type=='TUTOR') { ?>
+                <button type="submit" class="request-send" style="background-color: #03254E">Send Message</button>
+            <?php } elseif ($type=='STUDENT') { ?>
+                <button type="submit" class="request-send" style="background-color: #32533D">Send Message</button>
+            <?php } elseif ($type=='ADMIN'){ ?>
+                <button type="submit" class="request-send" style="background-color: #FFD670">Send Message</button>
+            <?php } ?>
         <button type="button" class="cancel" onclick="window.location.href='/profile.php?id=<?= urlencode($recieverusername) ?>'">Cancel</button>
+        </div>
     </form>
+    </div>
 </body>
 
 

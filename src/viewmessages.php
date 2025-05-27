@@ -48,6 +48,7 @@ if ($user->type === 'STUDENT') {
     <meta charset="UTF-8">
     <title>My Requests</title>
     <link rel="stylesheet" href="/styles/homepage.css">
+    <link rel="stylesheet" href="/styles/viewmessages.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
 <body>
@@ -139,7 +140,13 @@ if ($user->type === 'STUDENT') {
         </div>
     </header>
     <main>
-        <h1>My Messages</h1>
+        <?php if ($user->type === 'TUTOR'): ?>
+            <h1 style="color: #03254E">My Messages</h1>
+        <?php elseif ($user->type === 'STUDENT'): ?>
+            <h1 style="color: #32533D">My Messages</h1>
+        <?php elseif ($user->type === 'ADMIN'): ?>
+            <h1 style="color: #FFD670">My Messages</h1>
+        <?php endif; ?>
         <div class="messages-section">
             <div class="messages-table-container">
                 <h2>Messages Sent</h2>
@@ -190,6 +197,7 @@ if ($user->type === 'STUDENT') {
                     </tbody>
                 </table>
                 <?php endif; ?>
+            </div>
             </div>
         </div>
     </main>

@@ -386,7 +386,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                                             <div class="text-content">
                                                 <h2 class="title"><?= htmlspecialchars($user['NAME']) ?></h2>
                                                 <div class="subtitle-container">
-                                                    <div class="subtitles"><?= ucfirst($user['type']) ?></div>
+                                                    <?php if (strtoupper($user['type']) === 'TUTOR'): ?>
+                                                        <div class="subtitles" style="background-color: #03254E;"><?= ucfirst($user['type']) ?></div>
+                                                    <?php elseif (strtoupper($user['type']) === 'STUDENT'): ?>
+                                                        <div class="subtitles" style="background-color: #32533D;"><?= ucfirst($user['type']) ?></div>
+                                                    <?php elseif (strtoupper($user['type']) === 'ADMIN'): ?>
+                                                        <div class="subtitles" style="background-color: #FFD670;"><?= ucfirst($user['type']) ?></div>
+                                                    <?php endif; ?>
                                                 </div>
                                                 <?php if (!empty($user['DESCRIPTION'])): ?>
                                                     <p class="description"><?= htmlspecialchars($user['DESCRIPTION']) ?></p>
