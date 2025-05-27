@@ -103,7 +103,6 @@ h1 {
 
 .request-send,
 .cancel {
-    background-color: #03254E;
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: bold;
@@ -115,9 +114,20 @@ h1 {
     text-decoration: none;
 }
 
-.request-send:hover,
+.cancel {
+    background-color: #721c24;
+}   
+
+.request-send {
+    background-color: #03254E;
+}
+
 .cancel:hover {
-    filter: brightness(1.2);
+    background-color: #5a161d;
+}
+
+.request-send:hover {
+    background-color: #021B3A;
 }
 
 .buttons {
