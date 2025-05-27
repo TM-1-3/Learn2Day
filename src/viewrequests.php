@@ -45,6 +45,7 @@ if ($user->type === 'STUDENT') {
     <meta charset="UTF-8">
     <title>My Requests</title>
     <link rel="stylesheet" href="/styles/homepage.css">
+    <link rel="stylesheet" href="/styles/viewrequests.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
 <body>
@@ -136,9 +137,14 @@ if ($user->type === 'STUDENT') {
         </div>
     </header>
     <main>
-        <h1>My Requests</h1>
+        <div class="container">
+            <?php if ($user->type === 'TUTOR'): ?>
+                <h1 style="color: #03254E">My Requests</h1>
+            <?php elseif ($user->type === 'STUDENT'): ?>
+                <h1 style="color: #32533D">My Requests</h1>
+            <?php endif; ?>
         <?php if (empty($requests)): ?>
-            <p>No requests found.</p>
+            <p style:«="color: black">No requests found.</p>
         <?php else: ?>
             <table class="requests-table">
                 <thead>
@@ -162,6 +168,7 @@ if ($user->type === 'STUDENT') {
                         <td><?= $req->accepted ? 'Accepted' : 'Pending' ?></td>
                         <td><?= htmlspecialchars($req->date_sent) ?></td>
                         <?php if ($user->type === 'TUTOR'): ?>
+                            <div class="buttons">
                             <td>
                                 <?php if (!$req->accepted): ?>
                                     <form action="/actions/accept.php" method="post" style="display:inline;">
@@ -173,15 +180,17 @@ if ($user->type === 'STUDENT') {
                                         <button type="submit" name="action" value="deny" class="deny-btn">Deny</button>
                                     </form>
                                 <?php else: ?>
-                                    <span style="color:green;">Accepted</span>
+                                    <span class="accepted">Accepted</span>
                                 <?php endif; ?>
                             </td>
+                            </div>
                         <?php endif; ?>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>
         <?php endif; ?>
+        </div>
     </main>
     <script src="/scripts/homepage_script.js"></script>
 </body>
