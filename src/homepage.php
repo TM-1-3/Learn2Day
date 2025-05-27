@@ -234,7 +234,7 @@ $allLevels = Qualifications::getAllTutorLevels();
                     <a href="/viewrequests.php?id=<?=htmlspecialchars($session->getUserUsername()) ?>" class="viewprofile-btn">View Requests</a>
                 <?php endif; ?>
                 <hr size="5">
-                <a href="/messages.php" class="viewprofile-btn">Messages</a>
+                <a href="/viewmessages.php?id=<?=htmlspecialchars($session->getUserUsername()) ?>" class="viewprofile-btn">Messages</a>
         </div>
         <div class="access-profile">
             <?php $user = $session->getUser(); ?>

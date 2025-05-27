@@ -305,7 +305,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                 <span class="material-symbols-outlined">notifications</span>
             </button>
             <div id="notification-inner" class="notification-popup">
-                <a href="/messages.php" class="viewprofile-btn">Messages</a>
+                <a href="/viewmessages.php?id=<?=htmlspecialchars($session->getUserUsername()) ?>" class="viewprofile-btn">Messages</a>
             </div>
         </div>
         <div class="access-profile">

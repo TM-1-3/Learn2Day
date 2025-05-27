@@ -146,4 +146,15 @@ class User
         $stmt = $db->prepare('DELETE FROM USERS WHERE ID_USER = ?');
         return $stmt->execute([$this->id]);
     }
+
+    public static function friendship(string $username1, string $username2): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('
+            SELECT COUNT(*) FROM STUDENT_TUTOR 
+            WHERE (STUDENT = ? AND TUTOR = ?)
+            OR (STUDENT = ? AND TUTOR = ?)
+        ');
+        $stmt->execute([$username1, $username2, $username2, $username1]);
+        return (bool)$stmt->fetchColumn();
+    }
 }
