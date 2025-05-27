@@ -346,7 +346,17 @@ if ($myuser->username !== $profile_username) {
                                     <a href="/requestwriter.php?id=<?= htmlspecialchars($profile_username) ?>" class="ask-profile-btn">Ask For Tutoring</a>
                                 <?php endif; ?>
                             <?php elseif($friendship == true || $myuser->type == 'ADMIN'): ?>
-                                <a href="/messagewriter.php?id=<?= htmlspecialchars($profile_username) ?>" class="ask-profile-btn">Send a Message</a>
+                                <?php
+                                // Use the visited user's type for the button color
+                                if($profile_type == 'Student'){
+                                    $profileTypeColor = '#32533D';
+                                } elseif($profile_type == 'Tutor'){
+                                    $profileTypeColor = '#03254E';
+                                } else {
+                                    $profileTypeColor = '#FFD670';
+                                }
+                                ?>
+                                <a href="/messagewriter.php?id=<?= htmlspecialchars($profile_username) ?>" class="ask-profile-btn" style="background-color: <?= $profileTypeColor ?>;">Send a Message</a>                  
                             <?php endif; ?>
                         <?php endif; ?>
                     </div>
