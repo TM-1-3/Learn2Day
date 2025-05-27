@@ -169,6 +169,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
     $stmt_students->execute($params_students);
     $studentResults = $stmt_students->fetchAll(PDO::FETCH_ASSOC);
     $searchResults = array_merge($tutorResults, $studentResults);
+
+}
+
+$friendship = false;
+if ($myuser->username !== $profile_username) {
+    $friendship = User::friendship($myuser->username, $profile_username);
 }
 ?>
 
@@ -244,7 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                 <a href="/viewrequests.php?id=<?=htmlspecialchars($session->getUserUsername()) ?>" class="viewprofile-btn">View Requests</a>
             <?php endif; ?>
             <hr size="5">
-            <a href="/messages.php" class="viewprofile-btn">Messages</a>
+            <a href="/viewmessages.php?id=<?=htmlspecialchars($session->getUserUsername()) ?>" class="viewprofile-btn">Messages</a>
         </div>
     </div>
     <div class="access-profile">
@@ -333,12 +339,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                                 $tutorUsername = $profile_username ?? '';
                             ?>
                                 <?php if ($studentUsername && $tutorUsername && Request::exists($studentUsername, $tutorUsername) && Request::isApproved($studentUsername, $tutorUsername)): ?>
-                                    <a href="/requestwriter.php?id=<?= htmlspecialchars($profile_username) ?>" class="ask-profile-btn" style="background-color: #03254E">Send a Message</a>
+                                    <a href="/messagewriter.php?id=<?= htmlspecialchars($profile_username) ?>" class="ask-profile-btn">Send a Message</a>
                                 <?php elseif($studentUsername && $tutorUsername && Request::exists($studentUsername, $tutorUsername) && !Request::isApproved($studentUsername, $tutorUsername)): ?>
                                     <div class="ask-profile-btn">Request Sent</div>
                                 <?php else: ?>
                                     <a href="/requestwriter.php?id=<?= htmlspecialchars($profile_username) ?>" class="ask-profile-btn">Ask For Tutoring</a>
                                 <?php endif; ?>
+                            <?php elseif($friendship == true || $myuser->type == 'ADMIN'): ?>
+                                <?php
+                                // Use the visited user's type for the button color
+                                if($profile_type == 'Student'){
+                                    $profileTypeColor = '#32533D';
+                                } elseif($profile_type == 'Tutor'){
+                                    $profileTypeColor = '#03254E';
+                                } else {
+                                    $profileTypeColor = '#FFD670';
+                                }
+                                ?>
+                                <a href="/messagewriter.php?id=<?= htmlspecialchars($profile_username) ?>" class="ask-profile-btn" style="background-color: <?= $profileTypeColor ?>;">Send a Message</a>                  
                             <?php endif; ?>
                         <?php endif; ?>
                     </div>

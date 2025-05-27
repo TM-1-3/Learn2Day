@@ -1,9 +1,12 @@
 <?php
+
 require_once __DIR__ . '/database/requestclass.php';
 require_once __DIR__ . '/includes/session.php';
 require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/studentclass.php';
+require_once __DIR__ . '/database/adminclass.php';
+require_once __DIR__ . '/database/message.php';
 
 $session = Session::getInstance();
 if (!$session->isLoggedIn()) {
@@ -13,12 +16,11 @@ if (!$session->isLoggedIn()) {
 $user = $session->getUser();
 
 // Fetch requests for the logged-in user
-$requests = [];
-if ($user->type === 'STUDENT') {
-    $requests = Request::getByStudent($user->username);
-} elseif ($user->type === 'TUTOR') {
-    $requests = Request::getByTutor($user->username);
-}
+$messagessent = [];
+$messagesreceived = [];
+$messagessent = Message::getMessagesSent($user->username);
+$messagesreceived = Message::getMessagesReceived($user->username);
+
 
 $profile_image = 'default.png';
 if ($user->type === 'STUDENT') {
@@ -39,6 +41,7 @@ if ($user->type === 'STUDENT') {
 }
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -136,55 +139,67 @@ if ($user->type === 'STUDENT') {
         </div>
     </header>
     <main>
-        <h1>My Requests</h1>
-        <?php if (empty($requests)): ?>
-            <p>No requests found.</p>
-        <?php else: ?>
-            <table class="requests-table">
-                <thead>
-                    <tr>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Message</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <?php if ($user->type === 'TUTOR'): ?>
-                            <th>Actions</th>
-                        <?php endif; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php foreach ($requests as $req): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($req->usernamestudent) ?></td>
-                        <td><?= htmlspecialchars($req->usernametutor) ?></td>
-                        <td><?= htmlspecialchars($req->message) ?></td>
-                        <td><?= $req->accepted ? 'Accepted' : 'Pending' ?></td>
-                        <td><?= htmlspecialchars($req->date_sent) ?></td>
-                        <?php if ($user->type === 'TUTOR'): ?>
-                            <td>
-                                <?php if (!$req->accepted): ?>
-                                    <form action="/actions/accept.php" method="post" style="display:inline;">
-                                        <input type="hidden" name="request_id" value="<?= htmlspecialchars($req->id) ?>">
-                                        <button type="submit" name="action" value="accept" class="accept-btn">Accept</button>
-                                    </form>
-                                    <form action ="/actions/deny.php" method="post" style="display:inline;">
-                                        <input type="hidden" name="request_id" value="<?= htmlspecialchars($req->id) ?>">
-                                        <button type="submit" name="action" value="deny" class="deny-btn">Deny</button>
-                                    </form>
-                                <?php else: ?>
-                                    <span style="color:green;">Accepted</span>
-                                <?php endif; ?>
-                            </td>
-                        <?php endif; ?>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php endif; ?>
+        <h1>My Messages</h1>
+        <div class="messages-section">
+            <div class="messages-table-container">
+                <h2>Messages Sent</h2>
+                <?php if (empty($messagessent)): ?>
+                    <p>No sent messages.</p>
+                <?php else: ?>
+                <table class="messages-table">
+                    <thead>
+                        <tr>
+                            <th>To</th>
+                            <th>Message</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($messagessent as $msg): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($msg->receiver) ?></td>
+                            <td><?= nl2br(htmlspecialchars($msg->content)) ?></td>
+                            <td><?= htmlspecialchars($msg->timestamp ?? $msg->date_sent ?? '') ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <?php endif; ?>
+            </div>
+            <div class="messages-table-container">
+                <h2>Messages Received</h2>
+                <?php if (empty($messagesreceived)): ?>
+                    <p>No received messages.</p>
+                <?php else: ?>
+                <table class="messages-table">
+                    <thead>
+                        <tr>
+                            <th>From</th>
+                            <th>Message</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($messagesreceived as $msg): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($msg->sender) ?></td>
+                            <td><?= nl2br(htmlspecialchars($msg->content)) ?></td>
+                            <td><?= htmlspecialchars($msg->timestamp ?? $msg->date_sent ?? '') ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <?php endif; ?>
+            </div>
+        </div>
     </main>
     <script src="/scripts/homepage_script.js"></script>
 </body>
 </html>
+
+
+
+
+
 
 
