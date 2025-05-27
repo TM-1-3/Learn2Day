@@ -47,10 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Write your request</title>
-    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="styles/requestwriter.css">
 </head>
 
 <body>
+    <div class="container">
     <?php if (!empty($success)): ?>
         <h1>Request sent to <?= htmlspecialchars($tutorusername) ?></h1>
     <?php else: ?>
@@ -70,11 +71,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
     <form method="post" action="/requestwriter.php?id=<?= urlencode($tutorusername) ?>">
-        <label for="message">Message:</label>
+        <label for="message" id="message-title">Your Message</label>
         <textarea id="message" name="message" rows="4" cols="50"></textarea>
         <br>
+        <div class="buttons">
         <button type="submit" class="request-send">Send Request</button>
         <button type="button" class="cancel" onclick="window.location.href='/profile.php?id=<?= urlencode($tutorusername) ?>'">Cancel</button>
+        </div>
     </form>
+    </div>
 </body>
 </html>
