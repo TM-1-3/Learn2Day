@@ -8,6 +8,7 @@ require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/qualificationclass.php';
 require_once __DIR__ . '/database/adminclass.php';
 require_once __DIR__ . '/database/requestclass.php';
+require_once __DIR__ . '/database/ratingclass.php';
 
 $session = Session::getInstance();
 
@@ -176,6 +177,26 @@ $friendship = false;
 if ($myuser->username !== $profile_username) {
     $friendship = User::friendship($myuser->username, $profile_username);
 }
+
+$success = '';
+$error = '';
+if ($myuser->type === 'STUDENT' && $profile_type === 'Tutor' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $rating = isset($_POST['rating']) ? floatval($_POST['rating']) : 0;
+    $comment = trim($_POST['comment'] ?? '');
+    if ($rating < 0 || $rating > 5 || ($rating * 10) % 5 !== 0) {
+        $error = 'Invalid rating. Must be 0, 0.5, 1, ..., 5.';
+    } else {
+        try {
+            $newRating = new Rating(null, $profile_username, $myuser->username, $rating, $comment, $created_at = date('Y-m-d H:i:s'));
+            $newRating->create();
+            header('Location: ' . $_SERVER['REQUEST_URI']);
+            exit();
+        } catch (Exception $e) {
+            $error = 'Could not submit rating: ' . $e->getMessage();
+        }
+    }
+}
+$ratings = Rating::getRatingByTutor($profile_username);
 ?>
 
 <!DOCTYPE html>
@@ -409,7 +430,7 @@ if ($myuser->username !== $profile_username) {
                 <?php
                 $subjectImages = [
                 'Portuguese' => '/images/portuguese.gif',
-                'Math' => '/images/math.gif',
+                'Mathematics' => '/images/math.gif',
                 'Physics and Chemistry' => '/images/physics.gif',
                 'Natural Sciences' => '/images/naturalSciences.gif',
                 'Biology and Geology' => '/images/biology.gif',
@@ -484,35 +505,67 @@ if ($myuser->username !== $profile_username) {
                 <?php endif; ?>
             </div>
         </div>
-        <div class="container">
-        <h1>Rate Tutor: <?= htmlspecialchars($tutor->name) ?> (@<?= htmlspecialchars($tutor->username) ?>)</h1>
-        <?php if ($error): ?>
-            <div class="error" style="color: red;"> <?= htmlspecialchars($error) ?> </div>
+        <?php if ($profile_type === 'Tutor'): ?>
+            <div class="ratings">
+                <h1 class="sections-title">Ratings</h1>
+                <div class="ratings-header">
+                    <div class="ratings-container">
+                        <?php if (empty($ratings)): ?>
+                            <p>No ratings yet.</p>
+                        <?php else: ?>
+                            <?php foreach ($ratings as $rating): ?>
+                                <div class="rating-card">
+                                    <div class="rating-header">
+                                        <?php 
+                                        $authorProfile = Student::getByUsername($rating->student) ?? Tutor::getByUsername($rating->student) ?? null;
+                                        $authorImage = $authorProfile && !empty($authorProfile->profile_image) ? $authorProfile->profile_image : 'default.png';
+                                        ?>
+                                        <img src="/uploads/profiles/<?= htmlspecialchars($authorImage) ?>" alt="Profile Picture" class="profile-picture" style="width:32px;height:32px;border-radius:50%;margin-right:8px;vertical-align:middle;">
+                                        <span class="rating-author">@<?= htmlspecialchars($rating->student) ?></span>
+                                    </div>
+                                    <div class="rating-stars">
+                                        <?php for ($i = 0; $i < 5; $i++): ?>
+                                            <span class="material-symbols-outlined star <?= ($i < $rating->rating) ? 'filled' : '' ?>">star</span>
+                                        <?php endfor; ?>
+                                    </div>
+                                    <div class="rating-comment">
+                                        <?= nl2br(htmlspecialchars($rating->comment)) ?>
+                                    </div>
+                                    <div class="rating-date">
+                                        <?= htmlspecialchars($rating->timestamp ?? $rating->created_at ?? '') ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                    <?php if ($myuser->type === 'STUDENT' && $profile_type === 'Tutor'): ?>
+                        <div class="rating-container">
+                            <h2>Rate Tutor <?= htmlspecialchars($profile->name) ?> (@<?= htmlspecialchars($profile_username) ?>)</h2>
+                            <?php if (!empty($success)): ?>
+                                <div class="success-message" style="color: green;">Rating submitted!</div>
+                            <?php endif; ?>
+                            <?php if (!empty($error)): ?>
+                                <div class="error-message" style="color: red;"><?= htmlspecialchars($error) ?></div>
+                            <?php endif; ?>
+                            <form method="post" action="">
+                                <input type="hidden" name="tutor" value="<?= htmlspecialchars($profile_username) ?>">
+                                <label for="rating">Rating (0-5):</label>
+                                <select name="rating" id="rating" required>
+                                    <?php for ($i = 0; $i <= 5; $i++): ?>
+                                        <option value="<?= $i ?>"> <?= $i ?> </option>
+                                    <?php endfor; ?>
+                                </select>
+                                <label for="comment">Comment (optional):</label>
+                                <textarea name="comment" id="comment" rows="4" cols="50"></textarea>
+                                <button type="submit" class="submit-rating">Submit Rating</button>
+                            </form>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
         <?php endif; ?>
-        <?php if ($success): ?>
-            <div class="success" style="color: green;"> <?= htmlspecialchars($success) ?> </div>
-        <?php endif; ?>
-        <form method="post">
-            <label for="rating">Rating (0-5, steps of 0.5):</label>
-            <select name="rating" id="rating" required>
-                <?php for ($i = 0; $i <= 10; $i++): $val = $i * 0.5; ?>
-                    <option value="<?= $val ?>"> <?= $val ?> </option>
-                <?php endfor; ?>
-            </select>
-            <br><br>
-            <label for="comment">Comment (optional):</label><br>
-            <textarea name="comment" id="comment" rows="4" cols="50"></textarea>
-            <br><br>
-            <button type="submit">Submit Rating</button>
-        </form>
-        <br>
-        <a href="/profile.php?id=<?= htmlspecialchars($tutor->username) ?>">Back to Tutor Profile</a>
     </div>
-
     </main>
     <script src="scripts/homepage_script.js"></script>
 </body>
-<footer class="rights">
-    <p>© 2025 Learn2Day. All rights reserved.</p>
-</footer>
 </html>
