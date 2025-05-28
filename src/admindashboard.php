@@ -434,6 +434,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
             </section>
         <?php endif; ?>
     </main>
+    
     <script>
         window.totalTutors = <?= $totalTutors ?>;
         window.totalStudents = <?= $totalStudents ?>;
@@ -444,5 +445,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
     <script src="/scripts/admin.js"></script>
     <script src="/scripts/homepage_script.js"></script>
 </body>
+
 
 </html>

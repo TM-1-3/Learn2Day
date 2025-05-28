@@ -484,10 +484,11 @@ if ($myuser->username !== $profile_username) {
                 <?php endif; ?>
             </div>
         </div>
-        <footer class="rights">
-            <p>© 2025 Learn2Day. All rights reserved.</p>
-        </footer>
+
     </main>
     <script src="scripts/homepage_script.js"></script>
 </body>
+<footer class="rights">
+    <p>© 2025 Learn2Day. All rights reserved.</p>
+</footer>
 </html>
