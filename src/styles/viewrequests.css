@@ -13,9 +13,25 @@ body {
   padding: 20px;
 }
 
-.container {
+.tables {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
   width: 100%;
-  min-width: 1200px;
+  gap: 70px;
+}
+
+.container1 {
+  width: 65%;
+  background-color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  margin-top: 90px;
+  padding: 40px;
+}
+
+.container2 {
+  width: 35%;
   background-color: #fff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   border-radius: 10px;
@@ -91,4 +107,122 @@ body {
 .buttons {
   display: flex;
   gap: 5px;
+}
+
+.cards-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.cards {
+    min-width: 0;
+    margin-top: 0;
+    width: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cards .cont {
+    background-color: #eeeeee;
+    width: 100%;
+    border-radius: 20px;
+    height: 100%;
+    padding: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cards:hover {
+    transform: translateY(-5px);
+}
+
+.cards:hover .cont {
+    background-color: #e0e0e0;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.cards:hover .subtitles {
+    background-color: #000;
+}
+
+.cards .content-wrapper {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    height: 100%;
+}
+
+.cards .img {
+    width: 180px;
+    height: 180px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.cards:hover .img {
+    transform: scale(1.02);
+}
+
+.cards .subtitle-container {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.cards .subtitles {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #eeeeee;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.cards .text-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.cards .description {
+    transition: color 0.3s ease;
+    word-wrap: break-word; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.cards .img {
+    width: 160px;
+    height: 160px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.cards .title {
+    transition: color 0.3s ease;
+}
+
+.cards:hover .title {
+    color: #000;
+}
+
+.cards .description {
+    transition: color 0.3s ease;
+}
+
+.cards:hover .description {
+    color: #333;
 }

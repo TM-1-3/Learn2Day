@@ -301,7 +301,6 @@ h1 {
 
 .card .subtitles {
   padding: 5px 10px;
-  background-color: #03254e;
   border-radius: 12px;
   font-size: 15px;
   font-weight: 600;
@@ -344,7 +343,7 @@ h1 {
 }
 
 .card:hover .title {
-  color: #1a3a6e;
+  color: #000;
 }
 
 .card .description {

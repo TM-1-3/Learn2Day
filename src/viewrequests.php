@@ -4,6 +4,7 @@ require_once __DIR__ . '/includes/session.php';
 require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/studentclass.php';
+require_once __DIR__ . '/includes/database.php';
 
 $session = Session::getInstance();
 if (!$session->isLoggedIn()) {
@@ -18,6 +19,30 @@ if ($user->type === 'STUDENT') {
     $requests = Request::getByStudent($user->username);
 } elseif ($user->type === 'TUTOR') {
     $requests = Request::getByTutor($user->username);
+}
+
+// Fetch tutors and students using STUDENT_TUTOR table
+$db = Database::getInstance();
+$tutors = [];
+$students = [];
+if ($user->type === 'STUDENT') {
+    $stmt = $db->prepare('
+        SELECT T.ID_TUTOR, T.NAME, T.PROFILE_IMAGE, T.DESCRIPTION
+        FROM STUDENT_TUTOR ST
+        JOIN TUTOR T ON ST.TUTOR = T.ID_TUTOR
+        WHERE ST.STUDENT = ?
+    ');
+    $stmt->execute([$user->username]);
+    $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} elseif ($user->type === 'TUTOR') {
+    $stmt = $db->prepare('
+        SELECT S.ID_STUDENT, S.NAME, S.PROFILE_IMAGE, S.DESCRIPTION
+        FROM STUDENT_TUTOR ST
+        JOIN STUDENT S ON ST.STUDENT = S.ID_STUDENT
+        WHERE ST.TUTOR = ?
+    ');
+    $stmt->execute([$user->username]);
+    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 $profile_image = 'default.png';
@@ -137,59 +162,126 @@ if ($user->type === 'STUDENT') {
         </div>
     </header>
     <main>
-        <div class="container">
-            <?php if ($user->type === 'TUTOR'): ?>
-                <h1 style="color: #03254E">My Requests</h1>
-            <?php elseif ($user->type === 'STUDENT'): ?>
-                <h1 style="color: #32533D">My Requests</h1>
-            <?php endif; ?>
-        <?php if (empty($requests)): ?>
-            <p style:«="color: black">No requests found.</p>
-        <?php else: ?>
-            <table class="requests-table">
-                <thead>
-                    <tr>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Message</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <?php if ($user->type === 'TUTOR'): ?>
-                            <th>Actions</th>
-                        <?php endif; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php foreach ($requests as $req): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($req->usernamestudent) ?></td>
-                        <td><?= htmlspecialchars($req->usernametutor) ?></td>
-                        <td><?= htmlspecialchars($req->message) ?></td>
-                        <td><?= $req->accepted ? 'Accepted' : 'Pending' ?></td>
-                        <td><?= htmlspecialchars($req->date_sent) ?></td>
-                        <?php if ($user->type === 'TUTOR'): ?>
-                            <div class="buttons">
-                            <td>
-                                <?php if (!$req->accepted): ?>
-                                    <form action="/actions/accept.php" method="post" style="display:inline;">
-                                        <input type="hidden" name="request_id" value="<?= htmlspecialchars($req->id) ?>">
-                                        <button type="submit" name="action" value="accept" class="accept-btn">Accept</button>
-                                    </form>
-                                    <form action ="/actions/deny.php" method="post" style="display:inline;">
-                                        <input type="hidden" name="request_id" value="<?= htmlspecialchars($req->id) ?>">
-                                        <button type="submit" name="action" value="deny" class="deny-btn">Deny</button>
-                                    </form>
-                                <?php else: ?>
-                                    <span class="accepted">Accepted</span>
-                                <?php endif; ?>
-                            </td>
-                            </div>
-                        <?php endif; ?>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php endif; ?>
+        <div class="tables">
+            <div class="container1">
+                <?php if ($user->type === 'TUTOR'): ?>
+                    <h1 style="color: #03254E">My Requests</h1>
+                <?php elseif ($user->type === 'STUDENT'): ?>
+                    <h1 style="color: #32533D">My Requests</h1>
+                <?php endif; ?>
+                <?php if (empty($requests)): ?>
+                    <p style:«="color: black;">No requests found.</p>
+                <?php else: ?>
+                <table class="requests-table">
+                    <thead>
+                        <tr>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Message</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <?php if ($user->type === 'TUTOR'): ?>
+                                <th>Actions</th>
+                            <?php endif; ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($requests as $req): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($req->usernamestudent) ?></td>
+                            <td><?= htmlspecialchars($req->usernametutor) ?></td>
+                            <td><?= htmlspecialchars($req->message) ?></td>
+                            <td><?= $req->accepted ? 'Accepted' : 'Pending' ?></td>
+                            <td><?= htmlspecialchars($req->date_sent) ?></td>
+                            <?php if ($user->type === 'TUTOR'): ?>
+                                <td class="buttons">
+                                    <?php if (!$req->accepted): ?>
+                                        <form action="/actions/accept.php" method="post" style="display:inline;">
+                                            <input type="hidden" name="request_id" value="<?= htmlspecialchars($req->id) ?>">
+                                            <button type="submit" name="action" value="accept" class="accept-btn">Accept</button>
+                                        </form>
+                                        <form action ="/actions/deny.php" method="post" style="display:inline;">
+                                            <input type="hidden" name="request_id" value="<?= htmlspecialchars($req->id) ?>">
+                                            <button type="submit" name="action" value="deny" class="deny-btn">Deny</button>
+                                        </form>
+                                    <?php else: ?>
+                                        <span class="accepted">Accepted</span>
+                                    <?php endif; ?>
+                                </td>
+                            <?php endif; ?>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <?php endif; ?>
+            </div>
+            <div class="container2">
+                <?php if ($user->type === 'TUTOR'): ?>
+                    <h1 style="color: #03254E">My Students</h1>
+                    <?php if (empty($students)): ?>
+                        <p style="color: black">No students found.</p>
+                    <?php else: ?>
+                        <div class="cards-grid">
+                            <?php foreach ($students as $student): ?>
+                                <div class="cards" id="student<?= htmlspecialchars($student['ID_STUDENT']) ?>"
+                                    onclick="window.location.href='/profile.php?id=<?= urlencode($student['ID_STUDENT']) ?>'"
+                                    style="cursor: pointer;">
+                                    <div class="cont">
+                                        <div class="details">
+                                            <div class="content-wrapper">
+                                                <img class="img" src="/uploads/profiles/<?= htmlspecialchars($student['PROFILE_IMAGE']) ?>"
+                                                    alt="<?= htmlspecialchars($student['NAME']) ?>"
+                                                    onerror="this.src='/uploads/profiles/default.png'">
+                                                <div class="text-content">
+                                                    <h2 class="title"><?= htmlspecialchars($student['NAME']) ?></h2>
+                                                    <div class="subtitle-container">
+                                                        <div class="subtitles" style="background-color: #32533D;">Student</div>
+                                                    </div>
+                                                    <?php if (!empty($student['DESCRIPTION'])): ?>
+                                                        <p class="description"><?= htmlspecialchars($student['DESCRIPTION']) ?></p>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                    <?php elseif ($user->type === 'STUDENT'): ?>
+                        <h1 style="color: #32533D">My Tutors</h1>
+                    <?php if (empty($tutors)): ?>
+                        <p style="color: black">No tutors found.</p>
+                    <?php else: ?>
+                        <div class="cards-grid">
+                            <?php foreach ($tutors as $tutor): ?>
+                                <div class="cards" id="tutor<?= htmlspecialchars($tutor['ID_TUTOR']) ?>"
+                                    onclick="window.location.href='/profile.php?id=<?= urlencode($tutor['ID_TUTOR']) ?>'"
+                                    style="cursor: pointer;">
+                                    <div class="cont">
+                                        <div class="details">
+                                            <div class="content-wrapper">
+                                                <img class="img" src="/uploads/profiles/<?= htmlspecialchars($tutor['PROFILE_IMAGE']) ?>"
+                                                    alt="<?= htmlspecialchars($tutor['NAME']) ?>"
+                                                    onerror="this.src='/uploads/profiles/default.png'">
+                                                <div class="text-content">
+                                                    <h2 class="title"><?= htmlspecialchars($tutor['NAME']) ?></h2>
+                                                    <div class="subtitle-container">
+                                                        <div class="subtitles" style="background-color: #03254E">Tutor</div>
+                                                    </div>
+                                                    <?php if (!empty($tutor['DESCRIPTION'])): ?>
+                                                        <p class="description"><?= htmlspecialchars($tutor['DESCRIPTION']) ?></p>
+                                                  <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </div>
         </div>
     </main>
     <script src="/scripts/homepage_script.js"></script>

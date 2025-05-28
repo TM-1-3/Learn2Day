@@ -246,10 +246,11 @@ if ($myuser->username !== $profile_username) {
         <div id="notification-inner" class="notification-popup">
             <?php if ($user->type === 'STUDENT'): ?>
                 <a href="/viewrequests.php?id=<?=htmlspecialchars($session->getUserUsername()) ?>" class="viewprofile-btn">View Requests</a>
+                <hr size="5">
             <?php elseif ($user->type === 'TUTOR'): ?>
                 <a href="/viewrequests.php?id=<?=htmlspecialchars($session->getUserUsername()) ?>" class="viewprofile-btn">View Requests</a>
+                <hr size="5">
             <?php endif; ?>
-            <hr size="5">
             <a href="/viewmessages.php?id=<?=htmlspecialchars($session->getUserUsername()) ?>" class="viewprofile-btn">Messages</a>
         </div>
     </div>

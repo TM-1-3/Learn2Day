@@ -231,10 +231,6 @@ h1 {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
-.card:hover .subtitles {
-    background-color: #03254e;
-}
-
 .card .content-wrapper {
     display: flex;
     gap: 20px;
@@ -263,7 +259,6 @@ h1 {
 
 .card .subtitles {
     padding: 5px 10px;
-    background-color: #03254e;
     border-radius: 12px;
     font-size: 15px;
     font-weight: 600;
@@ -306,7 +301,7 @@ h1 {
 }
 
 .card:hover .title {
-    color: #1a3a6e;
+    color: #000;
 }
 
 .card .description {
