@@ -484,6 +484,30 @@ if ($myuser->username !== $profile_username) {
                 <?php endif; ?>
             </div>
         </div>
+        <div class="container">
+        <h1>Rate Tutor: <?= htmlspecialchars($tutor->name) ?> (@<?= htmlspecialchars($tutor->username) ?>)</h1>
+        <?php if ($error): ?>
+            <div class="error" style="color: red;"> <?= htmlspecialchars($error) ?> </div>
+        <?php endif; ?>
+        <?php if ($success): ?>
+            <div class="success" style="color: green;"> <?= htmlspecialchars($success) ?> </div>
+        <?php endif; ?>
+        <form method="post">
+            <label for="rating">Rating (0-5, steps of 0.5):</label>
+            <select name="rating" id="rating" required>
+                <?php for ($i = 0; $i <= 10; $i++): $val = $i * 0.5; ?>
+                    <option value="<?= $val ?>"> <?= $val ?> </option>
+                <?php endfor; ?>
+            </select>
+            <br><br>
+            <label for="comment">Comment (optional):</label><br>
+            <textarea name="comment" id="comment" rows="4" cols="50"></textarea>
+            <br><br>
+            <button type="submit">Submit Rating</button>
+        </form>
+        <br>
+        <a href="/profile.php?id=<?= htmlspecialchars($tutor->username) ?>">Back to Tutor Profile</a>
+    </div>
 
     </main>
     <script src="scripts/homepage_script.js"></script>
