@@ -180,7 +180,7 @@ if ($myuser->username !== $profile_username) {
 
 $success = '';
 $error = '';
-if ($myuser->type === 'STUDENT' && $profile_type === 'Tutor' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($myuser->type === 'STUDENT' && $profile_type === 'Tutor' && $_SERVER['REQUEST_METHOD'] === 'POST' &&isset($_POST['tutor'])) {
     $rating = isset($_POST['rating']) ? floatval($_POST['rating']) : 0;
     $comment = trim($_POST['comment'] ?? '');
     if ($rating < 0 || $rating > 5 || ($rating * 10) % 5 !== 0) {
@@ -197,6 +197,12 @@ if ($myuser->type === 'STUDENT' && $profile_type === 'Tutor' && $_SERVER['REQUES
     }
 }
 $ratings = Rating::getRatingByTutor($profile_username);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_rating_id'])) {
+    Rating::deleteById($_POST['delete_rating_id']);
+    header('Location: ' . $_SERVER['REQUEST_URI']);
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -515,6 +521,7 @@ $ratings = Rating::getRatingByTutor($profile_username);
                         <?php else: ?>
                             <?php foreach ($ratings as $rating): ?>
                                 <div class="rating-card">
+                                    <div class="class-header">
                                     <div class="rating-header">
                                         <?php 
                                         $authorProfile = Student::getByUsername($rating->student) ?? Tutor::getByUsername($rating->student) ?? null;
@@ -533,6 +540,15 @@ $ratings = Rating::getRatingByTutor($profile_username);
                                     </div>
                                     <div class="rating-date">
                                         <?= htmlspecialchars($rating->timestamp ?? $rating->created_at ?? '') ?>
+                                    </div>
+                                    </div>
+                                    <div class="buttons">
+                                        <?php if ($myuser->username === $rating->student): ?>
+                                        <form method="post" action="">
+                                            <input type="hidden" name="delete_rating_id" value="<?= htmlspecialchars($rating->id) ?>">
+                                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this rating?')">Delete</button>
+                                        </form>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

@@ -91,6 +91,15 @@ class Rating{
         return $ratings;
     }
 
+    public static function deleteById($id) {
+        $db = Database::getInstance();
+        $stmt = $db -> prepare('
+            DELETE FROM RATING
+            WHERE ID_RATING = ?
+        ');
+        $stmt->execute([$id]);
+    }
+
 }
 
 

@@ -381,6 +381,10 @@ header {
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .rating-header {
@@ -487,4 +491,21 @@ header {
 
 .submit-rating:hover {
     background-color: #021d3a;
+}
+
+.delete-btn {
+    padding: 10px 12px;
+    background-color: #721c24;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+    align-self: center;
+    font-size: 15px;
+}
+
+.delete-btn:hover {
+    background-color: #5A161D;
 }
