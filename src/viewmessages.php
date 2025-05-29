@@ -7,6 +7,7 @@ require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/studentclass.php';
 require_once __DIR__ . '/database/adminclass.php';
 require_once __DIR__ . '/database/message.php';
+require_once __DIR__ . '/database/qualificationclass.php';
 
 $session = Session::getInstance();
 if (!$session->isLoggedIn()) {
@@ -39,6 +40,14 @@ if ($user->type === 'STUDENT') {
         $profile_image = $profile->profile_image;
     }
 }
+
+$allSubjects = Qualifications::getAllSubjects();
+$allLanguages = Qualifications::getAllLanguages();
+$allLevels = Qualifications::getAllTutorLevels();
+$searchQuery = trim($_GET['search'] ?? '');
+$selectedSubjects = $_GET['subjects'] ?? [];
+$selectedLanguages = $_GET['languages'] ?? [];
+$selectedLevels = $_GET['levels'] ?? [];
 
 ?>
 

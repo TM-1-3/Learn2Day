@@ -5,6 +5,7 @@ require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/studentclass.php';
 require_once __DIR__ . '/includes/database.php';
+require_once __DIR__ . '/database/qualificationclass.php';
 
 $session = Session::getInstance();
 if (!$session->isLoggedIn()) {
@@ -63,6 +64,13 @@ if ($user->type === 'STUDENT') {
     }
 }
 
+$allSubjects = Qualifications::getAllSubjects();
+$allLanguages = Qualifications::getAllLanguages();
+$allLevels = Qualifications::getAllTutorLevels();
+$searchQuery = trim($_GET['search'] ?? '');
+$selectedSubjects = $_GET['subjects'] ?? [];
+$selectedLanguages = $_GET['languages'] ?? [];
+$selectedLevels = $_GET['levels'] ?? [];
 ?>
 <!DOCTYPE html>
 <html lang="en">
