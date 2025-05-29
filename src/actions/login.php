@@ -13,7 +13,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $martim = User::get_user_by_username('martim');
         $martim->updatePassword(1, '123456');
     }
-
+    else if($username == 'testestudent'){
+        $testestudent = User::get_user_by_username('testestudent');
+        $testestudent->updatePassword(28, '123456');
+    }
+    else if($username == 'testetutor'){
+        $testetutor = User::get_user_by_username('testetutor');
+        $testetutor->updatePassword(29, '123456');
+    }
     try {
         $user = User::get_user_by_username_password($username, $password);
 
