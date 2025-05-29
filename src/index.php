@@ -96,7 +96,7 @@ $tutors = $stmt->fetchAll();
                 <p>Track student progress</p>
                 <p>Offer personalized guidance</p>
                 <p>Teach effectively and grow your reach</p>
-                <a href='/register_page.php' class="Tsignup-btn" style="background-color: #03254E;">Sign Up</a>
+                <a href='/register_page.php?tutor' class="Tsignup-btn" style="background-color: #03254E;">Sign Up</a>
             </div>
         </div>
         <div id="student-mode" class="student-mode">
@@ -106,7 +106,7 @@ $tutors = $stmt->fetchAll();
                 <p>Get live help from real tutors</p>
                 <p>Personalize your learning path</p>
                 <p>Learn anytime, anywhere</p>
-                <a href='/register_page.php' class="Ssignup-btn" style="background-color: #32533D;">Sign Up</a>
+                <a href='/register_page.php?student' class="Ssignup-btn" style="background-color: #32533D;">Sign Up</a>
             </div>
             <div class="image-stack">
                 <div class="blue-blob"></div>
