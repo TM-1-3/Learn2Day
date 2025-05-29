@@ -1,5 +1,17 @@
 const container = document.getElementById("container");
 const overlayBtn = document.getElementById("overlayBtn");
+const urlParams = new URLSearchParams(window.location.search);
+
+window.addEventListener('DOMContentLoaded', function() {
+  if (urlParams.has('student')) {
+    container.classList.add('right-panel-active');
+    overlayBtn.textContent = "Register as Tutor";
+    overlayBtn.style.color = "#32533D";
+  } else if (urlParams.has('tutor')) {
+    overlayBtn.textContent = "Register as Student";
+    overlayBtn.style.color = '#03254E';
+  }
+});
 
 overlayBtn.addEventListener("click", () => {
   container.classList.toggle("right-panel-active");

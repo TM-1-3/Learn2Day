@@ -359,8 +359,5 @@ $allLevels = Qualifications::getAllTutorLevels();
 
     <script src="scripts/homepage_script.js"></script>
 </body>
-<footer class="rights">
-<p>© 2025 Learn2Day. All rights reserved.</p>
-</footer>
 
 </html>

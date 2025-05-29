@@ -179,5 +179,23 @@ class Request{
         return null;
     }
 
+    public static function countAllRequestsA() {
+        $db = Database::getInstance();
+        $stmt = $db->query('
+            SELECT COUNT(*) FROM REQUEST
+            WHERE ACCEPTED = 1
+        ');
+        return (int)$stmt->fetchColumn();
+    }
+
+    public static function countAllRequestsP() {
+        $db = Database::getInstance();
+        $stmt = $db->query('
+            SELECT COUNT(*) FROM REQUEST
+            WHERE ACCEPTED = 0
+        ');
+        return (int)$stmt->fetchColumn();
+    }
+
 }
 

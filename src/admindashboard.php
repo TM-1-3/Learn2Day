@@ -9,6 +9,7 @@ require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/qualificationclass.php';
 require_once __DIR__ . '/database/adminclass.php';
+require_once __DIR__ . '/database/requestclass.php';
 
 $db = Database::getInstance();
 
@@ -28,6 +29,8 @@ $totalUsers = User::countAllUsers();
 $totalTutors = Tutor::countAllTutors();
 $totalStudents = Student::countAllStudents();
 $totalAdmins = Admin::countAllAdmins();
+$totalRequestsA = Request::countAllRequestsA();
+$totalRequestsP = Request::countAllRequestsP();
 
 $searchQuery = '';
 $searchResults = [];
@@ -352,6 +355,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                     <h3>User Distribution</h3>
                     <canvas id="userDistributionChart"></canvas>
                 </div>
+                <div class="stat-card">
+                    <h3>Requests Pending</h3>
+                    <p><?= $totalRequestsP ?></p>
+                </div>
+                <div class="stat-card">
+                    <h3>Requests Accepted</h3>
+                    <p><?= $totalRequestsA ?></p>
+                </div>
             </div>
         </div>
 
@@ -440,6 +451,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
             </section>
         <?php endif; ?>
     </main>
+    
     <script>
         window.totalTutors = <?= $totalTutors ?>;
         window.totalStudents = <?= $totalStudents ?>;
@@ -450,5 +462,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
     <script src="/scripts/admin.js"></script>
     <script src="/scripts/homepage_script.js"></script>
 </body>
+
 
 </html>
