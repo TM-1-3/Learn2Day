@@ -9,6 +9,7 @@ require_once __DIR__ . '/database/tutorclass.php';
 require_once __DIR__ . '/database/userclass.php';
 require_once __DIR__ . '/database/qualificationclass.php';
 require_once __DIR__ . '/database/adminclass.php';
+require_once __DIR__ . '/database/requestclass.php';
 
 $db = Database::getInstance();
 
@@ -28,6 +29,8 @@ $totalUsers = User::countAllUsers();
 $totalTutors = Tutor::countAllTutors();
 $totalStudents = Student::countAllStudents();
 $totalAdmins = Admin::countAllAdmins();
+$totalRequestsA = Request::countAllRequestsA();
+$totalRequestsP = Request::countAllRequestsP();
 
 $searchQuery = '';
 $searchResults = [];
@@ -351,6 +354,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
                 <div class="piechart">
                     <h3>User Distribution</h3>
                     <canvas id="userDistributionChart"></canvas>
+                </div>
+                <div class="stat-card">
+                    <h3>Requests Pending</h3>
+                    <p><?= $totalRequestsP ?></p>
+                </div>
+                <div class="stat-card">
+                    <h3>Requests Accepted</h3>
+                    <p><?= $totalRequestsA ?></p>
                 </div>
             </div>
         </div>
