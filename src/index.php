@@ -52,7 +52,7 @@ $tutors = $stmt->fetchAll();
                 <a href="#first-section" style="text-decoration:none;"><span style="color: #03254E;">Learn</span><span style="color: black;">2</span><span style="color: #32533D;">Day</span></a>
             </div>
             <div class="sections">
-                <a href="#teacher-mode" style="color: #03254E; text-decoration: none; font-size: 18px;">Teacher Mode</a>
+                <a href="#teacher-mode" style="color: #03254E; text-decoration: none; font-size: 18px;">Tutor Mode</a>
                 <a href="#student-mode" style="color: #32533D; text-decoration: none;font-size: 18px;">Student Mode</a>
                 <button type="submit" id="log-btn" class="log-btn" style="background-color: #535353;">Log In</button>
                 <div id="popup-overlay" class="<?= $loginError ? 'open' : '' ?>">
@@ -80,7 +80,7 @@ $tutors = $stmt->fetchAll();
                 <span style="color: black; font-size: 16px; font-weight: 600;">You don't have an account?</span>
                 <span style="color: black; font-size: 16px; font-weight: 600;">Explore the powerful tools for personalized learning.</span>
                 <div class="modes">
-                    <a href="#teacher-mode" class="teach-btn" style="background-color: #03254E;">Teacher Mode</a>
+                    <a href="#teacher-mode" class="teach-btn" style="background-color: #03254E;">Tutor Mode</a>
                     <a href="#student-mode" class="stud-btn" style="background-color: #32533D;">Student Mode</a>
                 </div>
             </div>
@@ -91,15 +91,21 @@ $tutors = $stmt->fetchAll();
                 <div class="teacher-img"></div>
             </div>
             <div class="teacher-text">
-                <h1>Teacher Mode</h1>
-                <p>DESCRIÇÃO</p>
+                <h1>Tutor Mode</h1>
+                <p>Create and manage engaging lessons</p>
+                <p>Track student progress</p>
+                <p>Offer personalized guidance</p>
+                <p>Teach effectively and grow your reach</p>
                 <a href='/register_page.php' class="Tsignup-btn" style="background-color: #03254E;">Sign Up</a>
             </div>
         </div>
         <div id="student-mode" class="student-mode">
             <div class="student-text">
                 <h1>Student Mode</h1>
-                <p>DESCRIÇÃO</p>
+                <p>Explore interactive lessons and tools</p>
+                <p>Get live help from real tutors</p>
+                <p>Personalize your learning path</p>
+                <p>Learn anytime, anywhere</p>
                 <a href='/register_page.php' class="Ssignup-btn" style="background-color: #32533D;">Sign Up</a>
             </div>
             <div class="image-stack">
