@@ -14,7 +14,7 @@
 **Freelancers:**
 - [x] List new services, providing details such as category, pricing, delivery time, and service description, along with images or videos.
 - [x] Track and manage their offered services.
-- [ ] Respond to inquiries from clients regarding their services and provide custom offers if needed.
+- [x] Respond to inquiries from clients regarding their services and provide custom offers if needed.
 - [ ] Mark services as completed once delivered.
 
 **Clients:**
