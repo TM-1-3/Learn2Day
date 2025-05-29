@@ -100,27 +100,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_G
     $stmt_students = $db->prepare($query_students);
     $stmt_students->execute($params_students);
     $studentResults = $stmt_students->fetchAll(PDO::FETCH_ASSOC);
-
-    $query_admins = "
-        SELECT A.ID_ADMIN as id, A.NAME, 'ADMIN' as type, A.PROFILE_IMAGE, A.DESCRIPTION, U.USERNAME
+    // Admins
+    $query_admins = "SELECT A.ID_ADMIN as id, A.NAME, 'ADMIN' as type, A.PROFILE_IMAGE, A.DESCRIPTION, U.USERNAME
         FROM ADMIN A
         JOIN USERS U ON A.ID_ADMIN = U.USERNAME
-        WHERE 1=1
-    ";
-
+        WHERE 1=1";
     $params_admins = [];
-
-    if (!empty($searchQuery)) {
-        $query_admins .= " AND (A.NAME LIKE ? OR U.USERNAME LIKE ?)";
+    if ($searchQuery) {
+        $query_admins .= " AND (A.NAME LIKE ? OR U.USERNAME LIKE ? )";
         $searchParam = "%$searchQuery%";
         $params_admins[] = $searchParam;
         $params_admins[] = $searchParam;
     }
-
     $stmt_admins = $db->prepare($query_admins);
     $stmt_admins->execute($params_admins);
     $adminResults = $stmt_admins->fetchAll(PDO::FETCH_ASSOC);
-
     $searchResults = array_merge($tutorResults, $studentResults, $adminResults);
 }
 
@@ -236,7 +230,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($searchQuery || $selectedSubjects |
     $stmt_students = $db->prepare($query_students);
     $stmt_students->execute($params_students);
     $studentResults = $stmt_students->fetchAll(PDO::FETCH_ASSOC);
-    $searchResults = array_merge($tutorResults, $studentResults);
+    // Admins
+    $query_admins = "SELECT A.ID_ADMIN as id, A.NAME, 'ADMIN' as type, A.PROFILE_IMAGE, A.DESCRIPTION, U.USERNAME
+        FROM ADMIN A
+        JOIN USERS U ON A.ID_ADMIN = U.USERNAME
+        WHERE 1=1";
+    $params_admins = [];
+    if ($searchQuery) {
+        $query_admins .= " AND (A.NAME LIKE ? OR U.USERNAME LIKE ? )";
+        $searchParam = "%$searchQuery%";
+        $params_admins[] = $searchParam;
+        $params_admins[] = $searchParam;
+    }
+    $stmt_admins = $db->prepare($query_admins);
+    $stmt_admins->execute($params_admins);
+    $adminResults = $stmt_admins->fetchAll(PDO::FETCH_ASSOC);
+    $searchResults = array_merge($tutorResults, $studentResults, $adminResults);
 }
 ?>
 

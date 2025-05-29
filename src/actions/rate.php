@@ -45,7 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Invalid rating. Must be 0, 0.5, 1, ..., 5.';
     } else {
         try {
-            $newRating = new Rating(null, $tutor_username, $user->username, $rating, $comment);
+            $created_at = date('Y-m-d H:i:s');
+            $newRating = new Rating(null, $tutor_username, $user->username, $rating, $comment, $created_at);
             $newRating->create();
             $success = 'Rating submitted!';
         } catch (Exception $e) {

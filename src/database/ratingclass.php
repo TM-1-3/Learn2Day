@@ -66,7 +66,7 @@ class Rating{
         $stmt = $db->prepare('
             SELECT * FROM RATING 
             WHERE TUTOR = ?
-            ORDER BY TIMESTAMP DESC
+            ORDER BY "TIMESTAMP" DESC
         ');
         $stmt->execute([$tutor]);
         $ratings = [];
