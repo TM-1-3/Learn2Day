@@ -32,6 +32,7 @@
 ## Running
 
     sqlite3 docs/learn2day.db < docs/learn2day.sql
+    cd src
     php -S localhost:9000
 
 ## Credentials

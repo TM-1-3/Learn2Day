@@ -55,7 +55,6 @@ if (isset($_GET['error'])) {
             <div class="overlay">
                 <div class="overlay-panel overlay-left">
                     <h1>Hello, Student!</h1>
-                    <p>Student Description</p>
                     <p></p>
                     <p></p>
                     <p></p>
@@ -63,7 +62,6 @@ if (isset($_GET['error'])) {
                 </div>
                 <div class="overlay-panel overlay-right">
                     <h1>Hello, Tutor!</h1>
-                    <p>Tutor Description</p>
                     <p></p>
                     <p></p>
                     <p></p>
