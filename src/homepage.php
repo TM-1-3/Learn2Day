@@ -42,10 +42,7 @@ if ($user->type === 'STUDENT') {
     }
 }
 
-if ($user->type == 'ADMIN') {
-    header('Location: /admindashboard.php');
-    exit();
-}
+
 
 $searchQuery = '';
 $searchResults = [];
@@ -140,23 +137,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search']) || isset($_G
     $stmt_students->execute($params_students);
     $studentResults = $stmt_students->fetchAll(PDO::FETCH_ASSOC);
 
-    $query_admins = "
-        SELECT A.ID_ADMIN as id, A.NAME, 'admin' as type, A.PROFILE_IMAGE, A.DESCRIPTION, U.USERNAME
-        FROM ADMIN A
-        JOIN USERS U ON A.ID_ADMIN = U.USERNAME
-        WHERE 1=1
-    ";
-    $params_admins = [];
+    $adminResults = [];
     if (!empty($searchQuery)) {
-        $query_admins .= " AND (A.NAME LIKE ? OR U.USERNAME LIKE ?)";
+        $query_admins = "
+            SELECT A.ID_ADMIN as id, A.NAME, 'admin' as type, A.PROFILE_IMAGE, A.DESCRIPTION, U.USERNAME
+            FROM ADMIN A
+            JOIN USERS U ON A.ID_ADMIN = U.USERNAME
+            WHERE (A.NAME LIKE ? OR U.USERNAME LIKE ?)
+        ";
+        $params_admins = [];
         $searchParam = "%$searchQuery%";
         $params_admins[] = $searchParam;
         $params_admins[] = $searchParam;
+        $stmt_admins = $db->prepare($query_admins);
+        $stmt_admins->execute($params_admins);
+        $adminResults = $stmt_admins->fetchAll(PDO::FETCH_ASSOC);
     }
-    $stmt_admins = $db->prepare($query_admins);
-    $stmt_admins->execute($params_admins);
-    $adminResults = $stmt_admins->fetchAll(PDO::FETCH_ASSOC);
-
     $searchResults = array_merge($tutorResults, $studentResults, $adminResults);
 }
 
@@ -188,7 +184,11 @@ $allLevels = Qualifications::getAllTutorLevels();
 <body>
     <header class="header">
         <div class="site-name">
+            <?php if($user->type == 'ADMIN'): ?>
+                <a href="/admindashboard.php" class="main-page" style="text-decoration:none;"><span style="color: #03254E;">Learn</span><span style="color: black;">2</span><span style="color: #32533D;">Day</span></a>
+            <?php else: ?>
             <a href="/homepage.php" class="main-page" style="text-decoration:none;"><span style="color: #03254E;">Learn</span><span style="color: black;">2</span><span style="color: #32533D;">Day</span></a>
+            <?php endif; ?>
         </div>
         <form method="GET" action="/homepage.php" class="search-form">
             <div class="search-bar">

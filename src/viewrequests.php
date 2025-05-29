@@ -71,6 +71,22 @@ $searchQuery = trim($_GET['search'] ?? '');
 $selectedSubjects = $_GET['subjects'] ?? [];
 $selectedLanguages = $_GET['languages'] ?? [];
 $selectedLevels = $_GET['levels'] ?? [];
+
+// If you ever add a search/filter section here, use the following logic for admins:
+$adminResults = [];
+if (!empty($searchQuery)) {
+    $query_admins = "SELECT A.ID_ADMIN as id, A.NAME, 'admin' as type, A.PROFILE_IMAGE, A.DESCRIPTION, U.USERNAME
+        FROM ADMIN A
+        JOIN USERS U ON A.ID_ADMIN = U.USERNAME
+        WHERE (A.NAME LIKE ? OR U.USERNAME LIKE ? )";
+    $params_admins = [];
+    $searchParam = "%$searchQuery%";
+    $params_admins[] = $searchParam;
+    $params_admins[] = $searchParam;
+    $stmt_admins = $db->prepare($query_admins);
+    $stmt_admins->execute($params_admins);
+    $adminResults = $stmt_admins->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -84,7 +100,11 @@ $selectedLevels = $_GET['levels'] ?? [];
 <body>
 <header class="header">
         <div class="site-name">
+             <?php if($user->type == 'ADMIN'): ?>
+                <a href="/admindashboard.php" class="main-page" style="text-decoration:none;"><span style="color: #03254E;">Learn</span><span style="color: black;">2</span><span style="color: #32533D;">Day</span></a>
+            <?php else: ?>
             <a href="/homepage.php" class="main-page" style="text-decoration:none;"><span style="color: #03254E;">Learn</span><span style="color: black;">2</span><span style="color: #32533D;">Day</span></a>
+            <?php endif; ?>
         </div>
         <form method="GET" action="/homepage.php" class="search-form">
             <div class="search-bar">
