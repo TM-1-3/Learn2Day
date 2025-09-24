@@ -4,7 +4,7 @@
 🌍 <a href="README.md">English</a> | 🇵🇹 <a href="README.pt.md">Português</a>
 </div>
 
-<h3 align="center">BSc in Informatics and Computing Engineering<br>L.EIC019 - Web Languages and Technologies<br> 2023/2024 </h3>
+<h3 align="center">BSc in Informatics and Computing Engineering<br>L.EIC019 - Web Languages and Technologies<br> 2024/2025 </h3>
 
 ---
 <h3 align="center"> Collaborators &#129309 </h2>
